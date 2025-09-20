@@ -1,0 +1,1081 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Block Working System — Uniform Cards (Centered, Larger, Responsive)</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Merriweather:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --header-height: 88px;
+  --accent-blue: #1976d2;
+  --accent-green: #388e3c;
+  --card-font-min: 15px;
+  --card-font-mid: 1.6vw;
+  --card-font-max: 18px;
+}
+
+/* Page shell */
+html,body{ height:100%; margin:0; font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background:#f9f9f9; overflow:hidden; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; scroll-behavior:smooth; color:#222; }
+
+/* Header */
+header{
+  min-height: var(--header-height);
+  height:auto;
+  background: linear-gradient(90deg, var(--accent-blue), var(--accent-green));
+  padding:12px 15px;
+  position:sticky;
+  top:0;
+  z-index:110;
+  box-shadow:0 4px 8px rgba(0,0,0,0.15);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-sizing:border-box;
+}
+#mainHeading {
+  color:#fff;
+  margin:0;
+  letter-spacing:1px;
+  text-align:center;
+  font-weight:800;                  /* slightly bolder */
+  line-height:1.15;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  font-size: clamp(3rem, 6vw, 3.5rem); /* much bigger, responsive */
+  padding:10px 52px;                /* extra breathing room */
+}
+
+#mainHeading span:nth-child(2) {
+  font-size:1em;                  /* keep middle line a bit smaller */
+  opacity:0.9;
+}
+/* App layout */
+.app{display:flex;flex-direction:column;height:calc(100% - var(--header-height));}
+#selectionPage{padding:18px;overflow-y:auto;flex:1 1 auto;}
+#systemPage{display:none;flex-direction:column;height:100%;}
+.subheader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  padding: 12px 20px;
+  border-bottom: 2px solid #ddd;
+  position: sticky;
+  top: var(--header-height);   /* sits directly under the top header */
+  z-index: 105;
+  box-sizing: border-box;
+  gap: 10px;
+}
+#systemTitle{font-size:1.2rem;color:#333;margin:0;text-align:center;font-weight:700;}
+#parentHeading { background:#fff; border-bottom:1px solid #e6eef6; position:sticky; z-index:104; display:none; padding:8px 20px; top:calc(var(--header-height)); }
+#parentHeadingText { font-size:1.1rem; font-weight:700; color:#000; text-align:center; }
+
+#systemMain{ flex:1 1 auto; overflow-y:auto; padding:20px; -webkit-overflow-scrolling: touch; box-sizing:border-box; }
+
+/* Blocks (initial selection) */
+.block-container{display:flex;justify-content:center;gap:20px;margin-top:30px;flex-wrap:wrap;}
+.block{ flex:1 1 200px; max-width:300px; height:150px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; font-weight:700; color:white; border-radius:12px; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.2); transition:transform .22s ease,opacity .22s ease; text-align:center; }
+.block.abs{background:var(--accent-blue);} .block.auto{background:var(--accent-green);}
+
+/* Grid layout */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  margin: 20px auto;
+  max-width: 980px;
+  align-content: start;
+}
+
+.grid-item {
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px 16px;
+  margin: 6px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.3;
+  user-select: none;
+  cursor: pointer;
+
+  /* subtle default shadow */
+  box-shadow:
+    0 2px 4px rgba(0,0,0,0.06),
+    0 8px 16px rgba(0,0,0,0.08);
+
+  /* smooth animation for hover/active */
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+/* Hover effect */
+.grid-item:hover {
+  transform: translateY(-6px) scale(1.02);
+  background: #ffffff;
+  box-shadow:
+    0 8px 16px rgba(0, 0, 0, 0.12),
+    0 20px 40px rgba(0, 0, 0, 0.14);
+}
+
+/* Active (click/tap) effect */
+.grid-item:active {
+  transform: translateY(-2px) scale(0.98); /* pressed down look */
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.15),
+    0 10px 20px rgba(0, 0, 0, 0.18);
+}
+
+/* Remove default focus ring */
+.grid-item:focus {
+  outline: none;
+}
+/* Cards: uniform, centered, readable */
+.card{ display:none; max-width:900px; margin:20px auto; background:white; border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,0.14); overflow:hidden; }
+
+/* make box-sizing universal (prevents layout surprises) */
+html { box-sizing: border-box; }
+*, *:before, *:after { box-sizing: inherit; }
+
+/* Authority card (base) */
+#authorityCard {
+  display: none;                 /* controlled by JS */
+  width: 100%;
+  max-width: 920px;              /* slightly wider but bounded */
+  margin: 18px auto;
+  background: #fff;              /* content background stays white */
+  border-radius: 1px;
+  box-shadow:
+    0 6px 12px rgba(0,0,0,0.08),
+    0 18px 36px rgba(0,0,0,0.12); /* 3D-like layered shadow */
+  overflow: hidden;
+  position: relative;
+  /* ensure flex column so children stack vertically */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+/* slim accent strip (system color) */
+#authorityCard::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto auto 0; /* top:0; left:0; right:auto; bottom:auto */
+  height: 6px;
+  width: 100%;
+  display: block;
+}
+
+/* system accents (add class 'abs' or 'auto' via JS) */
+#authorityCard.abs::before { background: #1976d2; }
+#authorityCard.auto::before { background: #388e3c; }
+
+/* sticky heading inside card (keeps heading above body content) */
+#authorityCard .sub-heading {
+  position: sticky;
+  top: 0;
+  z-index: 6;
+    background: rgba(224,247,250,0.88);
+  backdrop-filter: blur(3px);
+  padding: 8px 10px;
+  margin: 0;
+  font-family: "Merriweather", serif;
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: center;
+  color: #111;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+
+/* === Enforce uniform horizontal length for all card boxes ===
+   Place at the end of your stylesheet so it overrides conflicting rules.
+*/
+
+#authorityCard .card-body {
+  padding: 8px 10px !important;  /* tighter */
+  gap: 8px !important;           /* smaller gap */
+  font-size: 0.95rem;
+  line-height: 1.22;
+}
+
+/* Make every card-box a true block that fills the width of the card body */
+#authorityCard .card-box,
+.card-box {
+  display: block !important;
+  box-sizing: border-box !important;
+  width: 100% !important;         /* fill parent */
+  max-width: 760px !important;    /* comfortable reading width on wide screens */
+  margin: 12px auto !important;   /* center inside card when parent is wider */
+  padding: 8px 10px !important;
+  border-radius: 12px !important;
+  align-self: stretch !important; /* ensure stretching in flex context */
+  overflow: hidden;
+  word-break: break-word;
+}
+
+/* Nested card-box must not shrink smaller than parent */
+#authorityCard .card-box .card-box,
+.card-box .card-box {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 8px 0 !important;
+}
+
+/* Ensure common block children fill the width too */
+#authorityCard .card-box p,
+#authorityCard .card-box .card-line {
+  display: block !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  margin: 6px 0 !important;
+  text-align: center !important; /* keep centered as requested */
+}
+
+
+/* Exception: left-aligned .card-html.left as bulleted paragraph style */
+#authorityCard .card-html.left,
+#authorityCard .card-html.left ul,
+#authorityCard .card-html.left ol {
+  text-align: left !important;
+  padding-left: 32px !important;   /* indent bullets nicely */
+  margin: 10px 0 !important;
+}
+
+#authorityCard .card-html.left ul {
+  list-style-type: disc !important;   /* solid bullet */
+}
+
+#authorityCard .card-html.left ol {
+  list-style-type: decimal !important; /* numbered list if <ol> */
+}
+
+#authorityCard .card-html.left li {
+  margin: 8px 0 !important;          /* vertical gap between points */
+  line-height: 1.35;                 /* comfortable paragraph line spacing */
+  text-align: left !important;
+}
+
+/* small helper classes */
+.card-or { 
+  font-weight: 700; 
+  margin: 6px 0; 
+  font-size: clamp(13px, 1.2vw, 15px); /* responsive: never too small or too big */
+  color: #334155; 
+  text-align: center;   /* ✅ keep "OR" centered inside the card */
+  line-height: 1.2;     /* compact but readable */
+  text-transform: uppercase; /* optional: make OR stand out */
+  letter-spacing: 0.5px; /* optional: adds breathing space */
+}
+.card-box {
+  border: 3px solid #ddd;            /* light border */
+  border-radius: 12px;               /* rounded corners */
+  padding: 14px 18px;                /* spacing inside */
+  margin: 12px 0;                    /* gap between cards */
+  background: #fff;                  /* white background */
+  box-shadow: 0 3px 8px rgba(0,0,0,0.12); /* soft shadow */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-box:hover {
+  transform: translateY(-3px);       /* slight lift effect */
+  box-shadow: 0 5px 12px rgba(0,0,0,0.18);
+}
+
+/* Buttons */
+.back-btn, .menu-btn { position:absolute; top:50%; transform:translateY(-50%); width:40px; height:40px; border-radius:50%; border:none; color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(0,0,0,0.25); transition: transform .18s ease, box-shadow .18s ease; }
+.back-btn { left:10px; background:var(--accent-blue); display:none; } .menu-btn { right:10px; background:var(--accent-green); }
+
+.back-btn i { font-size:1.05rem; } .menu-btn i { font-size:1.25rem; }
+
+.back-btn:hover, .menu-btn:hover { transform:translateY(-50%) scale(1.05); box-shadow:0 6px 18px rgba(0,0,0,0.30); }
+
+/* Responsive tweaks: keep cards uniform but avoid overflow on small screens */
+@media (max-width:720px){
+  #mainHeading { font-size: 1rem; padding:8px 36px; }
+  .card-box { padding:12px; }
+  #authorityCard .card-body { padding:18px 16px; }
+  .grid { gap:14px; margin:12px; }
+  .grid-item { padding:12px; font-size:1rem; }
+  .block{ height:120px; font-size:1rem; }
+
+  /* slightly larger card font on small screens for readability */
+  :root { --card-font-min: 16px; --card-font-mid: 2.4vw; --card-font-max: 20px; }
+
+  /* Make uniform cards responsive: cap by percentage so they never stick out */
+  .card-box {
+    max-width: 92% !important;   /* use most of viewport, keeps all cards same horizontal length */
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* nested card-box should not exceed parent width */
+  .card-box .card-box,
+  #authorityCard .card-box .card-box {
+    max-width: 100% !important;
+  }
+}
+
+/* Extra small phones */
+@media (max-width:420px){
+  #mainHeading { font-size: 1.02rem; padding:8px 24px; }
+  #authorityCard .card-body { padding:16px 12px; }
+  .card-box { padding:10px; margin:10px 0; }
+  .block{ height:110px; }
+  :root { --card-font-min: 16px; --card-font-mid: 3.0vw; --card-font-max: 20px; }
+
+  /* stronger cap for very small screens */
+  .card-box {
+    max-width: 96% !important;
+    width: 100% !important;
+  }
+  .card-box .card-box,
+  #authorityCard .card-box .card-box {
+    max-width: 100% !important;
+  }
+}
+
+/* overlay & side menu */
+#overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.32); opacity: 0; pointer-events: none; transition: opacity .18s ease; z-index: 220; } #overlay.show { opacity:1; pointer-events:auto; }
+#sideMenu { position:fixed; top:0; right:-320px; width:300px; height:100vh; background:#fff; box-shadow:-8px 0 24px rgba(0,0,0,0.18); transition:right .24s cubic-bezier(.2,.9,.2,1); z-index:230; padding:16px; box-sizing:border-box; overflow-y:auto; display:flex; flex-direction:column; gap:10px; }
+#sideMenu.open { right:0; }
+#menuList { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:6px; } #menuList button { display:block; width:100%; text-align:left; background:transparent; border:none; padding:10px 8px; font-size:0.98rem; border-radius:8px; cursor:pointer; }
+
+
+
+
+</style>
+</head>
+<body>
+<header>
+  <h1 id="mainHeading">
+    <span>AUTHORITIES</span>
+    <span>&amp;</span>
+    <span class="nowrap">ABNORMAL WORKING</span>
+  </h1>
+</header>
+
+<div class="app" role="application">
+  <div id="selectionPage" role="main" aria-label="System selection">
+    <div class="block-container" role="list">
+      <div class="block abs" tabindex="0" role="button" aria-pressed="false"
+           onclick="selectSystem('Absolute Block System')"
+           onkeydown="if(event.key==='Enter') selectSystem('Absolute Block System')">
+        Absolute Block System
+      </div>
+
+      <div class="block auto" tabindex="0" role="button" aria-pressed="false"
+           onclick="selectSystem('Automatic Block Section')"
+           onkeydown="if(event.key==='Enter') selectSystem('Automatic Block Section')">
+        Automatic Block Section
+      </div>
+    </div>
+  </div>
+
+  <div id="systemPage" aria-hidden="true">
+    <div class="subheader">
+      <button class="back-btn" onclick="goBack()" aria-label="Go back" id="backBtn">
+        <i class="fas fa-arrow-left" aria-hidden="true"></i>
+      </button>
+      <h2 id="systemTitle"></h2>
+      <button class="menu-btn" onclick="openMenu()" aria-label="Open menu" id="menuBtn">
+        <i class="fas fa-bars" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <div id="parentHeading"><div id="parentHeadingText"></div></div>
+
+    <main id="systemMain" tabindex="0">
+      <div id="circumstancesGrid" class="grid" aria-label="Circumstances list"></div>
+      <div id="subMenuGrid" class="grid" aria-label="Submenu list" style="display:none;"></div>
+      <div id="authorityCard" class="card uniform" role="region" aria-label="Authority details" style="display:none;"></div>
+    </main>
+  </div>
+</div>
+
+<!-- overlay & side menu -->
+<div id="overlay" aria-hidden="true" onclick="closeMenu()"></div>
+<aside id="sideMenu" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="home-row">
+    <button id="menuHomeBtn" onclick="goHomeFromMenu()" aria-label="Go home">Home</button>
+  </div>
+
+  <div id="menuCurrentBlock">
+    <div class="system-name" id="menuCurrentSystem">No system selected</div>
+    <div class="system-note" id="menuSystemNote">Select a system from the main screen to see its subfolders here.</div>
+  </div>
+
+  <ul id="menuList" aria-label="System subfolders"></ul>
+</aside>
+
+<script>
+/* Script is identical to the working version you tested earlier (data and rendering),
+   no changes required there — only card styling has been adjusted above.
+   For completeness, this includes the same compact script that wires UI and data. */
+
+(function(){
+  try {
+    function el(id){ return document.getElementById(id); }
+    function clearChildren(node){ while(node && node.firstChild) node.removeChild(node.firstChild); }
+    function escapeHtml(unsafe) { if (unsafe === undefined || unsafe === null) return ""; return String(unsafe).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\"/g,"&quot;").replace(/'/g,"&#039;"); }
+    function looksLikeHtml(s){ if (typeof s !== 'string') return false; const t = s.trim(); return /^<[\s\S]+>$/.test(t); }
+    function isLeafObject(obj){ if (typeof obj !== "object" || obj === null) return false; return Object.values(obj).every(v => v === null || typeof v === "string" || typeof v === "number" || typeof v === "boolean" || Array.isArray(v)); }
+
+    const ABS_DATA = {
+      "Normal Authority to Proceed": {
+        "Single Line": "<div class='card-box'><div class='card-line'>OFF aspect of LSS</div></div>",
+        "Double Line": "<div class='card-box'><div class='card-line'>OFF aspect of LSS</div></div>"
+      },
+      "Signal Failure": {
+        "Block Instrument/Advance Starter": {
+          "Single Line": "<div class='card-box'><div class='card-line'>PLCT</div><div class='card-line'>(T/C 1425 or T/D 1425)</div></div>",
+          "Double Line":  "<div class='card-box'><div class='card-line'>T/369(3b) + PN</div></div>"
+        },
+        "Home Signal": "<div class='card-box'><div class='card-line'>Calling On Signal</div></div>"+"<div class='card-or'>or</div>"+"<div class='card-box'><div class='card-line'>T/369(3b) + PHS</div><div class='card-line'>(Speed 15 kmph)</div></div>",
+        "Starter Signal": "<div class='card-box'><div class='card-line'>Calling On Signal, if provided</div></div>"+"<div class='card-or'>or</div>"+" <div class='card-box'><div class='card-line'>T/369(3b) + PHS</div><div class='card-line'>(Speed 15 kmph (max))</div></div>",
+        "Shunt Signal":  "<div class='card-box'><div class='card-line'>Written Advice + PHS</div></div>",
+        "Shunting Permitted Indicator (SPI)": "<div class='card-box'><div class='card-line'>Endorsement on T/806 + PHS</div></div>"
+      },
+      "Other Occassions": {
+        "Reception on Non-Signalled Line": {
+          "": "<div class='card-box'><div class='card-line'>[T/510 or T/369(3b)]</div><div class='card-line'>+</div><div class='card-line'>Piloting</div></div>"+"<div class='card-or'>or</div>"+"  <div class='card-box'><div class='card-line'>As per SWR</div></div>"
+        },
+        "Reception on Obstructed Road": {
+          "": "<div class='card-box'><div class='card-line'>Calling On</div></div>"+"<div class='card-or'>or</div>"+"<div class='card-box'><div class='card-line'>T/509 + Piloting</div></div>"
+        },
+        "To Start from Non-Signalled Line": {
+          "": "<div class='card-box'><div class='card-line'>T/511</div><div class='card-line'>+</div><div class='card-line'>OFF aspect of LSS</div><div class='card-line'>+</div><div class='card-line'>Pilot Out</div></div>"
+        },
+        "Starting from Non-Signalled Line when LSS failed": {
+          "": "<div class='card-box'><div class='card-line'>T/511</div><div class='card-line'>+</div><div class='card-line'>Authority To Proceed</div><div class='card-line'>+</div><div class='card-line'>Pilot Out</div></div>"
+        },
+        "Despatch from a line having Common Starter": {
+          "": "<div class='card-box'><div class='card-line'>T/512</div><div class='card-line'>+</div><div class='card-line'>Authority To Proceed</div><div class='card-line'>+</div><div class='card-line'>Pilot Out</div></div>"
+        },
+        "For sending Relief Engine/Train in Obstructed Block Section": {
+          "": "<div class='card-box'><div class='card-line'>T/A 602</div><div class='card-line'>(Speed - 15/10/walking speed)</div></div>"
+        },
+        "To start the front portion of a Goods Train from Mid-Section": {
+          "": "<div class='card-box'><div class='card-line'>T/609</div><div class='card-line'>(without LV board)</div></div>"
+        },
+        "To send relief engine to clear rear portion (if front portion comes with T/609)": {
+          "": "<div class='card-box'><div class='card-line'>T/A 602</div><div class='card-line'>(Speed - 15/10/walking speed)</div></div>"
+        }
+      },
+      "Shunting": {
+        "Within the Station Section": {
+          "Single Line/Double Line": "<div class='card-box'><div class='card-line'>T/806</div></div>"
+        },
+        "Beyond Advance Starter and upto oppsite FSS": "<div class='card-box'><div class='card-line'>T/806</div><div class='card-line'>+</div><div class='card-line'>Shunt Key</div></div>",
+        "Beyond FSS (Block Back)": "<div class='card-box'><div class='card-line'>T/806</div><div class='card-line'>+</div><div class='card-line'>Shunt Key</div><div class='card-line'>+</div><div class='card-line'>Private Number</div></div>",
+        "Behind a Departed Train": "<div class='card-box'><div class='card-line'>Permitted Upto FSS</div><div class='card-line'>with</div><div class='card-line'>T/806 + Shunt Key</div></div>",
+        "In Advance of LSS (Block Forward) - On Double Line": "<div class='card-box'><div class='card-line'>T/806</div><div class='card-line'>+</div><div class='card-line'>Private Number</div></div>",
+        "In rear of Outermost Facing Points or BSLB/wrong line (Block Back) - On Double Line": "<div class='card-box'><div class='card-line'>T/806</div><div class='card-line'>+</div><div class='card-line'>Private Number</div></div>"
+      },
+      "Engine Pushing": {
+        "Permission": "<div class='card-box'><div class='card-line'>TMR written permission upto FSS</div></div>",
+        "SM to Permit": "<div class='card-box'><div class='card-line'>From FSS, SM to furnish with written order</div><div class='card-or'>or</div><div class='card-line'>Take OFF approach reception signal</div></div>",
+        "Engine Pushing Speed when TMR in leading vehicle (BV)": "<div class='card-box'><div class='card-line'>25kmph during Day</div><div class='card-line'>8 kmph during Night</div></div>"
+      },
+      "TSL working": {
+        "Right Direction": "<div class='card-box'><ul class='card-html left'><li>Double Line working is 'Suspended'</li><li>Ensure one line is clear</li><li>LSS cannot be taken OFF</li><li><strong>Authority - T/D 602 (3 parts)</strong></li><li>Caution Order (Endorsement)</li><li>First Train - 25 kmph</li><li>If first train is ART/SPARMV - Normal Speed</li><li>Second and Subsequent train - MPS</li><li>Protection - as per GR 6.03</li><li>Train can be received on Signal at next Station</li><li>In case of failure of FSS, train to be dealt accordingly</li></ul></div>",
+        "Wrong Direction": "<div class='card-box'><ul class='card-html left'><li>Double Line working is 'Suspended'</li><li>Ensure one line is clear</li><li>LSS not available on Wrong Line</li><li><strong>Authority - T/D 602 (3 parts) + Pilot Out Memo</strong></li><li>Flasher Light to be kept ON</li><li>Caution Order (Endorsement)</li><li>LPs ensure for 'Neutral Section'</li><li>First train 25 kmph</li><li>If first train is ART/SPARMV - Normal Speed</li><li>Second and Subsequent train - MPS</li><li>Protection - as per GR 6.03</li><li>LP to STOP at the Opposite FSS or LSS</li><li>Next Station - Train will be piloted with 'Pilot in Memo (T/510)'</li></ul></div>"
+      },
+      "TIC on Single Line": {
+        "Document for Opening Communication": "<div class='card-box'><div class='card-line'>T/B 602 (5 parts)</div></div>",
+        "For more than One Train": "<div class='card-box'><div class='card-line'>T/E 602</div></div>",
+        "Signals": "<div class='card-box'><div class='card-line'>Except LSS, fixed signals can be taken OFF</div></div>",
+        "Speed":  "<div class='card-box'><div class='card-line'>15/10/walking speed</div></div>",
+        "Tunnel": "<div class='card-box'><div class='card-line'>Visibility clearance to be ascertained</div></div>",
+        "Note": "<div class='card-box'><div class='card-line'>SM not to obstruct the line beyond outermost facing point</div></div>",
+        "Line Clear Reply": "<div class='card-box'><div class='card-line'>T/F 602</div></div>",
+        "Conditional Line Clear Ticket": "<div class='card-box'><div class='card-line'>[T/G 602 or T/H 602]</div><div class='card-line'>+</div><div class='card-line'>T/369(3b)</div></div>",
+        "Speed while Returning": "<div class='card-box'><div class='card-line'>Booked Speed</div></div>",
+        "At mid section": "<div class='card-box'><div class='card-line'>When two engines meet, LP and TMR will decide</div></div>",
+        "If only Engine or Engine + BV": "<div class='card-box'><div class='card-line'>T/B 602</div><div class='card-line'>(use only first 3 parts)</div></div>",
+        "Uneven Flow (one direction)": "<div class='card-box'><div class='card-box'><div class='card-line'><b>First Train</b></div><div class='card-line'>Booked Speed</div></div><div class='card-box'><div class='card-line'><b>Second and Subsequent</b></div><div class='card-line'>25/10 kmph</div><div class='card-line'>at 30 minute interval</div></div></div>",
+        "Even Flow (both direction)": "<div class='card-box'><div class='card-line'>All trains at Normal Speed</div></div>",
+        "Protection": "<div class='card-box'><div class='card-line'>250+250+10 meters</div></div>"
+      },
+      "TIC on Double Line": {
+        "Document for Opening Communication":"<div class='card-box'><div class='card-line'>T/C 602 (3 parts)</div></div>",
+        "Signals": "<div class='card-box'><div class='card-line'>Except LSS, fixed signals can be taken OFF</div></div>",
+        "Speed": "<div class='card-box'><div class='card-line'>25/10/walking speed</div></div>",
+        "Tunnel": "<div class='card-box'><div class='card-line'>Visibility clearance to be ascertained</div></div>",
+        "Interval": "<div class='card-box'><div class='card-line'>30 minutes after every train</div></div>",
+        "Protection": "<div class='card-box'><div class='card-line'>250+250+10 meters</div></div>",
+        "Backing of Train": "<div class='card-box'><div class='card-line'>Prohibited, except unavoidable circumstances</div></div>",
+        "At the FSS of Receiving Station": "<div class='card-box'><div class='card-line'>LP to stop at FSS and whistle continuous, if no response within 10 minutes from SM, send ALP to Station, TMR to Protect</div></div>"
+      },
+      
+"TIC in TSL": {
+  "Document for Opening Communication": "<div class='card-box'><div class='card-box'><div class='card-line'><b>Authority</b><br/><br/>T/B 602 + T/D 602</div></div><div class='card-box'><div class='card-line'><b>Speed</b><br/><br/>15/10/Walking Speed</div></div><div class='card-box'><div class='card-line'><b>Precautions</b><br/><br/>Follow the Procedures for TIC on Single Line of Absolute Block System</div></div></div>",
+    
+  "For Train movements on Conditional Line Clear Ticket (either Wrong Line or Right Line)": 
+  "<div class='card-box'><div class='card-box'><div class='card-line'><b>Authority</b><br/><br/>T/G 602 or T/H 602</div><div class='card-line'>+</div><div class='card-line'>T/369(3b)</div></div>   <div class='card-box'><div class='card-line'><b>Speed</b><br/><br/>         <div class='card-box><div class='card-line'><i>Uneven Flow</i></div><ul class='card-html left'><li>First Train - Booked Speed</li><li>Second and Subsequent Trains - 25/10 kmph, after interval of 30 minutes</li></ul></div>  <div class='card-line'><i>Even Flow</i></div><ul class='card-html left'><li>All Trains - Normal Speed</li></ul></div></div><div class='card-box'><div class='card-line'>Protection: 250+250+10 meters</div></div></div>"
+},
+
+      "Procedure to Pass Gate Stop Signal at ON":
+        "<div class='card-box'><ul class='card-html left'><li>Stop at the Gate Stop Signal</li><li>Sound a Long Whistle</li><li>Wait for 1 minute by day and 2 minutes by night</li><li>Ensure 'G' marker below Stop signal</li><li>Proceed cautiously</li><li>If Hand Signalled by Gateman, then Proceed.<br/>If NOT, Stop 30 meters before the LC Gate</li><li>Ensure the LC Gate is closed</li><li>Pass the LC only when Hand Signalled by TMR or one of the Engine Crew</li><li>After the last vehicle clears, stop with clearance of about two vehicle lengths beyond the Gate.</li><li>TMR or Engine Crew to re-open the LC Gate</li><li>TMR/LP to report the occurrence at the next Station</li></ul></div>",
+      "Reporting of Rough/Slack Running - Lurch":
+        "<div class='card-box'><ul class='card-html left'><li>Stop the Train <b>without clearing the Block Section</b></li><li>Inform the Station Master through <b>available means of communication</b></li><li>On arrival at Station, give <b>written advice</b> to the Station Master</li></ul></div>",
+      "Goods Train Without Brake Van/ TMR": {
+        "Permitted By":
+          "<div class='card-box'><div class='card-line'><b>Without BV</b></div><div class='card-line'>Special Instruction</div></div>" +
+          "<div class='card-box'><div class='card-line'><b>Without TMR</b></div><div class='card-line'>Regional Operating Instruction</div></div>",
+        "Speed":
+          "<div class='card-box'><div class='card-line'><b>Without BV</b></div><div class='card-line'>Normal Speed</div></div>" +
+          "<div class='card-box'><div class='card-line'><b>Without TMR</b></div><div class='card-line'>Normal Speed<br/>(Not Permitted during TIC)</div></div>"
+      }
+    };
+    
+    
+    const ATS_DATA = {
+      "Normal Authority to Proceed": {
+        "Single Line": "<div class='card-box'><div class='card-line'>OFF aspect of LSS</div></div>",
+        "Double Line": "<div class='card-box'><div class='card-line'>OFF aspect of LSS</div></div>"
+      },
+      "Signal Failure": {
+        "Block Instrument/Advance Starter": {
+          "Single Line": "<div class='card-box'><div class='card-line'>PLCT</div><div class='card-line'>(T/C 1425 or T/D 1425)</div></div>",
+          "Double Line":  "<div class='card-box'><div class='card-line'>T/369(3b) + PN</div></div>"
+        }
+      }
+        };
+    
+    
+
+    const data = {
+      "Absolute Block System": ABS_DATA,
+      "Automatic Block Section": ATS_DATA
+    };
+
+    const BACK_BTN = document.querySelector('.back-btn');
+    const SELECTION_PAGE = el("selectionPage");
+    const SYSTEM_PAGE = el("systemPage");
+    const CIRC_GRID = el("circumstancesGrid");
+    const SUBMENU_GRID = el("subMenuGrid");
+    const AUTH_CARD = el("authorityCard");
+    const SYSTEM_MAIN = el("systemMain");
+    const PARENT_HEADING = el("parentHeading");
+    const PARENT_HEADING_TEXT = el("parentHeadingText");
+
+    function debounce(fn, wait = 120) {
+      let t = null;
+      return function(...args) {
+        clearTimeout(t);
+        t = setTimeout(() => fn.apply(this, args), wait);
+      };
+    }
+
+    function updateSubheaderOffset(){
+      try {
+        const headerEl = document.querySelector('header');
+        const subheaderEl = document.querySelector('.subheader');
+        if (!headerEl) return;
+        const headerRect = headerEl.getBoundingClientRect();
+        const subRect = subheaderEl ? subheaderEl.getBoundingClientRect() : { height: 0 };
+        const headerH = Math.ceil(headerRect.height || 0);
+        const subH = Math.ceil(subRect.height || 0);
+        if (subheaderEl) { subheaderEl.style.top = headerH + 'px'; subheaderEl.style.position = 'sticky'; subheaderEl.style.zIndex = 105; }
+        headerEl.style.position = 'sticky'; headerEl.style.top = '0px'; headerEl.style.zIndex = 110;
+        if (PARENT_HEADING) { PARENT_HEADING.style.top = (headerH + subH) + 'px'; PARENT_HEADING.style.position = 'sticky'; PARENT_HEADING.style.zIndex = 104; }
+        const viewportH = window.innerHeight || document.documentElement.clientHeight;
+        const available = Math.max(120, viewportH - headerH - subH - 12);
+        if (SYSTEM_MAIN) { SYSTEM_MAIN.style.height = (available + subH) + 'px'; SYSTEM_MAIN.style.overflowY = 'auto'; }
+        if (CIRC_GRID) { CIRC_GRID.style.maxHeight = 'none'; CIRC_GRID.style.overflowY = 'visible'; }
+        if (SUBMENU_GRID) { SUBMENU_GRID.style.maxHeight = 'none'; SUBMENU_GRID.style.overflowY = 'visible'; }
+        if (AUTH_CARD) {
+          const cardHeading = AUTH_CARD.querySelector('.sub-heading');
+          const cardHeadingH = cardHeading ? Math.ceil(cardHeading.getBoundingClientRect().height || 0) : 56;
+          const body = AUTH_CARD.querySelector('.card-body');
+          if (body) {
+            const bodyMax = Math.max(120, available - cardHeadingH - 24);
+            body.style.maxHeight = bodyMax + 'px';
+            body.style.overflowY = 'auto';
+            body.style.webkitOverflowScrolling = 'touch';
+          }
+          AUTH_CARD.style.maxHeight = Math.max(200, viewportH - headerH - 24) + 'px';
+        }
+      } catch (err) {
+        console.warn('updateSubheaderOffset error', err);
+      }
+    }
+
+    function setParentHeading(text) {
+      if (!PARENT_HEADING || !PARENT_HEADING_TEXT) return;
+      if (text) { PARENT_HEADING_TEXT.textContent = text; PARENT_HEADING.style.display = 'block'; }
+      else { PARENT_HEADING_TEXT.textContent = ''; PARENT_HEADING.style.display = 'none'; }
+    }
+
+    window.addEventListener('load', updateSubheaderOffset);
+    window.addEventListener('resize', debounce(updateSubheaderOffset, 130));
+
+    function loadCircumstances(){
+      setParentHeading(null);
+      clearChildren(CIRC_GRID);
+      const systemData = data[currentSystem] || {};
+      Object.keys(systemData).forEach(circ => {
+        const div = document.createElement("div");
+        div.className = "grid-item";
+        div.tabIndex = 0;
+        div.setAttribute("role", "button");
+        div.setAttribute("aria-controls","authorityCard");
+        div.setAttribute("aria-expanded","false");
+        div.textContent = circ;
+        div.onclick = () => showSubMenu(circ);
+        div.onkeydown = (e) => { if(e.key === "Enter" || e.key === " ") showSubMenu(circ); };
+        CIRC_GRID.appendChild(div);
+      });
+      CIRC_GRID.style.display = "grid";
+      SUBMENU_GRID.style.display = "none";
+      AUTH_CARD.style.display = "none";
+      SYSTEM_MAIN.scrollTop = 0;
+      updateSubheaderOffset();
+    }
+
+    function showSubMenu(circ){
+      currentCircumstance = circ;
+      if (circ === "Signal Failure" || circ === "Shunting") { setParentHeading(circ); } else { setParentHeading(null); }
+      const subData = data[currentSystem] && data[currentSystem][circ];
+      if ( circ === "TIC on Single Line" || circ === "TIC on Double Line" || !subData || typeof subData !== "object" || isLeafObject(subData) ) {
+        openedFromSubmenu = false; showAuthority(circ, true); return;
+      }
+      clearChildren(SUBMENU_GRID);
+      Object.keys(subData).forEach(sub => {
+        const div = document.createElement("div");
+        div.className = "grid-item";
+        div.tabIndex = 0;
+        div.setAttribute("role", "button");
+        div.setAttribute("aria-controls","authorityCard");
+        div.setAttribute("aria-expanded","false");
+        div.textContent = sub;
+        div.onclick = () => { openedFromSubmenu = true; showAuthority(sub); };
+        div.onkeydown = (e) => { if(e.key === "Enter" || e.key === " ") { openedFromSubmenu = true; showAuthority(sub); } };
+        SUBMENU_GRID.appendChild(div);
+      });
+      CIRC_GRID.style.display = "none";
+      SUBMENU_GRID.style.display = "grid";
+      AUTH_CARD.style.display = "none";
+      updateSubheaderOffset();
+      SYSTEM_MAIN.scrollTop = 0;
+      setTimeout(()=>{ const first = SUBMENU_GRID.querySelector('.grid-item'); if(first) first.focus(); },80);
+    }
+
+    function renderStringOrHtml(val){
+      if (looksLikeHtml(val)) return `<div class="card-html">${val}</div>`;
+      const parts = String(val).split('\n').map(p => p.trim());
+      let out = '';
+      parts.forEach(line => {
+        if (line.toLowerCase() === 'or') out += `<p class="or-text" style="text-align:center;margin:0;">${escapeHtml(line)}</p>`;
+        else out += `<p style="margin:0 0 6px 0;text-align:center;">${escapeHtml(line)}</p>`;
+      });
+      return out;
+    }
+
+    function showAuthority(sub, direct = false) {
+      let subData;
+      if (direct) subData = data[currentSystem] && data[currentSystem][sub];
+      else subData = data[currentSystem] && data[currentSystem][currentCircumstance] && data[currentSystem][currentCircumstance][sub];
+
+      const parentVisible = (!direct && currentCircumstance &&
+          (currentCircumstance === "Signal Failure" || currentCircumstance === "Shunting"));
+
+      let html = "";
+      const shouldSuppressInnerHeading = parentVisible && (sub === "Signal Failure" || sub === "Shunting");
+
+      if (!shouldSuppressInnerHeading) {
+        html += `<div class="sub-heading sub-heading-small">${escapeHtml(sub)}</div>`;
+      } else {
+        html += `<div class="sub-heading sub-heading-small hidden-subheading-spacer" aria-hidden="true"></div>`;
+      }
+
+      html += `<div class="card-body" tabindex="0" role="region" aria-live="polite">`;
+
+      if (typeof subData === "string") {
+        html += renderStringOrHtml(subData);
+      }
+      else if (Array.isArray(subData)) {
+        const anyHtml = subData.some(item => looksLikeHtml(item));
+        if (anyHtml) {
+          subData.forEach(item => {
+            if (looksLikeHtml(item)) html += `<div class="card-html">${item}</div>`;
+            else html += renderStringOrHtml(String(item));
+          });
+        } else {
+          const hasOr = subData.some(v => String(v).toLowerCase() === "or");
+          if (currentCircumstance === "TSL working" || /TSL working/i.test(sub)) {
+            html += `<ul>`;
+            subData.forEach(v => {
+              const text = String(v);
+              if (text.toLowerCase().includes("authority")) html += `<li><strong>${escapeHtml(text)}</strong></li>`;
+              else html += `<li>${escapeHtml(text)}</li>`;
+            });
+            html += `</ul>`;
+          } else if (hasOr) {
+            html += `<div style="display:flex;flex-direction:column;gap:8px;align-items:center;">`;
+            subData.forEach(v => {
+              const text = String(v);
+              if (text.toLowerCase() === "or") html += `<p class="or-text" style="margin:0;">${escapeHtml(text)}</p>`;
+              else html += `<p class="card-line" style="margin:0;text-align:center;">${escapeHtml(text)}</p>`;
+            });
+            html += `</div>`;
+          } else {
+            html += `<ul>`;
+            subData.forEach(v => html += `<li>${escapeHtml(String(v))}</li>`);
+            html += `</ul>`;
+          }
+        }
+      }
+      else if (typeof subData === "object" && subData !== null) {
+        const innerKeys = Object.keys(subData);
+        innerKeys.forEach(key => {
+          const isOnlyInnerKey = innerKeys.length === 1;
+          html += `<div style="margin:18px 0;text-align:center;">`;
+          if (key !== "" && !isOnlyInnerKey) {
+            html += `<h4>${escapeHtml(key)}</h4>`;
+          }
+          const val = subData[key];
+          if (typeof val === "string") {
+            html += renderStringOrHtml(val);
+          } else if (Array.isArray(val)) {
+            const anyHtmlNested = val.some(item => looksLikeHtml(item));
+            if (anyHtmlNested) {
+              val.forEach(item => {
+                if (looksLikeHtml(item)) html += `<div class="card-html">${item}</div>`;
+                else html += renderStringOrHtml(String(item));
+              });
+            } else {
+              const hasOrNested = val.some(v => String(v).toLowerCase() === "or");
+              if (hasOrNested) {
+                html += `<div style="display:flex;flex-direction:column;gap:8px;align-items:center;">`;
+                val.forEach(item => {
+                  const text = String(item);
+                  if (text.toLowerCase() === "or") html += `<p class="or-text" style="margin:0;">${escapeHtml(text)}</p>`;
+                  else html += `<p class="card-line" style="margin:0;text-align:center;">${escapeHtml(text)}</p>`;
+                });
+                html += `</div>`;
+              } else {
+                html += `<ul>`;
+                val.forEach(item => html += `<li>${escapeHtml(String(item))}</li>`);
+                html += `</ul>`;
+              }
+            }
+          } else if (typeof val === "object" && val !== null) {
+            html += `<div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">`;
+            Object.keys(val).forEach(subKey => {
+              const v = val[subKey];
+              if (typeof v === "string") {
+                html += `<p style="margin:0;text-align:center;"><strong>${escapeHtml(subKey)}:</strong> ${escapeHtml(String(v))}</p>`;
+              } else if (Array.isArray(v)) {
+                html += `<p style="margin:0;text-align:center;"><strong>${escapeHtml(subKey)}:</strong> ${escapeHtml(v.join(", "))}</p>`;
+              } else {
+                html += `<p style="margin:0;text-align:center;"><strong>${escapeHtml(subKey)}:</strong> ${escapeHtml(String(v))}</p>`;
+              }
+            });
+            html += `</div>`;
+          } else {
+            html += `<p>${escapeHtml(String(val))}</p>`;
+          }
+          html += `</div>`;
+        });
+      } else {
+        html += `<p>No data available</p>`;
+      }
+
+      html += `</div>`;
+      AUTH_CARD.innerHTML = html;
+      // ensure authority card uses system accent and vertical layout
+AUTH_CARD.classList.remove('abs','auto');
+if (currentSystem === "Absolute Block System") AUTH_CARD.classList.add('abs');
+else if (currentSystem === "Automatic Block Section") AUTH_CARD.classList.add('auto');
+
+// enforce flex column (in case other CSS changes slipped in)
+AUTH_CARD.style.display = 'flex';
+AUTH_CARD.style.flexDirection = 'column';
+      AUTH_CARD.style.display = "flex";
+      AUTH_CARD.setAttribute("aria-hidden", "false");
+      updateSubheaderOffset();
+      SYSTEM_MAIN.scrollTop = Math.max(0, SYSTEM_MAIN.scrollTop - 1);
+      setTimeout(() => { SYSTEM_MAIN.scrollTop = Math.max(0, SYSTEM_MAIN.scrollTop + 1); }, 20);
+      SUBMENU_GRID.style.display = "none";
+      CIRC_GRID.style.display = "none";
+
+      const bodyEl = AUTH_CARD.querySelector('.card-body');
+      setTimeout(() => {
+        if (bodyEl) try { bodyEl.focus(); } catch (e) {}
+        const activeControls = document.querySelectorAll('[aria-controls="authorityCard"]');
+        activeControls.forEach(c => c.setAttribute('aria-expanded','true'));
+      }, 80);
+
+      if (BACK_BTN) BACK_BTN.style.display = 'flex';
+      if (BACK_BTN) BACK_BTN.focus();
+
+      const focusTrap = (e) => {
+        if (AUTH_CARD.style.display === "none") return;
+        const root = AUTH_CARD;
+        const focusable = root.querySelectorAll('a,button,input,textarea,select,[tabindex]:not([tabindex="-1"])');
+        const arr = Array.prototype.slice.call(focusable);
+        if (arr.length === 0) {
+          if (e.key === 'Tab' && document.activeElement === document.body) { e.preventDefault(); try { bodyEl.focus(); } catch (err) {} }
+          return;
+        }
+        const first = arr[0], last = arr[arr.length - 1];
+        if (e.key === 'Tab') {
+          if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+          else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        }
+      };
+
+      document.removeEventListener('keydown', window.__authFocusTrapHandler);
+      window.__authFocusTrapHandler = function(e){ focusTrap(e); };
+      document.addEventListener('keydown', window.__authFocusTrapHandler);
+    }
+
+    let currentSystem = "";
+    let currentCircumstance = "";
+    let openedFromSubmenu = false;
+
+    function loadCircumstancesWrapper(){
+      try { loadCircumstances(); } catch(e){ console.error('loadCircumstances failed', e); }
+    }
+
+    function selectSystem(system){
+      currentSystem = system;
+      SELECTION_PAGE.style.display = "none";
+      SYSTEM_PAGE.style.display = "block";
+      SYSTEM_PAGE.setAttribute("aria-hidden","false");
+      el("systemTitle").textContent = system;
+      const subheader = document.querySelector('.subheader');
+      if (subheader) subheader.style.display = 'flex';
+      updateSubheaderOffset();
+      if (BACK_BTN) BACK_BTN.style.display = 'flex';
+      loadCircumstancesWrapper();
+      SYSTEM_MAIN.scrollTop = 0;
+      buildMenu();
+    }
+
+    function goBack(){
+      if (AUTH_CARD && AUTH_CARD.style.display && AUTH_CARD.style.display !== "none") {
+        AUTH_CARD.style.display = "none";
+        AUTH_CARD.setAttribute("aria-hidden", "true");
+        const activeControls = document.querySelectorAll('[aria-controls=\"authorityCard\"]');
+        activeControls.forEach(c => c.setAttribute('aria-expanded','false'));
+        if (window.__authFocusTrapHandler) { document.removeEventListener('keydown', window.__authFocusTrapHandler); window.__authFocusTrapHandler = null; }
+        if (openedFromSubmenu) {
+          SUBMENU_GRID.style.display = "grid";
+          setTimeout(()=>{ const first = SUBMENU_GRID.querySelector('.grid-item'); if(first) first.focus(); },80);
+        } else {
+          CIRC_GRID.style.display = "grid";
+          setTimeout(()=>{ const first = CIRC_GRID.querySelector('.grid-item'); if(first) first.focus(); },80);
+        }
+        openedFromSubmenu = false;
+        return;
+      }
+
+      if (SUBMENU_GRID && SUBMENU_GRID.style.display && SUBMENU_GRID.style.display !== "none") {
+        SUBMENU_GRID.style.display = "none";
+        CIRC_GRID.style.display = "grid";
+        setTimeout(()=>{ const first = CIRC_GRID.querySelector('.grid-item'); if(first) first.focus(); },80);
+        openedFromSubmenu = false;
+        setParentHeading(null);
+        return;
+      }
+
+      if (SYSTEM_PAGE && SYSTEM_PAGE.style.display && SYSTEM_PAGE.style.display !== "none") {
+        SYSTEM_PAGE.style.display = "none";
+        SYSTEM_PAGE.setAttribute("aria-hidden", "true");
+        SELECTION_PAGE.style.display = "block";
+        const subheader = document.querySelector('.subheader');
+        if (subheader) subheader.style.display = 'none';
+        if (BACK_BTN) BACK_BTN.style.display = 'none';
+        setTimeout(()=>{ const firstBlock = document.querySelector('.block'); if(firstBlock) firstBlock.blur(); },80);
+        currentSystem = "";
+        currentCircumstance = "";
+        openedFromSubmenu = false;
+        setParentHeading(null);
+        return;
+      }
+
+      SELECTION_PAGE.style.display = "block";
+      const subheaderFallback = document.querySelector('.subheader');
+      if (subheaderFallback) subheaderFallback.style.display = 'none';
+      if (BACK_BTN) BACK_BTN.style.display = 'none';
+    }
+
+    document.addEventListener('keydown', function(e){ if (e.key === 'Escape') { e.preventDefault(); goBack(); return; } });
+    document.addEventListener('click', function(e){ if (!AUTH_CARD || AUTH_CARD.style.display === "none") return; if (!AUTH_CARD.contains(e.target) && !BACK_BTN.contains(e.target)) { goBack(); } }, true);
+
+    function openMenu(){
+      const overlay = document.getElementById('overlay'), side = document.getElementById('sideMenu');
+      if (!side || !overlay) return;
+      side.classList.add('open'); side.setAttribute('aria-hidden','false');
+      overlay.classList.add('show'); overlay.setAttribute('aria-hidden','false');
+      buildMenu();
+      setTimeout(()=>{ const first = side.querySelector('button:not([disabled])'); if(first) first.focus(); },60);
+    }
+    function closeMenu(){
+      const overlay = document.getElementById('overlay'), side = document.getElementById('sideMenu');
+      if (!side || !overlay) return;
+      side.classList.remove('open'); side.setAttribute('aria-hidden','true');
+      overlay.classList.remove('show'); overlay.setAttribute('aria-hidden','true');
+      const menuBtn = document.getElementById('menuBtn'); if(menuBtn) menuBtn.focus();
+    }
+    function goHomeFromMenu(){
+      closeMenu();
+      const sel = document.getElementById('selectionPage'), sys = document.getElementById('systemPage');
+      if (sel && sys) { sel.style.display = 'block'; sys.style.display = 'none'; }
+      currentSystem = '';
+      currentCircumstance = '';
+      openedFromSubmenu = false;
+      setParentHeading(null);
+      const subheader = document.querySelector('.subheader'); if (subheader) subheader.style.display='none';
+      if (BACK_BTN) BACK_BTN.style.display='none';
+    }
+
+    function buildMenu(){
+      const listEl = document.getElementById('menuList'), currSysEl = document.getElementById('menuCurrentSystem'), noteEl = document.getElementById('menuSystemNote');
+      if (!listEl || !currSysEl) return;
+      listEl.innerHTML = '';
+      if (!currentSystem || !data || !data[currentSystem]) {
+        currSysEl.textContent = '—';
+        if (noteEl) { noteEl.style.display = 'block'; noteEl.textContent = 'Select a system from the main screen to see its subfolders here.'; }
+        return;
+      }
+      currSysEl.textContent = currentSystem;
+      if (noteEl) noteEl.style.display = 'none';
+      const systemData = data[currentSystem] || {};
+      Object.keys(systemData).forEach(parentKey => {
+        const parentVal = systemData[parentKey];
+        const li = document.createElement('li');
+        li.className = 'menu-parent';
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = parentKey;
+        btn.setAttribute('aria-expanded','false');
+
+        const parentIsLeaf = (typeof parentVal === 'string') || Array.isArray(parentVal) || isLeafObject(parentVal);
+
+        if (parentIsLeaf) {
+          btn.onclick = () => {
+            setParentHeading(null);
+            currentCircumstance = parentKey;
+            openedFromSubmenu = false;
+            closeMenu();
+            showAuthority(parentKey, true);
+          };
+          btn.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btn.click(); } };
+          li.appendChild(btn);
+          listEl.appendChild(li);
+          return;
+        }
+
+        btn.onclick = () => {
+          showSubMenu(parentKey);
+          const subheader = document.querySelector('.subheader'); if (subheader) subheader.style.display='flex';
+          if (BACK_BTN) BACK_BTN.style.display='flex';
+          li.classList.toggle('open');
+          const opened = li.classList.contains('open');
+          btn.setAttribute('aria-expanded', String(opened));
+          closeMenu();
+          setTimeout(buildMenu, 80);
+        };
+        btn.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btn.click(); } };
+
+        li.appendChild(btn);
+
+        const ul = document.createElement('ul'); ul.className = 'submenu-list';
+        Object.keys(parentVal || {}).forEach(childKey => {
+          const childVal = parentVal[childKey];
+          const childLi = document.createElement('li');
+          const childBtn = document.createElement('button');
+          childBtn.type = 'button';
+          childBtn.textContent = childKey;
+
+          const childIsLeaf = (typeof childVal === 'string') || Array.isArray(childVal) || isLeafObject(childVal);
+
+          if (childIsLeaf) {
+            childBtn.onclick = () => {
+              showSubMenu(parentKey);
+              openedFromSubmenu = true;
+              currentCircumstance = parentKey;
+              closeMenu();
+              setTimeout(()=> { showAuthority(childKey); }, 60);
+            };
+            childBtn.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); childBtn.click(); } };
+            childLi.appendChild(childBtn);
+            ul.appendChild(childLi);
+            return;
+          }
+
+          if (typeof childVal === 'object' && childVal !== null) {
+            childBtn.onclick = () => {
+              childLi.classList.toggle('open');
+              li.classList.add('open');
+              const opened = childLi.classList.contains('open');
+              childBtn.setAttribute('aria-expanded', String(opened));
+            };
+            childBtn.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); childBtn.click(); } };
+            childLi.appendChild(childBtn);
+
+            const nestedUL = document.createElement('ul');
+            Object.keys(childVal).forEach(level3Key => {
+              const nli = document.createElement('li');
+              const nbtn = document.createElement('button');
+              nbtn.type = 'button';
+              nbtn.textContent = level3Key;
+              nbtn.onclick = () => {
+                showSubMenu(parentKey);
+                openedFromSubmenu = true;
+                currentCircumstance = parentKey;
+                closeMenu();
+                setTimeout(()=> { showAuthority(level3Key); }, 60);
+              };
+              nbtn.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); nbtn.click(); } };
+              nli.appendChild(nbtn);
+              nestedUL.appendChild(nli);
+            });
+            childLi.appendChild(nestedUL);
+            ul.appendChild(childLi);
+            return;
+          }
+
+          childBtn.disabled = true;
+          childBtn.setAttribute('aria-disabled','true');
+          childLi.appendChild(childBtn);
+          ul.appendChild(childLi);
+        });
+
+        li.appendChild(ul);
+        listEl.appendChild(li);
+      });
+    }
+
+    document.getElementById('menuBtn').addEventListener('click', openMenu);
+    document.getElementById('overlay').addEventListener('click', closeMenu);
+    document.getElementById('menuHomeBtn').addEventListener('click', goHomeFromMenu);
+
+    window.selectSystem = selectSystem;
+    window.goBack = goBack;
+    window.openMenu = openMenu;
+    window.closeMenu = closeMenu;
+    window.buildMenu = buildMenu;
+
+    window.addEventListener('load', function(){
+      const subheader = document.querySelector('.subheader');
+      if (subheader) { subheader.style.display = 'none'; subheader.setAttribute('aria-hidden', 'true'); }
+      updateSubheaderOffset();
+      setTimeout(()=>{ const first = document.querySelector('.block'); if(first) first.setAttribute('tabindex','0'); }, 40);
+    });
+
+  } catch (err) {
+    console.error('Fatal script error:', err);
+    alert('A script error occurred. Open DevTools Console (F12) and paste the error into chat so I can debug.');
+  }
+})();
+</script>
+</body>
+</html>
