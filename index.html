@@ -4,8 +4,10 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Block Working System — Uniform Cards (Centered, Larger, Responsive)</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Merriweather:wght@700;900&display=swap" rel="stylesheet">
+
+<!-- NOTE: This single-file HTML generates a manifest and service-worker at runtime (no external files needed).
+     If you prefer a custom PNG icon, replace the manifestIconDataURI in the script below with a data:image/png;base64,... string. -->
+
 <style>
 :root{
   --header-height: 88px;
@@ -17,7 +19,7 @@
 }
 
 /* Page shell */
-html,body{ height:100%; margin:0; font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background:#f9f9f9; overflow:hidden; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; scroll-behavior:smooth; color:#222; }
+html,body{ height:100%; margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background:#f9f9f9; overflow:hidden; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; scroll-behavior:smooth; color:#222; }
 
 /* Header */
 header{
@@ -39,18 +41,18 @@ header{
   margin:0;
   letter-spacing:1px;
   text-align:center;
-  font-weight:800;                  /* slightly bolder */
+  font-weight:800;
   line-height:1.15;
   display:flex;
   flex-direction:column;
   align-items:center;
   gap:6px;
-  font-size: clamp(3rem, 6vw, 3.5rem); /* much bigger, responsive */
-  padding:10px 52px;                /* extra breathing room */
+  font-size: clamp(3rem, 6vw, 3.5rem);
+  padding:10px 52px;
 }
 
 #mainHeading span:nth-child(2) {
-  font-size:1em;                  /* keep middle line a bit smaller */
+  font-size:1em;
   opacity:0.9;
 }
 /* App layout */
@@ -65,7 +67,7 @@ header{
   padding: 12px 20px;
   border-bottom: 2px solid #ddd;
   position: sticky;
-  top: var(--header-height);   /* sits directly under the top header */
+  top: var(--header-height);
   z-index: 105;
   box-sizing: border-box;
   gap: 10px;
@@ -102,13 +104,9 @@ header{
   line-height: 1.3;
   user-select: none;
   cursor: pointer;
-
-  /* subtle default shadow */
   box-shadow:
     0 2px 4px rgba(0,0,0,0.06),
     0 8px 16px rgba(0,0,0,0.08);
-
-  /* smooth animation for hover/active */
   transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
@@ -123,7 +121,7 @@ header{
 
 /* Active (click/tap) effect */
 .grid-item:active {
-  transform: translateY(-2px) scale(0.98); /* pressed down look */
+  transform: translateY(-2px) scale(0.98);
   box-shadow:
     0 4px 8px rgba(0, 0, 0, 0.15),
     0 10px 20px rgba(0, 0, 0, 0.18);
@@ -136,24 +134,23 @@ header{
 /* Cards: uniform, centered, readable */
 .card{ display:none; max-width:900px; margin:20px auto; background:white; border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,0.14); overflow:hidden; }
 
-/* make box-sizing universal (prevents layout surprises) */
+/* universal box-sizing */
 html { box-sizing: border-box; }
 *, *:before, *:after { box-sizing: inherit; }
 
 /* Authority card (base) */
 #authorityCard {
-  display: none;                 /* controlled by JS */
+  display: none;
   width: 100%;
-  max-width: 920px;              /* slightly wider but bounded */
+  max-width: 920px;
   margin: 18px auto;
-  background: #fff;              /* content background stays white */
+  background: #fff;
   border-radius: 1px;
   box-shadow:
     0 6px 12px rgba(0,0,0,0.08),
-    0 18px 36px rgba(0,0,0,0.12); /* 3D-like layered shadow */
+    0 18px 36px rgba(0,0,0,0.12);
   overflow: hidden;
   position: relative;
-  /* ensure flex column so children stack vertically */
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -164,17 +161,14 @@ html { box-sizing: border-box; }
 #authorityCard::before {
   content: "";
   position: absolute;
-  inset: 0 auto auto 0; /* top:0; left:0; right:auto; bottom:auto */
+  inset: 0 auto auto 0;
   height: 6px;
   width: 100%;
   display: block;
 }
-
-/* system accents (add class 'abs' or 'auto' via JS) */
 #authorityCard.abs::before { background: #1976d2; }
 #authorityCard.auto::before { background: #388e3c; }
 
-/* sticky heading inside card (keeps heading above body content) */
 #authorityCard .sub-heading {
   position: sticky;
   top: 0;
@@ -183,7 +177,7 @@ html { box-sizing: border-box; }
   backdrop-filter: blur(3px);
   padding: 8px 10px;
   margin: 0;
-  font-family: "Merriweather", serif;
+  font-family: serif;
   font-size: 1rem;
   font-weight: 700;
   text-align: center;
@@ -191,33 +185,28 @@ html { box-sizing: border-box; }
   border-bottom: 1px solid rgba(0,0,0,0.04);
 }
 
-/* === Enforce uniform horizontal length for all card boxes ===
-   Place at the end of your stylesheet so it overrides conflicting rules.
-*/
-
+/* === Enforce uniform horizontal length for all card boxes === */
 #authorityCard .card-body {
-  padding: 8px 10px !important;  /* tighter */
-  gap: 8px !important;           /* smaller gap */
+  padding: 8px 10px !important;
+  gap: 8px !important;
   font-size: 0.95rem;
   line-height: 1.22;
 }
 
-/* Make every card-box a true block that fills the width of the card body */
 #authorityCard .card-box,
 .card-box {
   display: block !important;
   box-sizing: border-box !important;
-  width: 100% !important;         /* fill parent */
-  max-width: 760px !important;    /* comfortable reading width on wide screens */
-  margin: 12px auto !important;   /* center inside card when parent is wider */
+  width: 100% !important;
+  max-width: 760px !important;
+  margin: 12px auto !important;
   padding: 8px 10px !important;
   border-radius: 12px !important;
-  align-self: stretch !important; /* ensure stretching in flex context */
+  align-self: stretch !important;
   overflow: hidden;
   word-break: break-word;
 }
 
-/* Nested card-box must not shrink smaller than parent */
 #authorityCard .card-box .card-box,
 .card-box .card-box {
   width: 100% !important;
@@ -225,75 +214,71 @@ html { box-sizing: border-box; }
   margin: 8px 0 !important;
 }
 
-/* Ensure common block children fill the width too */
 #authorityCard .card-box p,
 #authorityCard .card-box .card-line {
   display: block !important;
   width: 100% !important;
   box-sizing: border-box !important;
   margin: 6px 0 !important;
-  text-align: center !important; /* keep centered as requested */
+  text-align: center !important;
 }
-
 
 /* Exception: left-aligned .card-html.left as bulleted paragraph style */
 #authorityCard .card-html.left,
 #authorityCard .card-html.left ul,
 #authorityCard .card-html.left ol {
   text-align: left !important;
-  padding-left: 32px !important;   /* indent bullets nicely */
+  padding-left: 32px !important;
   margin: 10px 0 !important;
 }
 
 #authorityCard .card-html.left ul {
-  list-style-type: disc !important;   /* solid bullet */
+  list-style-type: disc !important;
 }
 
 #authorityCard .card-html.left ol {
-  list-style-type: decimal !important; /* numbered list if <ol> */
+  list-style-type: decimal !important;
 }
 
 #authorityCard .card-html.left li {
-  margin: 8px 0 !important;          /* vertical gap between points */
-  line-height: 1.35;                 /* comfortable paragraph line spacing */
+  margin: 8px 0 !important;
+  line-height: 1.35;
   text-align: left !important;
 }
 
 /* small helper classes */
-.card-or { 
-  font-weight: 700; 
-  margin: 6px 0; 
-  font-size: clamp(13px, 1.2vw, 15px); /* responsive: never too small or too big */
-  color: #334155; 
-  text-align: center;   /* ✅ keep "OR" centered inside the card */
-  line-height: 1.2;     /* compact but readable */
-  text-transform: uppercase; /* optional: make OR stand out */
-  letter-spacing: 0.5px; /* optional: adds breathing space */
+.card-or {
+  font-weight: 700;
+  margin: 6px 0;
+  font-size: clamp(13px, 1.2vw, 15px);
+  color: #334155;
+  text-align: center;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 .card-box {
-  border: 3px solid #ddd;            /* light border */
-  border-radius: 12px;               /* rounded corners */
-  padding: 14px 18px;                /* spacing inside */
-  margin: 12px 0;                    /* gap between cards */
-  background: #fff;                  /* white background */
-  box-shadow: 0 3px 8px rgba(0,0,0,0.12); /* soft shadow */
+  border: 3px solid #ddd;
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin: 12px 0;
+  background: #fff;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.12);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card-box:hover {
-  transform: translateY(-3px);       /* slight lift effect */
+  transform: translateY(-3px);
   box-shadow: 0 5px 12px rgba(0,0,0,0.18);
 }
 
-/* Buttons */
+/* Buttons - use inline SVGs for icons (no FontAwesome) */
 .back-btn, .menu-btn { position:absolute; top:50%; transform:translateY(-50%); width:40px; height:40px; border-radius:50%; border:none; color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(0,0,0,0.25); transition: transform .18s ease, box-shadow .18s ease; }
 .back-btn { left:10px; background:var(--accent-blue); display:none; } .menu-btn { right:10px; background:var(--accent-green); }
 
-.back-btn i { font-size:1.05rem; } .menu-btn i { font-size:1.25rem; }
-
+.back-btn svg, .menu-btn svg { width:20px; height:20px; fill: #fff; }
 .back-btn:hover, .menu-btn:hover { transform:translateY(-50%) scale(1.05); box-shadow:0 6px 18px rgba(0,0,0,0.30); }
 
-/* Responsive tweaks: keep cards uniform but avoid overflow on small screens */
 @media (max-width:720px){
   #mainHeading { font-size: 1rem; padding:8px 36px; }
   .card-box { padding:12px; }
@@ -302,24 +287,20 @@ html { box-sizing: border-box; }
   .grid-item { padding:12px; font-size:1rem; }
   .block{ height:120px; font-size:1rem; }
 
-  /* slightly larger card font on small screens for readability */
   :root { --card-font-min: 16px; --card-font-mid: 2.4vw; --card-font-max: 20px; }
 
-  /* Make uniform cards responsive: cap by percentage so they never stick out */
   .card-box {
-    max-width: 92% !important;   /* use most of viewport, keeps all cards same horizontal length */
+    max-width: 92% !important;
     width: 100% !important;
     box-sizing: border-box !important;
   }
 
-  /* nested card-box should not exceed parent width */
   .card-box .card-box,
   #authorityCard .card-box .card-box {
     max-width: 100% !important;
   }
 }
 
-/* Extra small phones */
 @media (max-width:420px){
   #mainHeading { font-size: 1.02rem; padding:8px 24px; }
   #authorityCard .card-body { padding:16px 12px; }
@@ -327,7 +308,6 @@ html { box-sizing: border-box; }
   .block{ height:110px; }
   :root { --card-font-min: 16px; --card-font-mid: 3.0vw; --card-font-max: 20px; }
 
-  /* stronger cap for very small screens */
   .card-box {
     max-width: 96% !important;
     width: 100% !important;
@@ -343,10 +323,6 @@ html { box-sizing: border-box; }
 #sideMenu { position:fixed; top:0; right:-320px; width:300px; height:100vh; background:#fff; box-shadow:-8px 0 24px rgba(0,0,0,0.18); transition:right .24s cubic-bezier(.2,.9,.2,1); z-index:230; padding:16px; box-sizing:border-box; overflow-y:auto; display:flex; flex-direction:column; gap:10px; }
 #sideMenu.open { right:0; }
 #menuList { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:6px; } #menuList button { display:block; width:100%; text-align:left; background:transparent; border:none; padding:10px 8px; font-size:0.98rem; border-radius:8px; cursor:pointer; }
-
-
-
-
 </style>
 </head>
 <body>
@@ -377,13 +353,26 @@ html { box-sizing: border-box; }
 
   <div id="systemPage" aria-hidden="true">
     <div class="subheader">
-      <button class="back-btn" onclick="goBack()" aria-label="Go back" id="backBtn">
-        <i class="fas fa-arrow-left" aria-hidden="true"></i>
-      </button>
-      <h2 id="systemTitle"></h2>
-      <button class="menu-btn" onclick="openMenu()" aria-label="Open menu" id="menuBtn">
-        <i class="fas fa-bars" aria-hidden="true"></i>
-      </button>
+<button class="back-btn" onclick="goBack()" aria-label="Go back" id="backBtn">
+  <!-- inline svg long arrow -->
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M19 12H5M12 5l-7 7 7 7"
+          stroke="currentColor"
+          stroke-width="2.5"
+          fill="none"
+          stroke-linecap="round"
+          stroke-linejoin="round"/>
+  </svg>
+</button>
+
+<h2 id="systemTitle"></h2>
+
+<button class="menu-btn" onclick="openMenu()" aria-label="Open menu" id="menuBtn">
+  <!-- inline svg menu -->
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M3 6h18v2H3zM3 11h18v2H3zM3 16h18v2H3z"></path>
+  </svg>
+</button>
     </div>
 
     <div id="parentHeading"><div id="parentHeadingText"></div></div>
@@ -412,9 +401,111 @@ html { box-sizing: border-box; }
 </aside>
 
 <script>
-/* Script is identical to the working version you tested earlier (data and rendering),
-   no changes required there — only card styling has been adjusted above.
-   For completeness, this includes the same compact script that wires UI and data. */
+/* ----------------------------
+   Single-file PWA bootstrap
+   - creates manifest (Blob URL)
+   - creates service-worker (Blob URL) and registers it
+   - keeps all app logic intact below
+   ---------------------------- */
+
+(function(){
+  // manifest icon: an inline SVG (simple BWS badge). If you have a PNG data URI replace manifestIconDataURI.
+  const manifestIconSVG = `<svg xmlns='http://www.w3.org/2000/svg' width='512' height='512' viewBox='0 0 512 512'>
+    <rect width='100%' height='100%' rx='64' fill='#1976d2'/>
+    <g transform='translate(0,40)'>
+      <text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='Arial, Helvetica, sans-serif' font-weight='700' font-size='120' fill='#fff'>BWS</text>
+    </g>
+  </svg>`;
+  const manifestIconDataURI = 'data:image/svg+xml;base64,' + btoa(manifestIconSVG);
+
+  const manifest = {
+    name: "Block Working System",
+    short_name: "BlockSys",
+    description: "Authorities & Abnormal Working — offline reference",
+    start_url: "./",
+    display: "standalone",
+    orientation: "portrait",
+    background_color: "#ffffff",
+    theme_color: "#1976d2",
+    icons: [
+      { src: manifestIconDataURI, sizes: "192x192", type: "image/svg+xml" },
+      { src: manifestIconDataURI, sizes: "256x256", type: "image/svg+xml" },
+      { src: manifestIconDataURI, sizes: "512x512", type: "image/svg+xml" }
+    ]
+  };
+
+  // create manifest blob url and attach link
+  const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+  const manifestURL = URL.createObjectURL(manifestBlob);
+  const link = document.createElement('link');
+  link.rel = 'manifest';
+  link.href = manifestURL;
+  document.head.appendChild(link);
+
+  // prepare service worker code as string. We'll inject the current page URL to precache.
+  const pageUrl = location.href;
+  const swCode = `
+    const CACHE_NAME = 'blocksys-singlefile-v1';
+    const PAGE_URL = ${JSON.stringify(pageUrl)};
+    const PRECACHE = [
+      PAGE_URL,
+      './'
+    ];
+    self.addEventListener('install', evt => {
+      evt.waitUntil(
+        caches.open(CACHE_NAME).then(c => c.addAll(PRECACHE)).then(() => self.skipWaiting())
+      );
+    });
+    self.addEventListener('activate', evt => {
+      evt.waitUntil(
+        caches.keys().then(keys => Promise.all(keys.map(k => { if (k !== CACHE_NAME) return caches.delete(k); }))).then(() => self.clients.claim())
+      );
+    });
+    self.addEventListener('fetch', evt => {
+      const req = evt.request;
+      // navigation requests: try network, fallback to cached page
+      if (req.mode === 'navigate') {
+        evt.respondWith(
+          fetch(req).then(r => { return r; }).catch(() => caches.match(PAGE_URL))
+        );
+        return;
+      }
+      evt.respondWith(
+        caches.match(req).then(cached => {
+          if (cached) return cached;
+          return fetch(req).then(net => {
+            // cache same-origin, basic responses
+            if (net && net.type === 'basic' && net.status === 200) {
+              caches.open(CACHE_NAME).then(c => c.put(req, net.clone()));
+            }
+            return net;
+          }).catch(()=> caches.match(PAGE_URL));
+        })
+      );
+    });
+  `;
+
+  // register service worker from a blob so everything stays in one file
+  if ('serviceWorker' in navigator) {
+    const swBlob = new Blob([swCode], {type: 'application/javascript'});
+    const swUrl = URL.createObjectURL(swBlob);
+    navigator.serviceWorker.register(swUrl).then(reg => {
+      console.log('Service worker (single-file) registered at', reg.scope);
+    }).catch(err => {
+      console.warn('SW registration failed:', err);
+    });
+  } else {
+    console.warn('Service workers unsupported in this browser');
+  }
+
+  // Optional: prompt for Add to Home Screen - mobile Chrome manages prompting itself.
+})();
+
+/* ----------------------------
+   The original app code starts here (unchanged logic).
+   I preserved your original data and UI behavior, with minor replacements
+   to avoid external fonts/icons (we already replaced FA with inline SVGs).
+   ---------------------------- */
 
 (function(){
   try {
@@ -510,12 +601,13 @@ html { box-sizing: border-box; }
         "Backing of Train": "<div class='card-box'><div class='card-line'>Prohibited, except unavoidable circumstances</div></div>",
         "At the FSS of Receiving Station": "<div class='card-box'><div class='card-line'>LP to stop at FSS and whistle continuous, if no response within 10 minutes from SM, send ALP to Station, TMR to Protect</div></div>"
       },
-      
+
 "TIC in TSL": {
   "Document for Opening Communication": "<div class='card-box'><div class='card-box'><div class='card-line'><b>Authority</b><br/><br/>T/B 602 + T/D 602</div></div><div class='card-box'><div class='card-line'><b>Speed</b><br/><br/>15/10/Walking Speed</div></div><div class='card-box'><div class='card-line'><b>Precautions</b><br/><br/>Follow the Procedures for TIC on Single Line of Absolute Block System</div></div></div>",
-    
-  "For Train movements on Conditional Line Clear Ticket (either Wrong Line or Right Line)": 
-  "<div class='card-box'><div class='card-box'><div class='card-line'><b>Authority</b><br/><br/>T/G 602 or T/H 602</div><div class='card-line'>+</div><div class='card-line'>T/369(3b)</div></div>   <div class='card-box'><div class='card-line'><b>Speed</b><br/><br/>         <div class='card-box'><div class='card-line'><i>Uneven Flow</i></div><ul class='card-html left'><li>First Train - Booked Speed</li><li>Second and Subsequent Trains - 25/10 kmph, after interval of 30 minutes</li></ul></div>  <div class='card-box'><div class='card-line'><i>Even Flow</i></div><ul class='card-html left'><li>All Trains - Normal Speed</li></ul></div></div></div><div class='card-box'><div class='card-line'>Protection: 250+250+10 meters</div></div></div>"
+
+  "For Train movements on Conditional Line Clear Ticket (either Wrong Line or Right Line)":
+  "<div class='card-box'><div class='card-box'><div class='card-line'><b>Authority</b><br/><br/>T/G 602 or T/H 602</div><div class='card-line'>+</div><div class='card-line'>T/369(3b)</div></div>   <div class='card-box'><div class='card-line'><b>Speed</b><br/><br/>         <div class='card-box'><div class='card-line'><i>Uneven Flow</i></div><ul class='card-html left'><li>First Train - Booked Speed</li><li>Second and Subsequent Trains - 25/10 kmph, after an interval of 30 minutes</li></ul></div>  <div class='card-box'><div class='card-line'><i>Even Flow</i></div><ul class='card-html left'><li>All Trains - Normal Speed</li></ul></div></div></div><div class='card-box'><div class='card-line'><b>Precautions</b><br/><br/>Follow the procedure for TIC on Single Line of Absolute Block System in case of even flow/uneven flow</div></div><div class='card-box'><div class='card-line'><b>Protection</b><br/><br/>250+250+10 meters</div></div><div class='card-box'><div class='card-line'><b>Reception</b><br/><br/><ul class='card-html left'><li><i>On Wrong Line</i> - Stop at the Opposite FSS or LSS of the receiving Station and the Train will then be 'Piloted In'</li><li><i>On Right Line</i> - The approach signal may be taken off</li></ul></div></div><div class='card-box'><div class='card-line'><b>NOTE</b><br/><br/>Whenever Trains are dealt on the Wrong Line, <b>Pilot Out</b> will be done using <b>T/511</b> or <b>Pilot Out Memo</b>, and <b>Pilot In</b> at the receiving station will be done using <b>T/510</b></div></div></div>"
+
 },
 
       "Procedure to Pass Gate Stop Signal at ON":
@@ -531,8 +623,8 @@ html { box-sizing: border-box; }
           "<div class='card-box'><div class='card-line'><b>Without TMR</b></div><div class='card-line'>Normal Speed<br/>(Not Permitted during TIC)</div></div>"
       }
     };
-    
-    
+
+
     const ATS_DATA = {
       "Normal Authority to Proceed": {
         "Single Line": "<div class='card-box'><div class='card-line'>OFF aspect of LSS</div></div>",
@@ -545,8 +637,6 @@ html { box-sizing: border-box; }
         }
       }
         };
-    
-    
 
     const data = {
       "Absolute Block System": ABS_DATA,
@@ -788,12 +878,10 @@ html { box-sizing: border-box; }
 
       html += `</div>`;
       AUTH_CARD.innerHTML = html;
-      // ensure authority card uses system accent and vertical layout
 AUTH_CARD.classList.remove('abs','auto');
 if (currentSystem === "Absolute Block System") AUTH_CARD.classList.add('abs');
 else if (currentSystem === "Automatic Block Section") AUTH_CARD.classList.add('auto');
 
-// enforce flex column (in case other CSS changes slipped in)
 AUTH_CARD.style.display = 'flex';
 AUTH_CARD.style.flexDirection = 'column';
       AUTH_CARD.style.display = "flex";
