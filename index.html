@@ -485,27 +485,32 @@ html { box-sizing: border-box; }
     });
   `;
 
-  // register service worker from a blob so everything stays in one file
-  if ('serviceWorker' in navigator) {
-  // register the stable sw.js at repo root
-  navigator.serviceWorker.register('./sw.js', { scope: './' })
-    .then(reg => {
-      console.log('service worker registered at', reg.scope);
-      // Optional: detect updates and log
-      if (reg.waiting) console.log('SW waiting (update available)');
-      reg.addEventListener('updatefound', () => {
-        const installing = reg.installing;
-        console.log('SW update found:', installing);
-      });
-      // optional: listen for controllerchange to refresh UI if needed
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        console.log('Service worker controller changed');
-      });
-    })
-    .catch(err => {
-      console.warn('SW registration failed:', err);
-    });
+if ('serviceWorker' in navigator) {
+  (function registerSW(){
+    // compute base path so it works on user.github.io/repo/ or root
+    const basePath = (function(){
+      let p = location.pathname;
+      if (!p.endsWith('/')) p = p.replace(/\/[^/]*$/, '/');
+      return p;
+    })();
+    const swUrl = basePath + 'sw.js';
+    const swScope = basePath;
+
+    navigator.serviceWorker.register(swUrl, { scope: swScope })
+      .then(reg => {
+        console.log('SW registered at', reg.scope, 'using', swUrl);
+        if (reg.waiting) console.log('SW waiting (update available)');
+        reg.addEventListener('updatefound', () => console.log('SW updatefound'));
+        navigator.serviceWorker.addEventListener('controllerchange', () => console.log('SW controller changed'));
+      })
+      .catch(err => console.warn('SW register failed for', swUrl, err));
+
+    // helpers accessible from console
+    window._bwsSkipWaiting = () => navigator.serviceWorker.getRegistration(swUrl).then(r => { if (r && r.waiting) r.waiting.postMessage('skipWaiting'); });
+    window._bwsDownloadOffline = () => navigator.serviceWorker.getRegistration(swUrl).then(r => { if (r && r.active) r.active.postMessage('downloadOffline'); });
+  })();
 }
+
 
 
 (function(){
