@@ -487,25 +487,26 @@ html { box-sizing: border-box; }
 
   // register service worker from a blob so everything stays in one file
   if ('serviceWorker' in navigator) {
-    const swBlob = new Blob([swCode], {type: 'application/javascript'});
-    const swUrl = URL.createObjectURL(swBlob);
-    navigator.serviceWorker.register(swUrl).then(reg => {
-      console.log('Service worker (single-file) registered at', reg.scope);
-    }).catch(err => {
+  // register the stable sw.js at repo root
+  navigator.serviceWorker.register('./sw.js', { scope: './' })
+    .then(reg => {
+      console.log('service worker registered at', reg.scope);
+      // Optional: detect updates and log
+      if (reg.waiting) console.log('SW waiting (update available)');
+      reg.addEventListener('updatefound', () => {
+        const installing = reg.installing;
+        console.log('SW update found:', installing);
+      });
+      // optional: listen for controllerchange to refresh UI if needed
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        console.log('Service worker controller changed');
+      });
+    })
+    .catch(err => {
       console.warn('SW registration failed:', err);
     });
-  } else {
-    console.warn('Service workers unsupported in this browser');
-  }
+}
 
-  // Optional: prompt for Add to Home Screen - mobile Chrome manages prompting itself.
-})();
-
-/* ----------------------------
-   The original app code starts here (unchanged logic).
-   I preserved your original data and UI behavior, with minor replacements
-   to avoid external fonts/icons (we already replaced FA with inline SVGs).
-   ---------------------------- */
 
 (function(){
   try {
