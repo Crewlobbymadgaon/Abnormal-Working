@@ -19,7 +19,31 @@
 }
 
 /* Page shell */
-html,body{ height:100%; margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background:#f9f9f9; overflow:hidden; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; scroll-behavior:smooth; color:#222; }
+html,body{ height:100%; margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background:#f9f9f9; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; scroll-behavior:smooth; color:#222; }
+
+/* utility: no-scroll toggle */
+.no-scroll { overflow: hidden !important; }
+
+/* skip link */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.skip-link:focus {
+  left: 10px;
+  top: 10px;
+  width: auto;
+  height: auto;
+  padding: 8px 12px;
+  background: #000;
+  color: #fff;
+  border-radius: 4px;
+  z-index: 9999;
+}
 
 /* Header */
 header{
@@ -55,6 +79,10 @@ header{
   font-size:1em;
   opacity:0.9;
 }
+
+/* small helper */
+.nowrap { white-space: nowrap; }
+
 /* App layout */
 .app{display:flex;flex-direction:column;height:calc(100% - var(--header-height));}
 #selectionPage{padding:18px;overflow-y:auto;flex:1 1 auto;}
@@ -323,9 +351,15 @@ html { box-sizing: border-box; }
 #sideMenu { position:fixed; top:0; right:-320px; width:300px; height:100vh; background:#fff; box-shadow:-8px 0 24px rgba(0,0,0,0.18); transition:right .24s cubic-bezier(.2,.9,.2,1); z-index:230; padding:16px; box-sizing:border-box; overflow-y:auto; display:flex; flex-direction:column; gap:10px; }
 #sideMenu.open { right:0; }
 #menuList { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:6px; } #menuList button { display:block; width:100%; text-align:left; background:transparent; border:none; padding:10px 8px; font-size:0.98rem; border-radius:8px; cursor:pointer; }
+
+/* reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+}
 </style>
 </head>
 <body>
+<a class="skip-link" href="#selectionPage">Skip to content</a>
 <header>
   <h1 id="mainHeading">
     <span>AUTHORITIES</span>
@@ -380,7 +414,7 @@ html { box-sizing: border-box; }
     <main id="systemMain" tabindex="0">
       <div id="circumstancesGrid" class="grid" aria-label="Circumstances list"></div>
       <div id="subMenuGrid" class="grid" aria-label="Submenu list" style="display:none;"></div>
-      <div id="authorityCard" class="card uniform" role="region" aria-label="Authority details" style="display:none;"></div>
+      <div id="authorityCard" class="card uniform" role="dialog" aria-modal="true" aria-label="Authority details" style="display:none;"></div>
     </main>
   </div>
 </div>
@@ -530,7 +564,7 @@ html { box-sizing: border-box; }
         "Shunt Signal":  "<div class='card-box'><div class='card-line'>Written Advice + PHS</div></div>",
         "Shunting Permitted Indicator (SPI)": "<div class='card-box'><div class='card-line'>Endorsement on T/806 + PHS</div></div>"
       },
-      "Other Occassions": {
+      "Other Occasions": {
         "Reception on Non-Signalled Line": {
           "": "<div class='card-box'><div class='card-line'>[T/510 or T/369(3b)]</div><div class='card-line'>+</div><div class='card-line'>Piloting</div></div>"+"<div class='card-or'>or</div>"+"  <div class='card-box'><div class='card-line'>As per SWR</div></div>"
         },
@@ -626,10 +660,13 @@ html { box-sizing: border-box; }
 
 
     const ATS_DATA = {
-      "Normal Authority to Proceed": {
-        "Single Line": "<div class='card-box'><div class='card-line'>OFF aspect of LSS</div></div>",
-        "Double Line": "<div class='card-box'><div class='card-line'>OFF aspect of LSS</div></div>"
-      },
+      "Failure of Automatic Signal/Signals in between Stations": {
+  "": "<div class='card-box'><div class='card-box'><div class='card-line'><b>Authority</b><br/><br/>No Authority</div></div><div class='card-box'><div class='card-line'><b>Speed</b><br/><br/>15 kmph, when view is clear<br/>10 kmph, when view is not clear</div></div><div class='card-box'><div class='card-line'><b>Precautions (GR/SR 9.02)</b><br/><br/><ul class='card-html left'><li>Stop at the foot of Signal</li><li>Wait for:<ul class='card-html left' style='list-style: none; margin-left:10px; padding-left:0;'><li style='list-style-type: none;'>→ 1 minute by day</li><li style='list-style-type: none;'>→ 2 minutes by night</li></ul></li><li>Ensure 'A' Marker</li><li>Blow one long whistle</li><li>Exchange signal with TMR</li><li>Follow speed restriction up to next Signal</li><li>After passing the Automatic Stop signal at ‘ON’, ensure a minimum separation of <b>150 metres</b> (or <b>two clear OHE masts</b> on electrified sections) from the preceding train/obstruction. This distance may be reduced to <b>75 metres</b> (or <b>one clear OHE mast</b>) when an EMU train is following.</li></ul></div></div></div>",
+},
+
+"Prolonged Failure of Signals": {
+  "": "<div class='card-box'><div class='card-box'><div class='card-line'><b>Authority</b><br/><br/>T/D 912</div></div><div class='card-box'><div class='card-line'><b>Speed</b><br/><br/>15 kmph, when view is clear<br/>10 kmph, when view is not clear</div></div><div class='card-box'><div class='card-line'><b>Precautions (GR/SR 9.02)</b><br/><br/><ul class='card-html left'><li>Stop at the foot of Signal</li><li>Wait for:<ul class='card-html left' style='list-style: none; margin-left:10px; padding-left:0;'><li style='list-style-type: none;'>→ 1 minute by day</li><li style='list-style-type: none;'>→ 2 minutes by night</li></ul></li><li>Ensure 'A' Marker</li><li>Blow one long whistle</li><li>Exchange signal with TMR</li><li>Follow speed restriction up to next Signal</li><li>After passing the Automatic Stop signal at ‘ON’, ensure a minimum separation of <b>150 metres</b> (or <b>two clear OHE masts</b> on electrified sections) from the preceding train/obstruction. This distance may be reduced to <b>75 metres</b> (or <b>one clear OHE mast</b>) when an EMU train is following.</li></ul></div></div></div>",
+},
       "Signal Failure": {
         "Block Instrument/Advance Starter": {
           "Single Line": "<div class='card-box'><div class='card-line'>PLCT</div><div class='card-line'>(T/C 1425 or T/D 1425)</div></div>",
@@ -699,6 +736,16 @@ html { box-sizing: border-box; }
       if (!PARENT_HEADING || !PARENT_HEADING_TEXT) return;
       if (text) { PARENT_HEADING_TEXT.textContent = text; PARENT_HEADING.style.display = 'block'; }
       else { PARENT_HEADING_TEXT.textContent = ''; PARENT_HEADING.style.display = 'none'; }
+    }
+
+    // Toggle background inertness (simple): mark selection/system pages aria-hidden and body scroll lock
+    function setBackgroundInert(isInert) {
+      try {
+        if (SELECTION_PAGE) SELECTION_PAGE.setAttribute('aria-hidden', String(isInert));
+        if (SYSTEM_PAGE) SYSTEM_PAGE.setAttribute('aria-hidden', String(isInert));
+        if (isInert) document.documentElement.classList.add('no-scroll'), document.body.classList.add('no-scroll');
+        else document.documentElement.classList.remove('no-scroll'), document.body.classList.remove('no-scroll');
+      } catch (e) { /* fail silently */ }
     }
 
     window.addEventListener('load', updateSubheaderOffset);
@@ -878,14 +925,18 @@ html { box-sizing: border-box; }
 
       html += `</div>`;
       AUTH_CARD.innerHTML = html;
-AUTH_CARD.classList.remove('abs','auto');
-if (currentSystem === "Absolute Block System") AUTH_CARD.classList.add('abs');
-else if (currentSystem === "Automatic Block Section") AUTH_CARD.classList.add('auto');
 
-AUTH_CARD.style.display = 'flex';
-AUTH_CARD.style.flexDirection = 'column';
+      // theme class
+      AUTH_CARD.classList.remove('abs','auto');
+      if (currentSystem === "Absolute Block System") AUTH_CARD.classList.add('abs');
+      else if (currentSystem === "Automatic Block Section") AUTH_CARD.classList.add('auto');
+
+      // show dialog safely and mark background inert
+      AUTH_CARD.style.flexDirection = 'column';
       AUTH_CARD.style.display = "flex";
       AUTH_CARD.setAttribute("aria-hidden", "false");
+      setBackgroundInert(true);
+
       updateSubheaderOffset();
       SYSTEM_MAIN.scrollTop = Math.max(0, SYSTEM_MAIN.scrollTop - 1);
       setTimeout(() => { SYSTEM_MAIN.scrollTop = Math.max(0, SYSTEM_MAIN.scrollTop + 1); }, 20);
@@ -903,7 +954,7 @@ AUTH_CARD.style.flexDirection = 'column';
       if (BACK_BTN) BACK_BTN.focus();
 
       const focusTrap = (e) => {
-        if (AUTH_CARD.style.display === "none") return;
+        if (!AUTH_CARD || AUTH_CARD.style.display === "none") return;
         const root = AUTH_CARD;
         const focusable = root.querySelectorAll('a,button,input,textarea,select,[tabindex]:not([tabindex="-1"])');
         const arr = Array.prototype.slice.call(focusable);
@@ -950,6 +1001,7 @@ AUTH_CARD.style.flexDirection = 'column';
       if (AUTH_CARD && AUTH_CARD.style.display && AUTH_CARD.style.display !== "none") {
         AUTH_CARD.style.display = "none";
         AUTH_CARD.setAttribute("aria-hidden", "true");
+        setBackgroundInert(false);
         const activeControls = document.querySelectorAll('[aria-controls=\"authorityCard\"]');
         activeControls.forEach(c => c.setAttribute('aria-expanded','false'));
         if (window.__authFocusTrapHandler) { document.removeEventListener('keydown', window.__authFocusTrapHandler); window.__authFocusTrapHandler = null; }
@@ -995,7 +1047,15 @@ AUTH_CARD.style.flexDirection = 'column';
     }
 
     document.addEventListener('keydown', function(e){ if (e.key === 'Escape') { e.preventDefault(); goBack(); return; } });
-    document.addEventListener('click', function(e){ if (!AUTH_CARD || AUTH_CARD.style.display === "none") return; if (!AUTH_CARD.contains(e.target) && !BACK_BTN.contains(e.target)) { goBack(); } }, true);
+
+    // safe click-outside handler
+    document.addEventListener('click', function(e){
+      if (!AUTH_CARD || AUTH_CARD.style.display === "none") return;
+      const backBtnSafe = BACK_BTN || document.querySelector('.back-btn');
+      if (!AUTH_CARD.contains(e.target) && !(backBtnSafe && backBtnSafe.contains(e.target))) {
+        goBack();
+      }
+    }, true);
 
     function openMenu(){
       const overlay = document.getElementById('overlay'), side = document.getElementById('sideMenu');
