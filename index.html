@@ -786,7 +786,9 @@ html { box-sizing: border-box; }
     }
 
     function showSubMenu(circ){
-      currentCircumstance = circ;
+        currentCircumstance = circ;
+  if (window.__pushSubmenuState) window.__pushSubmenuState(circ);
+
       if (circ === "Signal Failure" || circ === "Shunting") { setParentHeading(circ); } else { setParentHeading(null); }
       const subData = data[currentSystem] && data[currentSystem][circ];
       if ( circ === "TIC on Single Line" || circ === "TIC on Double Line" || !subData || typeof subData !== "object" || isLeafObject(subData) ) {
@@ -946,6 +948,8 @@ html { box-sizing: border-box; }
       AUTH_CARD.style.flexDirection = 'column';
       AUTH_CARD.style.display = "flex";
       AUTH_CARD.setAttribute("aria-hidden", "false");
+           if (window.__pushAuthorityState) window.__pushAuthorityState(sub);
+
       setBackgroundInert(true);
 
       updateSubheaderOffset();
@@ -1073,7 +1077,8 @@ html { box-sizing: border-box; }
     }
 
     function selectSystem(system){
-      currentSystem = system;
+       currentSystem = system;
+  if (window.__pushSystemState) window.__pushSystemState(system);
       SELECTION_PAGE.style.display = "none";
       SYSTEM_PAGE.style.display = "block";
       SYSTEM_PAGE.setAttribute("aria-hidden","false");
