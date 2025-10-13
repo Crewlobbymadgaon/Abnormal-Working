@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
+     <link rel="manifest" href="/manifest.json">
+
 <title>Block Working System — Uniform Cards (Centered, Larger, Responsive)</title>
 
 <!-- NOTE: This single-file HTML generates a manifest and service-worker at runtime (no external files needed).
@@ -1227,6 +1229,15 @@ html { box-sizing: border-box; }
     alert('A script error occurred. Open DevTools Console (F12) and paste the error into chat so I can debug.');
   }
 })();
+
+     if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').then(reg => {
+    console.log('Service worker registered:', reg.scope);
+  }).catch(err => {
+    console.warn('SW registration failed:', err);
+  });
+}
+
 </script>
 </body>
 </html>
