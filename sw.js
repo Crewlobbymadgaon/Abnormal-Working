@@ -1,76 +1,82 @@
-/* sw.js - place at repo root */
-const CACHE_NAME = 'blocksys-v1';
-const SHELL_PATH = self.location.origin + self.location.pathname;
-const PRECACHE = [ SHELL_PATH, './' ];
+// sw.js — place at your site root (/) so it controls the whole app scope
+const CACHE_NAME = 'blocksys-v1'; // bump this string when you want clients to refresh cache
+const PRECACHE_URLS = [
+  '/',                // root (GitHub Pages will serve index.html)
+  '/index.html',      // ensure your index is cached (adjust path if the file is at repo root or docs/)
+  '/manifest.json',
+  // Add any static files you want cached (icons, CSS). Example:
+  '/styles.css',
+  '/app.js'
+  // if you don't have separate files for CSS/JS, you can omit them.
+];
 
-async function safeCachePut(request, response) {
-  try {
-    if (!response || response.status !== 200) return;
-    const cache = await caches.open(CACHE_NAME);
-    await cache.put(request, response.clone());
-  } catch (e) { console.warn('safeCachePut failed', e); }
+// A simple limit helper to avoid unbounded cache growth
+async function trimCache(cacheName, maxItems) {
+  const cache = await caches.open(cacheName);
+  const keys = await cache.keys();
+  if (keys.length > maxItems) {
+    await cache.delete(keys[0]);
+  }
 }
 
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache =>
-      cache.addAll(PRECACHE).catch(err => { console.warn('Precaching failed (non-fatal):', err); return Promise.resolve(); })
-    ).then(() => self.skipWaiting())
+    caches.open(CACHE_NAME).then(cache => cache.addAll(PRECACHE_URLS))
+      .then(() => self.skipWaiting())
   );
 });
 
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(keys => Promise.all(keys.map(k => (k !== CACHE_NAME ? caches.delete(k) : Promise.resolve()))))
-      .then(() => self.clients.claim())
+    caches.keys().then(keys =>
+      Promise.all(keys.map(k => {
+        if (k !== CACHE_NAME) return caches.delete(k);
+      }))
+    ).then(() => self.clients.claim())
   );
 });
 
 self.addEventListener('fetch', event => {
-  const req = event.request;
-  if (req.method !== 'GET') return;
-  const url = new URL(req.url);
+  const request = event.request;
+  const url = new URL(request.url);
 
-  if (req.mode === 'navigate') {
+  // Navigation requests (HTML): network first, fallback to cache
+  if (request.mode === 'navigate') {
     event.respondWith(
-      caches.match(SHELL_PATH).then(cached => {
-        if (cached) return cached;
-        return fetch(req).then(net => { safeCachePut(SHELL_PATH, net.clone()).catch(()=>{}); return net; })
-          .catch(() => caches.match(SHELL_PATH).then(f => f || new Response('Offline', {status:503})));
-      })
+      fetch(request).then(resp => {
+        // update cache with fresh index.html for next offline
+        caches.open(CACHE_NAME).then(cache => cache.put('/', resp.clone()));
+        return resp;
+      }).catch(() => caches.match('/') )
     );
     return;
   }
 
+  // For same-origin assets: cache-first (fast offline)
   if (url.origin === location.origin) {
     event.respondWith(
-      caches.match(req).then(cached => {
+      caches.match(request).then(cached => {
         if (cached) return cached;
-        return fetch(req).then(net => {
-          if (net && net.status === 200 && net.type === 'basic') safeCachePut(req, net.clone());
-          return net;
+        return fetch(request).then(resp => {
+          // cache only GET and basic responses
+          if (request.method === 'GET' && resp && resp.type === 'basic' && resp.status === 200) {
+            caches.open(CACHE_NAME).then(cache => {
+              cache.put(request, resp.clone());
+              trimCache(CACHE_NAME, 60); // keep cache size under control
+            });
+          }
+          return resp;
         }).catch(() => {
-          const accept = req.headers.get('accept') || '';
-          if (accept.includes('text/html')) return caches.match(SHELL_PATH);
-          return caches.match(SHELL_PATH);
+          // optional: return a fallback image for images, etc.
+          return caches.match('/'); // fallback to shell
         });
       })
     );
     return;
   }
 
-  event.respondWith(fetch(req).catch(() => caches.match(req)));
-});
-
-self.addEventListener('message', evt => {
-  if (!evt.data) return;
-  if (evt.data === 'skipWaiting') return self.skipWaiting();
-  if (evt.data === 'downloadOffline') {
-    caches.open(CACHE_NAME).then(async cache => {
-      try {
-        const r = await fetch(SHELL_PATH).catch(()=>null);
-        if (r && r.ok) await cache.put(SHELL_PATH, r.clone());
-      } catch(e){ console.warn('downloadOffline failed', e); }
-    });
-  }
+  // Default: try network, fallback to cache
+  event.respondWith(
+    fetch(request).catch(() => caches.match(request))
+  );
 });
