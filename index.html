@@ -988,6 +988,85 @@ html { box-sizing: border-box; }
     let currentSystem = "";
     let currentCircumstance = "";
     let openedFromSubmenu = false;
+       // --------- History / Android back-button friendly behavior ---------
+// call this once on startup to create the initial history state
+(function setupHistoryNavigation(){
+  // Normalize initial state
+  if (!history.state) {
+    history.replaceState({ screen: 'selection' }, '', location.pathname + location.search);
+  }
+
+  // push a state when we move to the system page
+  const pushSystemState = (sysName) => {
+    try {
+      history.pushState({ screen: 'system', system: sysName }, '', '#system');
+    } catch(e) { /* ignore */ }
+  };
+
+  // push a state when we show a submenu (parent)
+  const pushSubmenuState = (parentKey) => {
+    try {
+      history.pushState({ screen: 'submenu', system: currentSystem, parent: parentKey }, '', '#submenu');
+    } catch(e) { /* ignore */ }
+  };
+
+  // push a state when we show an authority/card dialog
+  const pushAuthorityState = (authorityKey) => {
+    try {
+      history.pushState({ screen: 'authority', system: currentSystem, authority: authorityKey, parent: currentCircumstance }, '', '#authority');
+    } catch(e) { /* ignore */ }
+  };
+
+  // When user presses hardware back, popstate fires; handle nav instead of letting app close.
+  window.addEventListener('popstate', (evt) => {
+    const s = (evt && evt.state) || {};
+    // If state is missing, fall back to current visible UI
+    const screen = s.screen || (document.getElementById('systemPage').style.display !== 'none' ? 'system' : 'selection');
+
+    // If authority is open -> close card first
+    const authVisible = AUTH_CARD && AUTH_CARD.style.display && AUTH_CARD.style.display !== 'none';
+
+    if (screen === 'authority' && authVisible) {
+      // This is a pop to authority — nothing to do. (rare)
+      return;
+    }
+
+    if (authVisible) {
+      // If card currently open, close it instead of exiting
+      goBack(); // your existing function hides authority card and restores previous grid
+      return;
+    }
+
+    // If submenu is open, go back to parent grid
+    if (document.getElementById('subMenuGrid').style.display !== 'none') {
+      goBack();
+      return;
+    }
+
+    // If system page visible, but we're popping to selection -> go home
+    if (document.getElementById('systemPage').style.display !== 'none' && (screen === 'selection' || !s.screen)) {
+      goBack(); // returns to selection
+      return;
+    }
+
+    // otherwise default behaviour: let browser handle (which may close app)
+  });
+
+  // Expose helpers so we can call them from your UI state transitions
+  window.__pushSystemState = pushSystemState;
+  window.__pushSubmenuState = pushSubmenuState;
+  window.__pushAuthorityState = pushAuthorityState;
+
+  // Double-back-to-exit fallback if already at selection screen
+  let lastBackAtRoot = 0;
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Backspace' || e.key === 'Escape') {
+      // don't treat these as exit on mobile hardware (Android uses popstate)
+    }
+  });
+  // If Android sends no popstate and actually tries to close, we can't intercept that reliably,
+  // but history management above will prevent most accidental closes.
+})();
 
     function loadCircumstancesWrapper(){
       try { loadCircumstances(); } catch(e){ console.error('loadCircumstances failed', e); }
