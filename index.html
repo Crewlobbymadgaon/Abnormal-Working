@@ -3,8 +3,10 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-     <link rel="manifest" href="/manifest.json">
-     <link rel="apple-touch-icon" href="icons/abnormal-192.png">
+     <link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="abnormal-working-192.png">
+<meta name="theme-color" content="#1976d2">
+
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
@@ -1234,15 +1236,14 @@ html { box-sizing: border-box; }
   }
 })();
 
-     if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').then(reg => {
-    console.log('Service worker registered:', reg.scope);
-  }).catch(err => {
-    console.warn('SW registration failed:', err);
-  });
+ 
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js')
+    .then(reg => console.log('Service Worker registered:', reg.scope))
+    .catch(err => console.warn('SW registration failed:', err));
 }
-
 </script>
+
      
 </body>
 </html>
