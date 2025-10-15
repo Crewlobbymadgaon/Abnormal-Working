@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Viewer — Operating Forms</title>
+  <style>
+    :root{
+      --accent-blue:#1976d2;
+      --accent-green:#388e3c;
+      --bg:#f7f9fb;
+      --muted:#6b7280;
+    }
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{
+      margin:0; padding:0; height:100%;
+      font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial;
+      background:var(--bg); color:#0b1220; overflow:hidden;
+    }
+
+    header{
+      position:sticky; top:0; z-index:100;
+      background:linear-gradient(90deg,var(--accent-blue),var(--accent-green));
+      color:#fff; display:flex; align-items:center; justify-content:center;
+      padding:14px; box-shadow:0 6px 18px rgba(0,0,0,0.15);
+    }
+    h1{
+      margin:0; font-size:clamp(1.3rem,4vw,1.9rem);
+      font-weight:800; letter-spacing:.5px; text-align:center; padding:0 60px;
+    }
+    .btn-back{
+      position:absolute; left:16px; top:50%; transform:translateY(-50%);
+      background:rgba(255,255,255,0.2); border:0; color:#fff;
+      width:44px; height:44px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.25);
+      transition:transform .2s ease;
+    }
+    .btn-back:hover{ transform:translateY(-50%) scale(1.05); }
+    .btn-back svg{ width:22px; height:22px; stroke:#fff; fill:none; stroke-width:2.5; }
+
+    main{
+      height:calc(100vh - 72px);
+      display:flex; flex-direction:column; align-items:center;
+      justify-content:center; padding:10px;
+    }
+    iframe,img{
+      width:100%; height:100%;
+      border:0; border-radius:10px; background:#fff;
+      box-shadow:0 8px 24px rgba(12,18,36,0.08);
+      object-fit:contain;
+    }
+    .viewer-container{
+      width:100%; max-width:900px; height:calc(100vh - 100px);
+      display:flex; flex-direction:column;
+    }
+    .file-info{
+      text-align:center; margin-bottom:10px;
+      color:var(--muted); font-size:0.95rem;
+    }
+    .download-btn{
+      margin-top:10px; align-self:center;
+      padding:10px 22px; border-radius:999px; border:0;
+      background:linear-gradient(90deg,var(--accent-blue),#0f63b8);
+      color:#fff; font-weight:700; cursor:pointer;
+      box-shadow:0 8px 20px rgba(15,74,163,0.18);
+    }
+    @media(max-width:640px){
+      h1{ font-size:1.3rem }
+      .viewer-container{ height:calc(100vh - 90px) }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <button class="btn-back" id="goBack" aria-label="Back">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    </button>
+    <h1 id="viewerTitle">Document Viewer</h1>
+  </header>
+
+  <main>
+    <div class="viewer-container">
+      <div class="file-info" id="fileInfo">Loading document...</div>
+      <div id="viewerBody"></div>
+      <button id="downloadBtn" class="download-btn">Download</button>
+    </div>
+  </main>
+
+  <script>
+    // Extract parameters from URL
+    const params = new URLSearchParams(location.search);
+    const file = params.get('file');
+    const id = params.get('id') || 'Document';
+    const system = params.get('system') || '';
+
+    const titleEl = document.getElementById('viewerTitle');
+    const fileInfo = document.getElementById('fileInfo');
+    const viewerBody = document.getElementById('viewerBody');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    titleEl.textContent = id;
+    fileInfo.textContent = system ? `${system}` : '';
+
+    if (file) {
+      const ext = file.split('.').pop().toLowerCase();
+      if (ext === 'pdf') {
+        const iframe = document.createElement('iframe');
+        iframe.src = file;
+        viewerBody.appendChild(iframe);
+      } else if (['jpg','jpeg','png','webp'].includes(ext)) {
+        const img = document.createElement('img');
+        img.src = file;
+        img.alt = id;
+        viewerBody.appendChild(img);
+      } else {
+        fileInfo.textContent = 'Unsupported file format.';
+      }
+      downloadBtn.onclick = ()=> window.open(file, '_blank');
+    } else {
+      viewerBody.innerHTML = '<p style="text-align:center;color:#666;">No file found.</p>';
+      downloadBtn.style.display = 'none';
+    }
+
+    // Back button
+    document.getElementById('goBack').addEventListener('click', ()=>{
+      window.history.back();
+    });
+  </script>
+</body>
+</html>
