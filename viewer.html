@@ -13,149 +13,103 @@
     }
     *,*::before,*::after{box-sizing:border-box}
     html,body{
-      margin:0; padding:0; height:100%;
+      margin:0; padding:0; height:100%; background:var(--bg); color:#0b1220;
       font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial;
-      background:var(--bg); color:#0b1220;
-      /* allow normal page scrolling so embedded PDFs can receive wheel events */
-      overflow:auto;
     }
 
     header{
       position:sticky; top:0; z-index:100;
       background:linear-gradient(90deg,var(--accent-blue),var(--accent-green));
       color:#fff; display:flex; align-items:center; justify-content:center;
-      padding:14px; box-shadow:0 6px 18px rgba(0,0,0,0.15);
+      padding:14px 12px; box-shadow:0 6px 18px rgba(0,0,0,0.12);
     }
     h1{
-      margin:0; font-size:clamp(1.3rem,4vw,1.9rem);
-      font-weight:800; letter-spacing:.5px; text-align:center; padding:0 60px;
+      margin:0; font-size:clamp(1.2rem,3.5vw,1.9rem);
+      font-weight:800; text-align:center; padding:0 56px;
     }
     .btn-back{
-      position:absolute; left:16px; top:50%; transform:translateY(-50%);
+      position:absolute; left:12px; top:50%; transform:translateY(-50%);
       background:rgba(255,255,255,0.12); border:0; color:#fff;
       width:44px; height:44px; border-radius:50%;
       display:flex; align-items:center; justify-content:center;
-      cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.25);
-      transition:transform .2s ease;
+      cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.22);
     }
-    .btn-back:hover{ transform:translateY(-50%) scale(1.05); }
-    .btn-back svg{ width:22px; height:22px; stroke:#fff; fill:none; stroke-width:2.5; }
+    .btn-back svg{ width:20px; height:20px; stroke:#fff; fill:none; stroke-width:2.4; }
 
-    /* viewer layout */
-    main{
-      min-height: calc(100vh - 72px);
-      display:flex; flex-direction:column; align-items:center;
-      padding:10px 12px 24px;
-      -webkit-overflow-scrolling:touch;
-    }
+    main{ min-height: calc(100vh - 72px); display:flex; flex-direction:column; align-items:center; padding:12px; -webkit-overflow-scrolling:touch; }
 
-    .viewer-container{
-      width:100%;
-      max-width:980px;
-      height: calc(100vh - 100px); /* fill space below header */
-      display:flex;
-      flex-direction:column;
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 8px 24px rgba(12,18,36,0.06);
-      overflow: hidden;
+    .viewer-wrap{
+      width:100%; max-width:980px; height: calc(100vh - 110px);
+      background:#fff; border-radius:10px; box-shadow:0 8px 24px rgba(12,18,36,0.06);
+      display:flex; flex-direction:column; overflow:hidden;
     }
 
     .file-info{
-      padding:10px 14px;
-      border-bottom:1px solid #f1f5f9;
-      color:var(--muted);
-      font-size:0.95rem;
+      padding:10px 14px; border-bottom:1px solid #f1f5f9; color:var(--muted); font-size:0.95rem;
     }
 
-    /* this area is scrollable — allows mouse wheel, trackpad & touch to scroll the document */
+    /* SCROLLABLE area that contains the iframe/image */
     #viewerBody{
-      flex:1;
-      overflow:auto;        /* <-- important */
-      -webkit-overflow-scrolling: touch;
-      background: #ffffff;
-      display:flex;
-      align-items:stretch;
-      justify-content:center;
+      flex:1; overflow:auto; -webkit-overflow-scrolling:touch; display:flex; align-items:stretch; justify-content:center;
+      background:#ffffff;
     }
 
-    /* keep iframe full width and minimum height to allow built-in PDF viewers to show scrollbars */
-    iframe{
-      width:100%;
-      min-height:100%;
-      border:0;
-      display:block;
-      background:#fff;
+    /* iframe fills available area; min-height ensures PDF viewers inside show scrollbars */
+    #viewerBody iframe{
+      width:100%; min-height:100%; border:0; display:block;
     }
 
-    img {
-      max-width:100%;
-      height:auto;
-      display:block;
-      margin:auto;
-    }
+    #viewerBody img{ max-width:100%; height:auto; display:block; margin:auto; }
 
-    .controls{
-      display:flex; gap:10px; align-items:center; justify-content:center;
-      padding:12px; border-top:1px solid #f1f5f9;
-      background: #fff;
-    }
+    .controls{ display:flex; gap:12px; align-items:center; justify-content:center; padding:12px; border-top:1px solid #f1f5f9; background:#fff; }
     .download-btn{
-      padding:10px 18px; border-radius:999px; border:0;
-      background:linear-gradient(90deg,var(--accent-blue),#0f63b8);
-      color:#fff; font-weight:700; cursor:pointer;
+      padding:10px 18px; border-radius:999px; border:0; background:linear-gradient(90deg,var(--accent-blue),#0f63b8); color:#fff; font-weight:700; cursor:pointer;
       box-shadow:0 8px 20px rgba(15,74,163,0.12);
-    }
-    .open-btn{
-      padding:10px 14px; border-radius:999px; border:1px solid rgba(0,0,0,0.06);
-      background:#fff; color:#111; font-weight:700; cursor:pointer;
     }
 
     @media(max-width:640px){
-      h1{ font-size:1.3rem }
-      .viewer-container{ height:calc(100vh - 90px) }
-      .download-btn, .open-btn { padding:10px 14px; font-size:0.95rem; }
+      .viewer-wrap{ height: calc(100vh - 98px); border-radius:8px; }
+      h1{ font-size:1.25rem; padding:0 48px; }
     }
   </style>
 </head>
 <body>
   <header>
-    <button class="btn-back" id="goBack" aria-label="Back">
-      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    <button id="goBack" class="btn-back" aria-label="Back">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
     </button>
-    <h1 id="viewerTitle">Document Viewer</h1>
+    <h1 id="title">Document Viewer</h1>
   </header>
 
   <main>
-    <div class="viewer-container" role="main">
-      <div class="file-info" id="fileInfo">Loading document...</div>
+    <div class="viewer-wrap" role="main" aria-label="Document viewer">
+      <div class="file-info" id="fileInfo">Loading…</div>
 
-      <div id="viewerBody"></div>
+      <div id="viewerBody" aria-live="polite"></div>
 
-      <div class="controls" aria-hidden="false">
+      <div class="controls">
         <button id="downloadBtn" class="download-btn">Download</button>
-        <button id="openBtn" class="open-btn">Open in new tab</button>
       </div>
     </div>
   </main>
 
   <script>
-    // read params
-    const params = new URLSearchParams(location.search);
-    const file = params.get('file');
-    const id = params.get('id') || 'Document';
-    const system = params.get('system') || '';
+    // Read query params: ?file=...&id=...&system=...
+    const ps = new URLSearchParams(location.search);
+    const file = ps.get('file');
+    const id = ps.get('id') || 'Document';
+    const system = ps.get('system') || '';
 
-    const titleEl = document.getElementById('viewerTitle');
+    const titleEl = document.getElementById('title');
     const fileInfo = document.getElementById('fileInfo');
     const viewerBody = document.getElementById('viewerBody');
     const downloadBtn = document.getElementById('downloadBtn');
-    const openBtn = document.getElementById('openBtn');
     const goBack = document.getElementById('goBack');
 
     titleEl.textContent = id;
-    fileInfo.textContent = system ? `${system}` : '';
+    fileInfo.textContent = system ? system : '';
 
+    // robust download (fetch -> blob) with fallback
     async function fetchAndDownload(url, filename){
       try {
         const res = await fetch(url, { credentials: 'same-origin' });
@@ -163,97 +117,83 @@
         const blob = await res.blob();
         const blobUrl = URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.href = blobUrl;
-        a.download = filename || '';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
+        a.href = blobUrl; a.download = filename || '';
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(()=> URL.revokeObjectURL(blobUrl), 2000);
         return true;
       } catch (err) {
-        console.warn('fetchAndDownload failed', err);
+        console.warn('Download via fetch failed:', err);
         return false;
       }
     }
 
+    // Render document inside page (iframe for pdf, img for images)
     (function render(){
-      if (!file) {
-        viewerBody.innerHTML = '<div style="padding:18px;text-align:center;color:#666">No file specified.</div>';
+      if (!file){
+        viewerBody.innerHTML = '<div style="padding:18px;text-align:center;color:#666">No file provided.</div>';
         downloadBtn.style.display = 'none';
-        openBtn.style.display = 'none';
         return;
       }
 
       const ext = (file.split('.').pop() || '').toLowerCase();
       fileInfo.textContent = system ? `${system} • ${ext.toUpperCase()}` : `${ext.toUpperCase()}`;
 
-      viewerBody.innerHTML = '';
+      viewerBody.innerHTML = ''; // clear
 
-      if (ext === 'pdf') {
+      if (ext === 'pdf'){
         const iframe = document.createElement('iframe');
         iframe.src = file;
         iframe.setAttribute('aria-label', id);
-        // make focusable so wheel/keyboard inputs reach it more reliably
-        iframe.tabIndex = 0;
+        iframe.tabIndex = 0;                // allow focusing
         iframe.style.minHeight = '100%';
         iframe.style.height = '100%';
         viewerBody.appendChild(iframe);
 
-        // try to focus iframe on load (best-effort; cross-origin may prevent access)
-        iframe.addEventListener('load', () => {
-          try { iframe.focus(); } catch (e) { /* ignore cross-origin */ }
-        });
+        // Focus the iframe when user moves pointer over the viewer (helps wheel/trackpad)
+        viewerBody.addEventListener('pointerenter', () => {
+          try { iframe.focus(); } catch(e){ /* cross-origin may block focus; ignore */ }
+        }, { once: false, passive: true });
 
-      } else if (['jpg','jpeg','png','webp','gif','svg'].includes(ext)) {
-        const imgWrap = document.createElement('div');
-        imgWrap.style.display = 'flex';
-        imgWrap.style.alignItems = 'center';
-        imgWrap.style.justifyContent = 'center';
-        imgWrap.style.padding = '20px';
+        // also focus on click/touch
+        viewerBody.addEventListener('click', () => { try { iframe.focus(); } catch(e){} }, { passive: true });
+
+      } else if (['jpg','jpeg','png','webp','gif','svg'].includes(ext)){
         const img = document.createElement('img');
         img.src = file;
         img.alt = id;
         img.loading = 'lazy';
-        img.style.maxWidth = '100%';
-        img.style.height = 'auto';
-        imgWrap.appendChild(img);
-        viewerBody.appendChild(imgWrap);
-
+        viewerBody.appendChild(img);
       } else {
         viewerBody.innerHTML = '<div style="padding:18px;text-align:center;color:#666">Unsupported file type.</div>';
+        downloadBtn.style.display = 'none';
       }
-
-      // hooks for download/open
-      downloadBtn.onclick = async () => {
-        const extLocal = ext || 'bin';
-        const suggested = (id || 'document').replace(/[\/\\:?<>|*"']/g,'_') + '.' + extLocal;
-        downloadBtn.disabled = true;
-        downloadBtn.textContent = 'Downloading...';
-        const ok = await fetchAndDownload(file, suggested);
-        if (!ok) {
-          alert('Direct download blocked by CORS. The file will open in a new tab — you can save from there.');
-          window.open(file, '_blank');
-        }
-        downloadBtn.disabled = false;
-        downloadBtn.textContent = 'Download';
-      };
-
-      openBtn.onclick = () => {
-        window.open(file, '_blank');
-      };
     })();
 
-    // back behaviour: prefer history.back() else go to operating-form.html
-    goBack.addEventListener('click', () => {
-      if (history.length > 1) history.back();
-      else window.location.href = 'operating-form.html';
+    // Download button
+    downloadBtn.addEventListener('click', async () => {
+      const ext = (file && file.split('.').pop()) || 'bin';
+      const safeName = (id || 'document').replace(/[\/\\:?<>|*"']/g,'_') + '.' + ext;
+      downloadBtn.disabled = true;
+      downloadBtn.textContent = 'Downloading...';
+      const ok = await fetchAndDownload(file, safeName);
+      if (!ok) {
+        // If fetch fails (CORS or other), open file in new tab as fallback — user can save from there.
+        alert('Direct download blocked (CORS). The file will open in a new tab — you can save it there.');
+        window.open(file, '_blank');
+      }
+      downloadBtn.disabled = false;
+      downloadBtn.textContent = 'Download';
     });
 
-    // When user scrolls with wheel over the viewer area, ensure viewerBody scrolls (desktop)
-    // This is defensive: wheel events should naturally scroll the viewerBody; this ensures focus.
-    viewerBody.addEventListener('wheel', (e) => {
-      // nothing special required — but keep event default to allow native scrolling
-    }, { passive: true });
+    // Back behavior: if there's history navigate back else go to operating forms page
+    goBack.addEventListener('click', () => {
+      if (history.length > 1) history.back();
+      else location.href = 'operating-form.html';
+    });
+
+    // Make the viewerBody scrollable on desktop & mobile. Nothing special required —
+    // but ensure it receives pointer/touch/wheel events (we don't block them).
+    // (We left the default behavior so users can mousewheel/trackpad/drag or touch-scroll.)
   </script>
 </body>
 </html>
