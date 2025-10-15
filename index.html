@@ -364,6 +364,67 @@ html { box-sizing: border-box; }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
 }
+
+/* Bottom center mobile menu */
+#bottomCenterMenu {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 12px;            /* little gap above safe area */
+  display: flex;
+  justify-content: center;
+  pointer-events: auto;
+  z-index: 9999;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+/* inner wrapper keeps content centered and compact */
+#bottomCenterMenu .menu-inner {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  box-sizing: border-box;
+  width: min(96%, 560px);   /* responsive width cap */
+}
+
+/* pill style for each menu item */
+.menu-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+  background: var(--accent-blue, #1976d2); /* uses your CSS var if present */
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(25,118,210,0.12);
+  border: 0;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+
+/* optional ghost style if you want a secondary button */
+.menu-pill.ghost {
+  background: transparent;
+  color: var(--accent-blue, #1976d2);
+  box-shadow: 0 0 0 1px rgba(25,118,210,0.08);
+}
+
+/* touch / press states */
+.menu-pill:active { transform: translateY(1px) scale(.995); }
+
+/* Respect safe-area inset for iPhone notch */
+@supports(padding: max(0px)) {
+  #bottomCenterMenu { padding-bottom: env(safe-area-inset-bottom); }
+  #bottomMenuSpacer { height: calc(76px + env(safe-area-inset-bottom)); }
+}
+
+/* Hide on wide desktop if you prefer (optional) */
+@media (min-width: 900px){
+  #bottomCenterMenu { bottom: 18px; }
+}
 </style>
 </head>
 <body>
@@ -391,6 +452,16 @@ html { box-sizing: border-box; }
         Automatic Block Section
       </div>
     </div>
+<!-- Bottom center menu (mobile) -->
+<div id="bottomMenuSpacer" aria-hidden="true" style="height:76px;"></div>
+
+<nav id="bottomCenterMenu" class="bottom-menu" role="navigation" aria-label="Home menu">
+  <div class="menu-inner">
+    <a class="menu-pill" href="operating-form.html">Operating Forms</a>
+    <!-- add more menu items separated by small dots if needed -->
+    <!-- <a class="menu-pill ghost" href="#other">Other</a> -->
+  </div>
+</nav>
   </div>
 
   <div id="systemPage" aria-hidden="true">
