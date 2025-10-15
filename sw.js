@@ -5,6 +5,8 @@ const PRECACHE = [
   './manifest.json',
   './abnormal-working-192.png',
   './abnormal-working-512.png'
+  './operating-form.html'
+  './viewer.html'
 ];
 
 // install
