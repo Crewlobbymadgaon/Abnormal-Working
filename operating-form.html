@@ -389,11 +389,12 @@
   })();
 
   // Populate side menu forms dynamically
+
+/* --------- Side-menu: populate and behaviour --------- */
 function populateMenuForms() {
   const absList = document.getElementById('menuFormsABS');
   const atsList = document.getElementById('menuFormsATS');
 
-  // ensure lists exist
   if (!absList || !atsList) return;
 
   absList.innerHTML = '';
@@ -402,26 +403,24 @@ function populateMenuForms() {
   (DATA['Absolute Block System'] || []).forEach(f => {
     const li = document.createElement('li');
     li.style.listStyle = 'none';
-    // Use a button for accessibility and to avoid accidental navigation
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'menu-form';
     btn.textContent = f.id;
     btn.style.width = '100%';
     btn.style.textAlign = 'left';
-    btn.style.padding = '8px 10px';
+    btn.style.padding = '10px';
     btn.style.border = '0';
     btn.style.background = 'transparent';
     btn.style.cursor = 'pointer';
-
     btn.addEventListener('click', (e) => {
-      e.stopPropagation(); // prevent bubbling to parent handlers
+      e.stopPropagation();
+      // open viewer (uses your existing openViewer function)
       openViewer(f);
-      // close side menu after opening (optional; remove if you want menu to stay open)
+      // close menu
       sideMenu.classList.remove('open');
       overlay.style.display = 'none';
     });
-
     li.appendChild(btn);
     absList.appendChild(li);
   });
@@ -435,60 +434,80 @@ function populateMenuForms() {
     btn.textContent = f.id;
     btn.style.width = '100%';
     btn.style.textAlign = 'left';
-    btn.style.padding = '8px 10px';
+    btn.style.padding = '10px';
     btn.style.border = '0';
     btn.style.background = 'transparent';
     btn.style.cursor = 'pointer';
-
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       openViewer(f);
       sideMenu.classList.remove('open');
       overlay.style.display = 'none';
     });
-
     li.appendChild(btn);
     atsList.appendChild(li);
   });
+
+  // ensure lists are hidden initially
+  absList.style.display = 'none';
+  atsList.style.display = 'none';
 }
 
-// Toggle expand/collapse for systems inside side menu
+/* Expand/collapse per system button (only one open at a time) */
 document.querySelectorAll('.menu-system').forEach(btn => {
-  const sysName = btn.dataset.system;
-  const listId = sysName.includes('Absolute') ? 'menuFormsABS' : 'menuFormsATS';
+  const sys = btn.dataset.system;
+  const listId = sys.includes('Absolute') ? 'menuFormsABS' : 'menuFormsATS';
   const listEl = document.getElementById(listId);
+  if (!listEl) return;
 
-  // initialise hidden
-  if (listEl) listEl.style.display = 'none';
   btn.setAttribute('aria-expanded', 'false');
+  listEl.style.display = 'none';
 
   btn.addEventListener('click', (e) => {
     e.preventDefault();
-    e.stopPropagation(); // important: prevents other handlers from closing menu
+    e.stopPropagation();
+    const open = listEl.style.display !== 'none';
+    // close both first
+    const otherId = listId === 'menuFormsABS' ? 'menuFormsATS' : 'menuFormsABS';
+    const otherEl = document.getElementById(otherId);
+    if (otherEl) otherEl.style.display = 'none';
+    const otherBtn = Array.from(document.querySelectorAll('.menu-system')).find(b => (b.dataset.system.includes('Absolute') ? 'menuFormsABS' : 'menuFormsATS') === otherId);
+    if (otherBtn) otherBtn.setAttribute('aria-expanded', 'false');
 
-    if (!listEl) return;
-    const isHidden = listEl.style.display === '' || listEl.style.display === 'none';
-    // Toggle clicked list
-    listEl.style.display = isHidden ? 'flex' : 'none';
+    // toggle clicked list
+    listEl.style.display = open ? 'none' : 'flex';
     listEl.style.flexDirection = 'column';
-    btn.setAttribute('aria-expanded', String(isHidden));
-
-    // Collapse the other list so only one is open
-    const otherListId = listId === 'menuFormsABS' ? 'menuFormsATS' : 'menuFormsABS';
-    const otherList = document.getElementById(otherListId);
-    const otherBtn = Array.from(document.querySelectorAll('.menu-system'))
-      .find(b => (b.dataset.system.includes('Absolute') ? 'menuFormsABS' : 'menuFormsATS') === otherListId);
-    if (otherList && otherList !== listEl) {
-      otherList.style.display = 'none';
-      if (otherBtn) otherBtn.setAttribute('aria-expanded', 'false');
-    }
+    btn.setAttribute('aria-expanded', String(!open));
   });
 });
 
-/* finally populate lists */
-populateMenuForms();
+/* Close menu when clicking outside or pressing Escape */
+document.addEventListener('click', (e) => {
+  // if menu open and click target is outside the sideMenu and outside openMenu button -> close
+  if (sideMenu.classList.contains('open') && !sideMenu.contains(e.target) && !openMenu.contains(e.target)) {
+    sideMenu.classList.remove('open');
+    overlay.style.display = 'none';
+  }
+}, true);
 
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && sideMenu.classList.contains('open')) {
+    sideMenu.classList.remove('open');
+    overlay.style.display = 'none';
+  }
+});
+
+/* Overlay click already closes menu in your code, but keep safe: */
+overlay.addEventListener('click', () => {
+  sideMenu.classList.remove('open');
+  overlay.style.display = 'none';
+});
+
+/* Initial population */
+populateMenuForms();
 </script>
+
+
 
 </body>
 </html>
