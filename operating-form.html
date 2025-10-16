@@ -1,513 +1,360 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<title>Operating Forms — Abnormal Working</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Operating Forms — Abnormal Working Style</title>
+  <style>
+    :root{
+      --header-height:120px;
+      --accent-blue:#1976d2;
+      --accent-green:#388e3c;
+      --bg:#f6f8fb;
+      --card:#ffffff;
+      --muted:#6b7280;
+    }
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{height:100%; margin:0; font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial; background:linear-gradient(180deg,#f8fafc 0%,var(--bg) 100%); color:#0b1220; overflow-x:hidden}
 
-<style>
-  :root{
-    --header-h:120px;
-    --accent-blue:#1976d2;
-    --accent-green:#388e3c;
-    --bg:#f6f8fb;
-    --card:#ffffff;
-    --muted:#6b7280;
-    --max-width:980px;
-    --pill-min:260px;
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%;margin:0;padding:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;background:var(--bg);color:#071133;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+    /* Header */
+    header{
+      position:sticky; top:0; z-index:120; min-height:var(--header-height);
+      display:flex; align-items:center; justify-content:center;
+      background:linear-gradient(90deg,var(--accent-blue),var(--accent-green));
+      color:#fff; padding:12px; box-shadow:0 6px 18px rgba(6,20,52,0.12);
+    }
+    #mainHeading{ margin:0; font-size:clamp(1.6rem,4vw,2.2rem); font-weight:800; letter-spacing:.4px; text-align:center; padding:0 68px; }
 
-  /* Header */
-  header{
-    position:sticky; top:0; z-index:1100;
-    min-height:var(--header-h);
-    display:flex; align-items:center; justify-content:center;
-    background:linear-gradient(90deg,var(--accent-blue),var(--accent-green));
-    color:#fff; padding:12px; box-shadow:0 6px 18px rgba(6,20,52,0.12);
-  }
-  #mainHeading{
-    margin:0; font-size:clamp(1.4rem,3.6vw,2.4rem); font-weight:800; letter-spacing:.4px; text-align:center; padding:0 84px;
-    line-height:1.05;
-    word-break:break-word;
-  }
+    .btn-circle{ position:absolute; bottom:14px; width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; border:0; cursor:pointer; box-shadow:0 6px 18px rgba(6,20,52,0.18); transition:transform .14s ease }
+    .back-btn{ left:12px; background:rgba(0,0,0,0.12) }
+    .menu-btn{ right:12px; background:rgba(0,0,0,0.12) }
+    .btn-circle svg{ width:20px; height:20px; stroke:#fff; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round }
+    .btn-circle:hover{ transform:translateY(-3px) }
 
-  /* header buttons (left / right) */
-  .btn-circle{
-    position:absolute; bottom:14px; width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; border:0;
-    cursor:pointer; box-shadow:0 6px 18px rgba(6,20,52,0.18); background:rgba(0,0,0,0.12);
-  }
-  .btn-back{ left:12px }
-  .btn-menu{ right:12px }
-  .btn-circle svg{ width:20px; height:20px; stroke:#fff; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round }
+    /* sticky system label below header */
+    #systemSub{ display:none; position:sticky; top:calc(var(--header-height) - 6px); z-index:110; background:transparent; padding:10px; text-align:center; }
+    #systemLabel{ display:inline-block; padding:10px 18px; border-radius:999px; font-weight:800; color:#fff; box-shadow:0 10px 28px rgba(3,10,36,0.12); min-width:200px; }
 
-/* Sticky system subheading - fully centered & mobile friendly */
-#systemSticky {
-  position: sticky;
-  top: calc(var(--header-h) - 4px);
-  z-index: 1099;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px 0;
-  background: transparent;
-  text-align: center;
-}
+    main.app{ max-width:980px; margin:18px auto; padding:12px; width:100% }
+    .card-surface{ background:transparent; border-radius:14px; padding:12px; }
 
-#systemLabel {
-  display: inline-block;
-  padding: 10px 22px;
-  border-radius: 999px;
-  font-weight: 900;
-  font-size: 1.05rem;
-  color: #fff;
-  box-shadow: 0 10px 30px rgba(3, 10, 36, 0.12);
-  text-align: center;
-  min-width: 220px;
-  margin: auto;
-}
+    /* Home pills */
+    .pill-row{ display:flex; gap:18px; justify-content:center; margin-top:16px; flex-wrap:wrap; }
+    .pill{
+      min-width:320px; max-width:100%; padding:22px 36px; border-radius:999px; font-weight:900; color:#fff; border:0;
+      font-size:1.15rem; cursor:pointer; text-align:center; box-shadow:0 18px 40px rgba(3,10,36,0.08); transition:transform .16s ease;
+    }
+    .pill.abs{ background: linear-gradient(180deg,#1e7ad9,#0f63b8) }
+    .pill.ats{ background: linear-gradient(180deg,#3fa04a,#2e8a3a) }
+    .pill:active{ transform:translateY(1px) }
 
-  /* main layout */
-  main{ max-width:var(--max-width); margin:18px auto; padding:12px; width:100% }
+    .grid{ margin-top:20px; display:grid; gap:16px; grid-template-columns:repeat(1,1fr) }
+    @media(min-width:560px){ .grid{ grid-template-columns:repeat(2,1fr) } }
+    @media(min-width:980px){ .grid{ grid-template-columns:repeat(3,1fr) } }
 
-  .card-surface{ background:transparent; border-radius:14px; padding:6px; }
+    /* Card layout */
+    .tile{
+      display:flex; flex-direction:column; gap:12px; padding:18px; border-radius:14px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(250,250,252,0.97));
+      border:1px solid rgba(14,20,30,0.03);
+      box-shadow: 0 18px 40px rgba(18,28,46,0.06);
+      text-align:center;
+      transition:transform .18s cubic-bezier(.2,.9,.2,1), box-shadow .18s ease;
+    }
+    .tile:hover{ transform:translateY(-8px); box-shadow: 0 34px 70px rgba(18,28,46,0.12) }
 
-  /* Home pills */
-  .pill-row{ display:flex; gap:18px; justify-content:center; margin-top:12px; flex-wrap:wrap; }
-  .pill{
-    min-width:var(--pill-min); max-width:100%; padding:20px 28px; border-radius:999px; font-weight:900; color:#fff; border:0; font-size:1.05rem;
-    cursor:pointer; text-align:center; box-shadow:0 18px 40px rgba(3,10,36,0.08); transition:transform .16s ease;
-  }
-  .pill.abs{ background: linear-gradient(180deg,#1e7ad9,#0f63b8) }
-  .pill.ats{ background: linear-gradient(180deg,#3fa04a,#2e8a3a) }
-  .pill:active{ transform:translateY(1px) }
+    .auth-number{ font-weight:900; font-size:1.15rem; color:#071133 }
+    .auth-desc{ color:var(--muted); font-size:0.95rem; line-height:1.35; min-height:2.6em }
 
-  /* grid of authority tiles */
-  .grid{ margin-top:18px; display:grid; gap:16px; grid-template-columns:repeat(1,1fr) }
-  @media(min-width:560px){ .grid{ grid-template-columns:repeat(2,1fr) } }
-  @media(min-width:980px){ .grid{ grid-template-columns:repeat(3,1fr) } }
+    .tile-actions{ display:flex; justify-content:center; align-items:center; margin-top:6px }
+    .btn-view{
+      padding:12px 22px; border-radius:999px; border:0; cursor:pointer; font-weight:900; color:#fff;
+      box-shadow: 0 12px 36px rgba(15,74,163,0.14); min-width:160px;
+      background:linear-gradient(90deg,var(--accent-blue),#0f63b8);
+    }
+    .tile.ats .btn-view{ background:linear-gradient(90deg,var(--accent-green),#2e8a3a); box-shadow:0 12px 36px rgba(46,132,50,0.12) }
 
-  .tile{
-    display:flex; flex-direction:column; gap:10px; padding:18px; border-radius:14px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,250,252,0.98));
-    border:1px solid rgba(14,20,30,0.03);
-    box-shadow: 0 18px 40px rgba(18,28,46,0.06);
-    text-align:center; transition:transform .18s cubic-bezier(.2,.9,.2,1), box-shadow .18s ease;
-  }
-  .tile:hover{ transform:translateY(-8px); box-shadow: 0 34px 70px rgba(18,28,46,0.12) }
+    .empty-note{ display:none }
 
-  .auth-id{ font-weight:900; font-size:1.12rem; color:#071133 }
-  .auth-desc{ color:var(--muted); font-size:0.95rem; line-height:1.35; min-height:2.6em }
+    /* side menu (right) */
+    #overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.35); display:none; z-index:998 }
+    #sideMenu{ position:fixed; top:0; right:0; width:340px; height:100vh; background:#fff; box-shadow:-12px 0 40px rgba(6,20,52,0.12); transform:translateX(100%); transition:transform .28s ease; z-index:999; padding:18px; overflow:auto }
+    #sideMenu.open{ transform:translateX(0) }
 
-  .tile-actions{ display:flex; justify-content:center; margin-top:6px }
-  .btn-view{
-    padding:12px 22px; border-radius:999px; border:0; cursor:pointer; font-weight:900; color:#fff;
-    min-width:140px; box-shadow: 0 12px 36px rgba(15,74,163,0.14);
-    background:linear-gradient(90deg,var(--accent-blue),#0f63b8);
-  }
-  .tile.ats .btn-view{ background:linear-gradient(90deg,var(--accent-green),#2e8a3a); box-shadow: 0 12px 36px rgba(46,132,50,0.12) }
+    .menu-header{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px }
+    .menu-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px }
+    .menu-section{ border-radius:10px; padding:8px; background:#fbfdff; border:1px solid rgba(12,18,36,0.03) }
+    .menu-system{ display:flex; align-items:center; justify-content:space-between; gap:8px; padding:10px; width:100%; text-align:left; border:0; background:transparent; cursor:pointer; font-weight:800 }
+    .menu-system:focus{ outline:2px solid rgba(25,118,210,0.12) }
 
-  /* empty note */
-  .empty-note{ padding:20px; text-align:center; color:var(--muted) }
+    .menu-forms{ display:none; flex-direction:column; gap:6px; margin-top:6px; padding-left:6px; }
+    .menu-forms button{ text-align:left; padding:8px 10px; border-radius:8px; border:0; background:transparent; cursor:pointer; font-weight:700 }
+    .menu-forms button:hover{ background:rgba(6,20,52,0.03) }
 
-  /* side menu (right side, off-canvas) */
-  #overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.35); display:none; z-index:2000 }
-  #sideMenu{
-    position:fixed; top:0; right:0; width:320px; height:100vh; background:#fff; box-shadow:-12px 0 40px rgba(6,20,52,0.12);
-    transform:translateX(100%); transition:transform .28s ease; z-index:2001; padding:18px; overflow:auto;
-  }
-  #sideMenu.open{ transform:translateX(0) }
-  .menu-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px }
-  .menu-list a, .menu-list button{ display:block; padding:12px; border-radius:10px; text-decoration:none; color:#071133; background:transparent; border:0; text-align:left; cursor:pointer }
-  .menu-sub{ padding-left:8px; display:flex; flex-direction:column; gap:6px; margin-top:6px }
+    .close-menu{ border:0; background:transparent; cursor:pointer; font-weight:700; color:var(--muted) }
 
-  @media(max-width:520px){
-    .pill{ min-width:92% }
-    .btn-view{ min-width:140px }
-    .auth-id{ font-size:1.05rem }
-    #sideMenu{ width:88vw }
-  }
-  .menu-forms {
-  list-style: none;
-  padding-left: 16px;
-  margin: 6px 0;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.menu-forms li {
-  background: #f3f6fa;
-  border-radius: 8px;
-  padding: 6px 10px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background .2s;
-}
-.menu-forms li:hover {
-  background: #e8eef5;
-}
-  .menu-forms {
-  display: none;
-  flex-direction: column;
-  gap: 6px;
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 260ms ease;
-}
-.menu-forms.open {
-  display: flex;
-  max-height: 800px; /* large enough for content */
-}
-</style>
+    @media(max-width:520px){
+      .pill{ min-width:92% }
+      .btn-view{ min-width:140px }
+      .auth-number{ font-size:1.05rem }
+      #sideMenu{ width:92%; }
+    }
+  </style>
 </head>
 <body>
-
   <header>
     <h1 id="mainHeading">Operating Forms</h1>
 
-    <button class="btn-circle btn-back" id="btnBack" aria-label="Back">
+    <button class="btn-circle back-btn" id="headerBack" aria-label="Back">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M12 5l-7 7 7 7" /></svg>
     </button>
 
-    <button class="btn-circle btn-menu" id="btnMenu" aria-label="Open menu">
+    <button class="btn-circle menu-btn" id="openMenu" aria-label="Open menu">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v2H3zM3 11h18v2H3zM3 16h18v2H3z" /></svg>
     </button>
   </header>
 
-  <!-- sticky system label area (appears after selecting a system) -->
-  <div id="systemSticky" aria-hidden="true">
-    <div id="systemLabel" role="status" aria-live="polite" style="display:none"></div>
+  <div id="systemSub" aria-hidden="true">
+    <div id="systemLabel" role="status" aria-live="polite"></div>
   </div>
 
   <main class="app" role="main">
     <div class="card-surface">
-
-      <!-- Home: pill system selection -->
-      <div id="homeArea">
+      <!-- Home Pills -->
+      <div id="homePills">
         <div class="pill-row">
           <button class="pill abs" id="pillABS" data-system="Absolute Block System">Absolute Block System</button>
           <button class="pill ats" id="pillATS" data-system="Automatic Block Section">Automatic Block Section</button>
         </div>
       </div>
 
-      <!-- Forms list area -->
+      <!-- Forms area -->
       <div id="formsArea" style="display:none">
         <div id="formsGrid" class="grid" role="list"></div>
-        <div id="noForms" class="empty-note" style="display:none">No forms available for this system.</div>
       </div>
-
     </div>
   </main>
 
   <div id="overlay" aria-hidden="true"></div>
 
-  <!-- side menu -->
-<aside id="sideMenu" aria-hidden="true">
+  <aside id="sideMenu" aria-hidden="true">
+    <div class="menu-header">
+      <div style="font-weight:900">Menu</div>
+      <button id="closeSide" class="close-menu" aria-label="Close menu">Close</button>
+    </div>
 
-  <ul class="menu-list">
-    <li><b><la href="index.html">Home</a></b></li>
+    <ul class="menu-list" role="menu" aria-label="App menu">
+      <li class="menu-section">
+        <a href="index.html" style="display:block;padding:8px 6px;text-decoration:none;color:#071133;font-weight:800">Home</a>
+      </li>
 
-    <li>
-      <div style="font-weight:800;padding:8px 6px">Operating Forms</div>
-      <div class="menu-sub">
-        <button class="menu-system" data-system="Absolute Block System">Absolute Block System</button>
-        <ul id="menuFormsABS" class="menu-forms" style="display:none"></ul>
+      <li class="menu-section" aria-expanded="false">
+        <button class="menu-system" type="button" data-system="Absolute Block System">Operating Forms — Absolute Block System
+          <span aria-hidden="true">▸</span>
+        </button>
+        <div id="menuFormsABS" class="menu-forms" role="menu"></div>
+      </li>
 
-        <button class="menu-system" data-system="Automatic Block Section">Automatic Block Section</button>
-        <ul id="menuFormsATS" class="menu-forms" style="display:none"></ul>
-      </div>
-    </li>
-  </ul>
-</aside>
+      <li class="menu-section" aria-expanded="false">
+        <button class="menu-system" type="button" data-system="Automatic Block Section">Operating Forms — Automatic Block Section
+          <span aria-hidden="true">▸</span>
+        </button>
+        <div id="menuFormsATS" class="menu-forms" role="menu"></div>
+      </li>
+    </ul>
+  </aside>
 
 <script>
-  /************************************************************************
-   * DATA
-   * Replace the file paths with the correct paths to your hosted PDFs / images.
-   * If hosting via GitHub Pages in the same repo, relative 'forms/t369.pdf' works.
-   * If using raw.githubusercontent.com, set the raw absolute URLs.
-   ************************************************************************/
+  /* ---------- DATA (adjust file paths as needed) ---------- */
   const DATA = {
     "Absolute Block System": [
-      { id: 'T/369(3b)', desc: 'Private number authority used for double line failures.', file: 'forms/t369.png' },
-      { id: 'T/806',     desc: 'Shunting movement authority & endorsements.', file: 'forms/t806.pdf' },
-      { id: 'T/510',     desc: 'Used for piloting trains into stations safely.', file: 'forms/t510.pdf' }
+      { id: 'T/369(3b)', title:'Private Number / T/369', desc:'Use when double line signal failure — private number authority.', file:'forms/t369.pdf' },
+      { id: 'T/806', title:'Shunting Form T/806', desc:'Shunting authority and endorsement procedures.', file:'forms/t806.pdf' },
+      { id: 'T/510', title:'Pilot In Memo / T/510', desc:'Used for piloting trains into stations.', file:'forms/t510.pdf' }
     ],
     "Automatic Block Section": [
-      { id: 'T/C 1425', desc: 'Block instrument authority for signal failures.', file: 'forms/tc1425.pdf' },
-      { id: 'T/D 912',  desc: 'Authority for prolonged failure of signals.', file: 'forms/td912.pdf' }
+      { id: 'T/C 1425', title:'PLCT / T/C 1425', desc:'Block instrument authority for failed signals on single line.', file:'forms/tc1425.pdf' },
+      { id: 'T/D 912', title:'Prolonged Failure / T/D 912', desc:'Authority for prolonged failure of signals.', file:'forms/td912.pdf' }
     ]
   };
 
-  // UI refs
+  /* ---------- UI refs ---------- */
   const pillABS = document.getElementById('pillABS');
   const pillATS = document.getElementById('pillATS');
-  const homeArea = document.getElementById('homeArea');
+  const homePills = document.getElementById('homePills');
   const formsArea = document.getElementById('formsArea');
   const formsGrid = document.getElementById('formsGrid');
-  const noForms = document.getElementById('noForms');
-  const systemSticky = document.getElementById('systemSticky');
+  const systemSub = document.getElementById('systemSub');
   const systemLabel = document.getElementById('systemLabel');
-  const btnBack = document.getElementById('btnBack');
-  const btnMenu = document.getElementById('btnMenu');
+  const headerBack = document.getElementById('headerBack');
+  const openMenuBtn = document.getElementById('openMenu');
   const sideMenu = document.getElementById('sideMenu');
   const overlay = document.getElementById('overlay');
+  const closeSide = document.getElementById('closeSide');
 
   let currentSystem = null;
 
-  // Navigation to the viewer: relative viewer.html in same repo
-  const VIEWER_PATH = 'viewer.html'; // change if viewer hosted elsewhere
-
-  // Render tiles for a system
+  /* ---------- Main list rendering ---------- */
   function renderGrid(system){
     formsGrid.innerHTML = '';
-    const list = DATA[system] || [];
-    if (!list.length){
-      noForms.style.display = 'block';
-      formsGrid.style.display = 'none';
+    const arr = DATA[system] || [];
+    if (!arr.length) {
+      formsGrid.innerHTML = '<div style="grid-column:1/-1;color:var(--muted)">No forms available</div>';
       return;
     }
-    noForms.style.display = 'none';
-    formsGrid.style.display = 'grid';
-
-    list.forEach(item => {
+    arr.forEach(it => {
       const tile = document.createElement('article');
       tile.className = 'tile' + (system.includes('Automatic') ? ' ats' : '');
       tile.setAttribute('role','listitem');
 
-      const idEl = document.createElement('div');
-      idEl.className = 'auth-id';
-      idEl.textContent = item.id;
-
-      const descEl = document.createElement('div');
-      descEl.className = 'auth-desc';
-      descEl.textContent = item.desc || '';
-
-      const actions = document.createElement('div');
-      actions.className = 'tile-actions';
-      const btn = document.createElement('button');
-      btn.className = 'btn-view';
-      btn.textContent = 'View';
-      btn.addEventListener('click', ()=> openViewer(item));
-
+      const auth = document.createElement('div'); auth.className = 'auth-number'; auth.textContent = it.id;
+      const d = document.createElement('div'); d.className = 'auth-desc'; d.textContent = it.desc || '';
+      const actions = document.createElement('div'); actions.className = 'tile-actions';
+      const btn = document.createElement('button'); btn.className = 'btn-view'; btn.textContent = 'View';
+      btn.addEventListener('click', ()=> openViewer(it));
       actions.appendChild(btn);
-      tile.appendChild(idEl);
-      tile.appendChild(descEl);
-      tile.appendChild(actions);
 
+      tile.appendChild(auth); tile.appendChild(d); tile.appendChild(actions);
       formsGrid.appendChild(tile);
     });
   }
 
-  // Select a system (called from pills and menu)
   function selectSystem(system){
     currentSystem = system;
     systemLabel.textContent = system;
-    systemLabel.style.display = 'inline-block';
-    // color the sticky label to reflect system
-    if (system.includes('Automatic')){
-      systemLabel.style.background = 'linear-gradient(90deg,var(--accent-green),#2e8a3a)';
-    } else {
-      systemLabel.style.background = 'linear-gradient(90deg,var(--accent-blue),#0f63b8)';
-    }
-    systemSticky.style.display = 'block';
-    homeArea.style.display = 'none';
-    formsArea.style.display = 'block';
+    systemLabel.style.background = system.includes('Automatic') ? 'linear-gradient(90deg,var(--accent-green),#2e8a3a)' : 'linear-gradient(90deg,var(--accent-blue),#0f63b8)';
+    systemSub.style.display = 'block';
     renderGrid(system);
-    // update URL for bookmarking (optional)
-    try { history.pushState({screen:'forms', system}, '', '?system=' + encodeURIComponent(system)); } catch(e){}
+    homePills.style.display = 'none';
+    formsArea.style.display = 'block';
+    try { history.pushState({page:'list', system}, '', '?system=' + encodeURIComponent(system)); } catch(e){}
   }
 
-  // Open viewer in same origin viewer.html with params
-  function openViewer(item){
-    // Build query string for viewer.html
-    const q = new URLSearchParams();
-    q.set('file', item.file);
-    q.set('system', currentSystem || '');
-    q.set('id', item.id);
-    // Navigate to viewer (in same tab)
-    window.location.href = VIEWER_PATH + '?' + q.toString();
-  }
+  [pillABS, pillATS].forEach(b => b.addEventListener('click', ()=> selectSystem(b.dataset.system)));
 
-  // Back button behaviour: if in forms list go to home of operating forms, else go back to index
-  btnBack.addEventListener('click', (e) => {
-    e.preventDefault();
-    if (formsArea.style.display !== 'none'){
-      // go back to home pills
-      formsArea.style.display = 'none';
-      homeArea.style.display = 'block';
-      systemSticky.style.display = 'none';
-      currentSystem = null;
-      try { history.pushState({}, '', location.pathname); } catch(e){}
-      return;
-    }
-    // otherwise go to main app
+  headerBack.addEventListener('click', ()=>{
+    if (formsArea.style.display !== 'none'){ formsArea.style.display='none'; homePills.style.display='block'; systemSub.style.display='none'; currentSystem = null; return; }
     window.location.href = 'index.html';
   });
 
-  // Menu toggle
-  btnMenu.addEventListener('click', ()=>{
-    const opening = !sideMenu.classList.contains('open');
-    if (opening){
-      sideMenu.classList.add('open'); overlay.style.display = 'block'; sideMenu.setAttribute('aria-hidden','false');
-    } else {
-      sideMenu.classList.remove('open'); overlay.style.display = 'none'; sideMenu.setAttribute('aria-hidden','true');
-    }
-  });
-  overlay.addEventListener('click', ()=>{ sideMenu.classList.remove('open'); overlay.style.display = 'none'; sideMenu.setAttribute('aria-hidden','true'); });
+  /* ---------- Viewer navigation: open viewer.html with params ---------- */
+  function openViewer(item){
+    const q = new URLSearchParams();
+    q.set('file', item.file);
+    q.set('id', item.id);
+    q.set('system', currentSystem || '');
+    // close the side menu if open
+    sideMenu.classList.remove('open');
+    overlay.style.display = 'none';
+    // navigate to your viewer.html (which you uploaded)
+    window.location.href = 'viewer.html?' + q.toString();
+  }
 
-  // menu system buttons
-  document.querySelectorAll('.menu-system').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const sys = btn.dataset.system;
-      sideMenu.classList.remove('open'); overlay.style.display = 'none'; sideMenu.setAttribute('aria-hidden','true');
-      // small delay so menu closes smoothly
-      setTimeout(()=> selectSystem(sys), 120);
+  /* ---------- Side-menu population & toggles ---------- */
+  function populateMenuForms() {
+    const absList = document.getElementById('menuFormsABS');
+    const atsList = document.getElementById('menuFormsATS');
+    if (!absList || !atsList) return;
+    absList.innerHTML = '';
+    atsList.innerHTML = '';
+
+    (DATA['Absolute Block System'] || []).forEach(f => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'menu-form';
+      btn.textContent = f.id;
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        // set currentSystem so viewer receives context
+        currentSystem = 'Absolute Block System';
+        openViewer(f);
+      });
+      absList.appendChild(btn);
     });
-  });
 
-  // pill clicks
-  [pillABS, pillATS].forEach(p => p.addEventListener('click', (e)=> selectSystem(p.dataset.system)));
+    (DATA['Automatic Block Section'] || []).forEach(f => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'menu-form';
+      btn.textContent = f.id;
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        currentSystem = 'Automatic Block Section';
+        openViewer(f);
+      });
+      atsList.appendChild(btn);
+    });
 
-  // initialize from querystring (optional)
+    absList.style.display = 'none';
+    atsList.style.display = 'none';
+  }
+
+  function wireSystemToggles() {
+    document.querySelectorAll('.menu-system').forEach(btn => {
+      if (btn.__wired) return;
+      btn.__wired = true;
+      const sys = btn.dataset.system || '';
+      const listId = sys.includes('Absolute') ? 'menuFormsABS' : 'menuFormsATS';
+      const listEl = document.getElementById(listId);
+      if (!listEl) return;
+      btn.setAttribute('aria-expanded', 'false');
+      listEl.style.display = 'none';
+      btn.addEventListener('click', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        const isOpen = listEl.style.display !== 'none';
+        // close other
+        ['menuFormsABS','menuFormsATS'].forEach(id => {
+          if (id === listId) return;
+          const other = document.getElementById(id);
+          if (other) other.style.display = 'none';
+        });
+        listEl.style.display = isOpen ? 'none' : 'flex';
+        listEl.style.flexDirection = 'column';
+        btn.setAttribute('aria-expanded', String(!isOpen));
+      });
+    });
+  }
+
+  function wireMenuOpenClose() {
+    if (openMenuBtn && !openMenuBtn.__wired) {
+      openMenuBtn.__wired = true;
+      openMenuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = sideMenu.classList.toggle('open');
+        overlay.style.display = isOpen ? 'block' : 'none';
+      });
+    }
+    closeSide.addEventListener('click', () => { sideMenu.classList.remove('open'); overlay.style.display = 'none'; });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!sideMenu.classList.contains('open')) return;
+      if (sideMenu.contains(e.target) || (openMenuBtn && openMenuBtn.contains(e.target))) return;
+      sideMenu.classList.remove('open'); overlay.style.display = 'none';
+    }, true);
+
+    // Escape closes
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && sideMenu.classList.contains('open')) {
+        sideMenu.classList.remove('open'); overlay.style.display = 'none';
+      }
+    });
+
+    overlay.addEventListener('click', () => { sideMenu.classList.remove('open'); overlay.style.display = 'none'; });
+  }
+
+  /* ---------- Init ---------- */
+  populateMenuForms();
+  wireSystemToggles();
+  wireMenuOpenClose();
+
+  // Restore state from URL if needed
   (function initFromQuery(){
     const q = new URLSearchParams(location.search);
-    const sys = q.get('system'), id = q.get('id');
-    if (sys && DATA[sys]){
-      selectSystem(sys);
-      if (id){
-        const arr = DATA[sys] || [];
-        const item = arr.find(x => x.id === id);
-        if (item){
-          // open viewer if doc provided
-          setTimeout(()=> openViewer(item), 250);
-        }
-      }
-    }
+    const sys = q.get('system');
+    if (sys && DATA[sys]) { selectSystem(sys); }
   })();
 
-  // Populate side menu forms dynamically
-
-/* --------- Side-menu: populate and behaviour --------- */
-function populateMenuForms() {
-  const absList = document.getElementById('menuFormsABS');
-  const atsList = document.getElementById('menuFormsATS');
-
-  if (!absList || !atsList) return;
-
-  absList.innerHTML = '';
-  atsList.innerHTML = '';
-
-  (DATA['Absolute Block System'] || []).forEach(f => {
-    const li = document.createElement('li');
-    li.style.listStyle = 'none';
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'menu-form';
-    btn.textContent = f.id;
-    btn.style.width = '100%';
-    btn.style.textAlign = 'left';
-    btn.style.padding = '10px';
-    btn.style.border = '0';
-    btn.style.background = 'transparent';
-    btn.style.cursor = 'pointer';
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      // open viewer (uses your existing openViewer function)
-      openViewer(f);
-      // close menu
-      sideMenu.classList.remove('open');
-      overlay.style.display = 'none';
-    });
-    li.appendChild(btn);
-    absList.appendChild(li);
-  });
-
-  (DATA['Automatic Block Section'] || []).forEach(f => {
-    const li = document.createElement('li');
-    li.style.listStyle = 'none';
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'menu-form';
-    btn.textContent = f.id;
-    btn.style.width = '100%';
-    btn.style.textAlign = 'left';
-    btn.style.padding = '10px';
-    btn.style.border = '0';
-    btn.style.background = 'transparent';
-    btn.style.cursor = 'pointer';
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      openViewer(f);
-      sideMenu.classList.remove('open');
-      overlay.style.display = 'none';
-    });
-    li.appendChild(btn);
-    atsList.appendChild(li);
-  });
-
-  // ensure lists are hidden initially
-  absList.style.display = 'none';
-  atsList.style.display = 'none';
-}
-
-/* Expand/collapse per system button (only one open at a time) */
-document.querySelectorAll('.menu-system').forEach(btn => {
-  const sys = btn.dataset.system;
-  const listId = sys.includes('Absolute') ? 'menuFormsABS' : 'menuFormsATS';
-  const listEl = document.getElementById(listId);
-  if (!listEl) return;
-
-  btn.setAttribute('aria-expanded', 'false');
-  listEl.style.display = 'none';
-
-  btn.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const open = listEl.style.display !== 'none';
-    // close both first
-    const otherId = listId === 'menuFormsABS' ? 'menuFormsATS' : 'menuFormsABS';
-    const otherEl = document.getElementById(otherId);
-    if (otherEl) otherEl.style.display = 'none';
-    const otherBtn = Array.from(document.querySelectorAll('.menu-system')).find(b => (b.dataset.system.includes('Absolute') ? 'menuFormsABS' : 'menuFormsATS') === otherId);
-    if (otherBtn) otherBtn.setAttribute('aria-expanded', 'false');
-
-    // toggle clicked list
-    listEl.style.display = open ? 'none' : 'flex';
-    listEl.style.flexDirection = 'column';
-    btn.setAttribute('aria-expanded', String(!open));
-  });
-});
-
-/* Close menu when clicking outside or pressing Escape */
-document.addEventListener('click', (e) => {
-  // if menu open and click target is outside the sideMenu and outside openMenu button -> close
-  if (sideMenu.classList.contains('open') && !sideMenu.contains(e.target) && !openMenu.contains(e.target)) {
-    sideMenu.classList.remove('open');
-    overlay.style.display = 'none';
-  }
-}, true);
-
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && sideMenu.classList.contains('open')) {
-    sideMenu.classList.remove('open');
-    overlay.style.display = 'none';
-  }
-});
-
-/* Overlay click already closes menu in your code, but keep safe: */
-overlay.addEventListener('click', () => {
-  sideMenu.classList.remove('open');
-  overlay.style.display = 'none';
-});
-
-/* Initial population */
-populateMenuForms();
 </script>
-
-
-
 </body>
 </html>
