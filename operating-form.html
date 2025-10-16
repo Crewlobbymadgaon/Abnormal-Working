@@ -128,6 +128,26 @@
     .auth-id{ font-size:1.05rem }
     #sideMenu{ width:88vw }
   }
+  .menu-forms {
+  list-style: none;
+  padding-left: 16px;
+  margin: 6px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.menu-forms li {
+  background: #f3f6fa;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background .2s;
+}
+.menu-forms li:hover {
+  background: #e8eef5;
+}
 </style>
 </head>
 <body>
@@ -175,12 +195,16 @@
 <aside id="sideMenu" aria-hidden="true">
 
   <ul class="menu-list">
-    <li><a href="index.html">Home</a></li>
+    <li><b></b><a href="index.html">Home</a></b></li>
+
     <li>
-      <button id="menuOperating">Operating Forms</button>
+      <div style="font-weight:800;padding:8px 6px">Operating Forms</div>
       <div class="menu-sub">
         <button class="menu-system" data-system="Absolute Block System">Absolute Block System</button>
+        <ul id="menuFormsABS" class="menu-forms" style="display:none"></ul>
+
         <button class="menu-system" data-system="Automatic Block Section">Automatic Block Section</button>
+        <ul id="menuFormsATS" class="menu-forms" style="display:none"></ul>
       </div>
     </li>
   </ul>
@@ -351,6 +375,53 @@
       }
     }
   })();
+
+  // Populate side menu forms dynamically
+function populateMenuForms() {
+  const absList = document.getElementById('menuFormsABS');
+  const atsList = document.getElementById('menuFormsATS');
+
+  absList.innerHTML = '';
+  atsList.innerHTML = '';
+
+  (DATA['Absolute Block System'] || []).forEach(f => {
+    const li = document.createElement('li');
+    li.textContent = f.id;
+    li.addEventListener('click', () => {
+      openViewer(f);
+      sideMenu.classList.remove('open');
+      overlay.style.display = 'none';
+    });
+    absList.appendChild(li);
+  });
+
+  (DATA['Automatic Block Section'] || []).forEach(f => {
+    const li = document.createElement('li');
+    li.textContent = f.id;
+    li.addEventListener('click', () => {
+      openViewer(f);
+      sideMenu.classList.remove('open');
+      overlay.style.display = 'none';
+    });
+    atsList.appendChild(li);
+  });
+}
+
+// Expand / collapse behavior
+document.querySelectorAll('.menu-system').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const sys = btn.dataset.system;
+    if (sys.includes('Absolute')) {
+      const ul = document.getElementById('menuFormsABS');
+      ul.style.display = ul.style.display === 'none' ? 'flex' : 'none';
+    } else {
+      const ul = document.getElementById('menuFormsATS');
+      ul.style.display = ul.style.display === 'none' ? 'flex' : 'none';
+    }
+  });
+});
+
+populateMenuForms();
 
 </script>
 
