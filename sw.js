@@ -1,26 +1,25 @@
 // sw.js — for https://crewlobbymadgaon.github.io/Abnormal-Working/
-const CACHE_NAME = 'blocksys-v3';
+const CACHE_NAME = 'blocksys-v4';
 const RUNTIME = 'runtime-v1';
 
 // Minimal app shell (loads page when offline)
 const PRECACHE_MIN = [
-  '/Abnormal-Working/',
-  '/Abnormal-Working/index.html',
-  '/Abnormal-Working/manifest.json',
-  '/Abnormal-Working/abnormal-working-192.png',
-  '/Abnormal-Working/abnormal-working-512.png'
+  './',
+  './index.html',
+  './manifest.json',
+  './abnormal-working-192.png',
+  './abnormal-working-512.png'
 ];
 
 // Full site to download for offline use
 const PRECACHE_FULL = [
-  '/Abnormal-Working/',
-  '/Abnormal-Working/index.html',
-  '/Abnormal-Working/manifest.json',
-  '/Abnormal-Working/abnormal-working-192.png',
-  '/Abnormal-Working/abnormal-working-512.png',
-  '/Abnormal-Working/operating-form.html',
-  '/Abnormal-Working/viewer.html'
-  // add more if you later move files into /forms/
+  './',
+  './index.html',
+  './manifest.json',
+  './abnormal-working-192.png',
+  './abnormal-working-512.png',
+  './operating-form.html',
+  './viewer.html'
 ];
 
 self.addEventListener('install', event => {
@@ -33,7 +32,11 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.map(k => (k !== CACHE_NAME && k !== RUNTIME) ? caches.delete(k) : null))
+      Promise.all(
+        keys.map(k =>
+          k !== CACHE_NAME && k !== RUNTIME ? caches.delete(k) : null
+        )
+      )
     ).then(() => self.clients.claim())
   );
 });
@@ -44,20 +47,23 @@ self.addEventListener('fetch', event => {
 
   const url = new URL(req.url);
 
-  // HTML navigations
-  if (req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html')) {
+  // Handle navigations (HTML pages)
+  if (
+    req.mode === 'navigate' ||
+    (req.headers.get('accept') || '').includes('text/html')
+  ) {
     event.respondWith(
       fetch(req)
         .then(r => {
           caches.open(RUNTIME).then(c => c.put(req, r.clone()));
           return r;
         })
-        .catch(() => caches.match('/Abnormal-Working/index.html'))
+        .catch(() => caches.match('./index.html'))
     );
     return;
   }
 
-  // Cache-first for same-origin assets
+  // Cache-first strategy for local assets
   if (url.origin === location.origin) {
     event.respondWith(
       caches.match(req).then(cached => {
@@ -67,23 +73,29 @@ self.addEventListener('fetch', event => {
             caches.open(RUNTIME).then(c => c.put(req, r.clone()));
             return r;
           })
-          .catch(() => caches.match(req));
+          .catch(() => caches.match('./index.html'));
       })
     );
   }
 });
 
-// handle “download full site” messages
+// Handle "download full site" message
 self.addEventListener('message', event => {
   if (event.data && event.data.type === 'DOWNLOAD_OFFLINE') {
     event.waitUntil(
       caches.open(CACHE_NAME).then(async cache => {
-        let ok = 0, fail = 0;
+        let ok = 0,
+          fail = 0;
         for (const url of PRECACHE_FULL) {
           try {
             const r = await fetch(url, { cache: 'no-cache' });
-            if (r.ok) { await cache.put(url, r.clone()); ok++; } else fail++;
-          } catch { fail++; }
+            if (r.ok) {
+              await cache.put(url, r.clone());
+              ok++;
+            } else fail++;
+          } catch {
+            fail++;
+          }
         }
         const clientsList = await self.clients.matchAll();
         for (const c of clientsList)
