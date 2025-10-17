@@ -19,7 +19,7 @@ const PRECACHE_FULL = [
   './abnormal-working-192.png',
   './abnormal-working-512.png',
   './operating-form.html',
-  './viewer.html'
+  './viewer.html',
   './forms/t369.png'
 ];
 
