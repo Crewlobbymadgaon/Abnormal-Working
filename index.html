@@ -1399,6 +1399,51 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 
-     
+  <button id="downloadOffline"
+        style="margin:1rem;padding:.7rem 1rem;border-radius:8px;
+               background:#1976d2;color:white;border:none;cursor:pointer;">
+  📥 Download for offline use
+</button>
+<span id="downloadStatus" style="margin-left:12px"></span>
+
+<script>
+const FILES = [
+  '/Abnormal-Working/',
+  '/Abnormal-Working/index.html',
+  '/Abnormal-Working/manifest.json',
+  '/Abnormal-Working/abnormal-working-192.png',
+  '/Abnormal-Working/abnormal-working-512.png',
+  '/Abnormal-Working/operating-form.html',
+  '/Abnormal-Working/viewer.html'
+];
+
+async function registerSW() {
+  if ('serviceWorker' in navigator) {
+    try {
+      const reg = await navigator.serviceWorker.register('/Abnormal-Working/sw.js');
+      console.log('SW registered', reg.scope);
+      if (navigator.storage && navigator.storage.persist) await navigator.storage.persist();
+    } catch (err) {
+      console.warn('SW registration failed:', err);
+    }
+  }
+}
+
+document.getElementById('downloadOffline').addEventListener('click', () => {
+  if (!navigator.serviceWorker.controller)
+    return alert('Please reload the page first so offline mode activates.');
+  const status = document.getElementById('downloadStatus');
+  status.textContent = 'Downloading...';
+  navigator.serviceWorker.addEventListener('message', function onMsg(e) {
+    if (e.data.type === 'DOWNLOAD_COMPLETE') {
+      status.textContent = `Ready ✅ (${e.data.ok} ok, ${e.data.fail} failed)`;
+      navigator.serviceWorker.removeEventListener('message', onMsg);
+    }
+  });
+  navigator.serviceWorker.controller.postMessage({ type: 'DOWNLOAD_OFFLINE', files: FILES });
+});
+
+registerSW();
+</script>   
 </body>
 </html>
