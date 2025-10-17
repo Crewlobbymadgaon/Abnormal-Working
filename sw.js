@@ -1,40 +1,94 @@
-const CACHE_NAME = 'blocksys-v1';
-const PRECACHE = [
-  './',
-  './index.html',
-  './manifest.json',
-  './abnormal-working-192.png',
-  './abnormal-working-512.png'
-  './operating-form.html'
-  './viewer.html'
+// sw.js — for https://crewlobbymadgaon.github.io/Abnormal-Working/
+const CACHE_NAME = 'blocksys-v3';
+const RUNTIME = 'runtime-v1';
+
+// Minimal app shell (loads page when offline)
+const PRECACHE_MIN = [
+  '/Abnormal-Working/',
+  '/Abnormal-Working/index.html',
+  '/Abnormal-Working/manifest.json',
+  '/Abnormal-Working/abnormal-working-192.png',
+  '/Abnormal-Working/abnormal-working-512.png'
 ];
 
-// install
+// Full site to download for offline use
+const PRECACHE_FULL = [
+  '/Abnormal-Working/',
+  '/Abnormal-Working/index.html',
+  '/Abnormal-Working/manifest.json',
+  '/Abnormal-Working/abnormal-working-192.png',
+  '/Abnormal-Working/abnormal-working-512.png',
+  '/Abnormal-Working/operating-form.html',
+  '/Abnormal-Working/viewer.html'
+  // add more if you later move files into /forms/
+];
+
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(PRECACHE))
+    caches.open(CACHE_NAME).then(cache => cache.addAll(PRECACHE_MIN))
   );
   self.skipWaiting();
 });
 
-// activate
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.map(k => k !== CACHE_NAME ? caches.delete(k) : null)
-    ))
+    caches.keys().then(keys =>
+      Promise.all(keys.map(k => (k !== CACHE_NAME && k !== RUNTIME) ? caches.delete(k) : null))
+    ).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-// fetch
 self.addEventListener('fetch', event => {
-  const request = event.request;
-  if (request.mode === 'navigate') {
-    event.respondWith(fetch(request).catch(() => caches.match('./')));
+  const req = event.request;
+  if (req.method !== 'GET') return;
+
+  const url = new URL(req.url);
+
+  // HTML navigations
+  if (req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html')) {
+    event.respondWith(
+      fetch(req)
+        .then(r => {
+          caches.open(RUNTIME).then(c => c.put(req, r.clone()));
+          return r;
+        })
+        .catch(() => caches.match('/Abnormal-Working/index.html'))
+    );
     return;
   }
-  event.respondWith(
-    caches.match(request).then(cached => cached || fetch(request))
-  );
+
+  // Cache-first for same-origin assets
+  if (url.origin === location.origin) {
+    event.respondWith(
+      caches.match(req).then(cached => {
+        if (cached) return cached;
+        return fetch(req)
+          .then(r => {
+            caches.open(RUNTIME).then(c => c.put(req, r.clone()));
+            return r;
+          })
+          .catch(() => caches.match(req));
+      })
+    );
+  }
+});
+
+// handle “download full site” messages
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'DOWNLOAD_OFFLINE') {
+    event.waitUntil(
+      caches.open(CACHE_NAME).then(async cache => {
+        let ok = 0, fail = 0;
+        for (const url of PRECACHE_FULL) {
+          try {
+            const r = await fetch(url, { cache: 'no-cache' });
+            if (r.ok) { await cache.put(url, r.clone()); ok++; } else fail++;
+          } catch { fail++; }
+        }
+        const clientsList = await self.clients.matchAll();
+        for (const c of clientsList)
+          c.postMessage({ type: 'DOWNLOAD_COMPLETE', ok, fail });
+      })
+    );
+  }
 });
