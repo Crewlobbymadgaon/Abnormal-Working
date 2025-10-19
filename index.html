@@ -3,18 +3,12 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-     <link rel="manifest" href="manifest.json">
+<link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="abnormal-working-192.png">
 <meta name="theme-color" content="#1976d2">
-
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-
-
 <title>Block Working System — Uniform Cards (Centered, Larger, Responsive)</title>
-
-<!-- NOTE: This single-file HTML generates a manifest and service-worker at runtime (no external files needed).
-     If you prefer a custom PNG icon, replace the manifestIconDataURI in the script below with a data:image/png;base64,... string. -->
 
 <style>
 :root{
@@ -53,39 +47,52 @@ html,body{ height:100%; margin:0; font-family: system-ui, -apple-system, "Segoe 
   z-index: 9999;
 }
 
-/* Header */
-header{
+/* --- Uniform Header (Perfectly Centered on Both Pages) --- */
+header,
+.category-mode header {
+  height: var(--header-height);
   min-height: var(--header-height);
-  height:auto;
   background: linear-gradient(90deg, var(--accent-blue), var(--accent-green));
-  padding:12px 15px;
-  position:sticky;
-  top:0;
-  z-index:110;
-  box-shadow:0 4px 8px rgba(0,0,0,0.15);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  box-sizing:border-box;
+  padding: 0 20px;
+  position: sticky;
+  top: 0;
+  z-index: 110;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;    /* Vertically center everything */
+  justify-content: center;/* Horizontally center */
+  box-sizing: border-box;
+  overflow: hidden;
 }
-#mainHeading {
-  color:#fff;
-  margin:0;
-  letter-spacing:1px;
-  text-align:center;
-  font-weight:800;
-  line-height:1.15;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:6px;
-  font-size: clamp(3rem, 6vw, 3.5rem);
-  padding:10px 52px;
+
+/* --- Main Heading Text (Aligned & Scaled Identically) --- */
+#mainHeading,
+.category-mode #mainHeading {
+  color: #fff;
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-align: center;
+  line-height: 1.1;
+  display: flex;
+  flex-direction: column; /* stacked title lines (for multi-line title) */
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 0;
+  font-size: clamp(1.5rem, 3.5vw, 2.0rem);
+  height: 100%;           /* ensure vertical centering inside header */
+  box-sizing: border-box;
+}
+
+#mainHeading span {
+  display: block;
+  width: 100%;
 }
 
 #mainHeading span:nth-child(2) {
-  font-size:1em;
-  opacity:0.9;
+  font-size: 1em;
+  opacity: 0.9;
 }
 
 /* small helper */
@@ -113,11 +120,91 @@ header{
 #parentHeadingText { font-size:1.1rem; font-weight:700; color:#000; text-align:center; }
 
 #systemMain{ flex:1 1 auto; overflow-y:auto; padding:20px; -webkit-overflow-scrolling: touch; box-sizing:border-box; }
+/* --- Home Screen Blocks (Improved, White & Larger Text) --- */
+.block-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  flex-wrap: wrap;
+  margin-top: 50px;
+  padding: 0 20px;
+}
 
-/* Blocks (initial selection) */
-.block-container{display:flex;justify-content:center;gap:20px;margin-top:30px;flex-wrap:wrap;}
-.block{ flex:1 1 200px; max-width:300px; height:150px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; font-weight:700; color:white; border-radius:12px; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.2); transition:transform .22s ease,opacity .22s ease; text-align:center; }
-.block.abs{background:var(--accent-blue);} .block.auto{background:var(--accent-green);}
+/* Main tiles */
+.block {
+  flex: 1 1 260px;
+  max-width: 340px;
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  padding: 20px;
+  box-sizing: border-box;
+  cursor: pointer;
+  text-align: center;
+  font-weight: 900;
+  color: #fff;  /* White text */
+  font-size: clamp(24px, 4vw, 36px); /* Bigger, responsive */
+  letter-spacing: 0.5px;
+  text-transform: none;
+  text-shadow: 0 3px 12px rgba(0,0,0,0.35);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* Gradient backgrounds */
+.block.abs {
+  background: linear-gradient(145deg, #1976d2, #42a5f5);
+}
+.block.auto {
+  background: linear-gradient(145deg, #2e7d32, #66bb6a);
+}
+
+/* Hover & focus effects */
+.block:hover, .block:focus {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+  outline: none;
+}
+
+/* Tap effect */
+.block:active {
+  transform: translateY(2px) scale(0.97);
+}
+
+/* Subtle highlight overlay */
+.block::before {
+  content: "";
+  position: absolute;
+  left: -20%;
+  top: -40%;
+  width: 140%;
+  height: 60%;
+  transform: rotate(-18deg);
+  background: linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0));
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+/* Mobile adjustments */
+@media (max-width: 720px) {
+  .block {
+    min-height: 140px;
+    font-size: clamp(20px, 5vw, 28px);
+  }
+}
+@media (max-width: 420px) {
+  .block {
+    min-height: 120px;
+    font-size: clamp(18px, 6vw, 24px);
+  }
+}
+
+
 
 /* Grid layout */
 .grid {
@@ -209,7 +296,7 @@ html { box-sizing: border-box; }
   position: sticky;
   top: 0;
   z-index: 6;
-    background: rgba(224,247,250,0.88);
+  background: rgba(224,247,250,0.88);
   backdrop-filter: blur(3px);
   padding: 8px 10px;
   margin: 0;
@@ -425,67 +512,231 @@ html { box-sizing: border-box; }
 @media (min-width: 900px){
   #bottomCenterMenu { bottom: 18px; }
 }
+/* === Home Tile Text (Slightly Reduced Size + Clean Glow) === */
+.block,
+.block *,
+.block a,
+.block:link,
+.block:visited {
+  text-decoration: none !important;
+  color: #ffffff !important;                   /* Pure white */
+  -webkit-text-fill-color: #ffffff !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  font-size: clamp(22px, 4.2vw, 32px);         /* reduced from 26–42px */
+  text-transform: none;
+  text-align: center;
+  text-shadow:
+    0 3px 10px rgba(0,0,0,0.45),
+    0 0 8px rgba(255,255,255,0.25),
+    1px 2px 2px rgba(0,0,0,0.35);
+  transition: text-shadow 0.3s ease, transform 0.3s ease;
+}
+
+/* Hover lift with brighter glow */
+.block:hover {
+  transform: translateY(-4px) scale(1.02);
+  text-shadow:
+    0 4px 14px rgba(0,0,0,0.55),
+    0 0 14px rgba(255,255,255,0.3),
+    1px 3px 3px rgba(0,0,0,0.45);
+}
+
+/* Make sure nested inline elements (spans, svg titles) also inherit white */
+.block span,
+.block p,
+.block div {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* --- Uniform round back button (same as menu button) --- */
+.back-btn {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;                     /* fixed width */
+  height: 40px;                    /* same height = perfect circle */
+  border-radius: 50%;              /* circular shape */
+  background: var(--accent-blue);  /* blue fill to match theme */
+  color: #fff;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+/* Hover/tap feedback */
+.back-btn:hover {
+  transform: translateY(-50%) scale(1.05);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+}
+.back-btn:active {
+  transform: translateY(-50%) scale(0.96);
+}
+
+/* Ensure SVG or text inside stays centered */
+.back-btn svg,
+.back-btn span {
+  width: 18px;
+  height: 18px;
+  color: #fff;
+  fill: currentColor;
+}
+
+/* Hide helper */
+.back-btn.hidden {
+  display: none !important;
+}
+
+/* ensure header menu button sits on right and matches visual style */
+.menu-btn {
+  right: 12px;
+  left: auto;
+}
+
+/* ------------------------------
+   Category (second-page) outline mode
+   Apply when body has .category-mode (added by JS)
+   ------------------------------ */
+
+/* Keep header identical to home */
+.category-mode header {
+  min-height: var(--header-height);
+  height: auto;
+}
+/* Match heading size exactly with home screen */
+.category-mode #mainHeading {
+  font-size: clamp(1.0rem, 3.0vw, 1.6rem);  /* same as home heading visual scale */
+  line-height: 1.15;
+  letter-spacing: 0.5px;
+  padding: 10px 52px;
+}
+.category-mode .block {
+  background: #ffffff !important;
+  color: #0b0b0b !important;
+  -webkit-text-fill-color: #0b0b0b !important;
+  border-radius: 16px;
+  border: 3px solid rgba(0,0,0,0.06);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+  font-weight: 800;
+  font-size: clamp(18px, 3.8vw, 26px);   /* increased font size */
+  text-shadow: none;
+  transition: transform .20s ease, box-shadow .20s ease, background .18s ease, border-color .18s ease;
+  min-height: 120px;
+  max-width: 420px;
+  padding: 18px 22px;
+  overflow: visible;
+}
+
+/* Colored outlines for each system (no fill) */
+.category-mode .block.abs {
+  border-color: #1976d2;                 /* blue outline */
+  color: #0f4fa8 !important;             /* blue-ish label color */
+  background: #fff !important;           /* ensure no gradient fill */
+}
+.category-mode .block.auto {
+  border-color: #2e7d32;                 /* green outline */
+  color: #1f6f2f !important;             /* green-ish label color */
+  background: #fff !important;
+}
+
+/* Hover: subtle tinted wash, keep mostly outline-only */
+.category-mode .block.abs:hover,
+.category-mode .block.abs:focus {
+  background: rgba(25,118,210,0.04);     /* very light blue wash on hover */
+  border-color: #1976d2;
+  box-shadow: 0 10px 30px rgba(25,118,210,0.08);
+  transform: translateY(-4px) scale(1.01);
+}
+.category-mode .block.auto:hover,
+.category-mode .block.auto:focus {
+  background: rgba(46,125,50,0.04);      /* very light green wash on hover */
+  border-color: #2e7d32;
+  box-shadow: 0 10px 30px rgba(56,142,60,0.08);
+  transform: translateY(-4px) scale(1.01);
+}
+
+/* Ensure links inside the blocks inherit the outline text color */
+.category-mode .block,
+.category-mode .block a,
+.category-mode .block * {
+  color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
+}
+
+/* Reduce sheen overlay used on home tiles so outlines stay crisp */
+.category-mode .block::before { opacity: 0.12; }
 </style>
 </head>
 <body>
 <a class="skip-link" href="#selectionPage">Skip to content</a>
 <header>
-  <h1 id="mainHeading">
-    <span>AUTHORITIES</span>
-    <span>&amp;</span>
-    <span class="nowrap">ABNORMAL WORKING</span>
-  </h1>
+<h1 id="mainHeading">
+  <span>ABNORMAL WORKING</span>
+  <span>&amp;</span>
+  <span class="nowrap">OPERATING FORMS</span>
+</h1>
 </header>
 
 <div class="app" role="application">
   <div id="selectionPage" role="main" aria-label="System selection">
     <div class="block-container" role="list">
+      <!-- primary - Abnormal Working: will show your two systems after selecting -->
       <div class="block abs" tabindex="0" role="button" aria-pressed="false"
-           onclick="selectSystem('Absolute Block System')"
-           onkeydown="if(event.key==='Enter') selectSystem('Absolute Block System')">
-        Absolute Block System
+           onclick="showCategory('Abnormal Working')"
+           onkeydown="if(event.key==='Enter') showCategory('Abnormal Working')">
+        Abnormal Working
       </div>
 
-      <div class="block auto" tabindex="0" role="button" aria-pressed="false"
-           onclick="selectSystem('Automatic Block Section')"
-           onkeydown="if(event.key==='Enter') selectSystem('Automatic Block Section')">
-        Automatic Block Section
-      </div>
+      <!-- primary - Operating Forms: native link (keeps browser navigation stable) -->
+      <a class="block auto" href="./operating-form.html" role="link" aria-label="Open Operating Forms">
+        Operating Forms
+      </a>
     </div>
-<!-- Bottom center menu (mobile) -->
-<div id="bottomMenuSpacer" aria-hidden="true" style="height:76px;"></div>
 
-<nav id="bottomCenterMenu" class="bottom-menu" role="navigation" aria-label="Home menu">
-  <div class="menu-inner">
-    <a class="menu-pill" href="operating-form.html">Operating Forms</a>
-    <!-- add more menu items separated by small dots if needed -->
-    <!-- <a class="menu-pill ghost" href="#other">Other</a> -->
-  </div>
-</nav>
+    <!-- Bottom center spacer & download button (mobile) -->
+    <div id="bottomMenuSpacer" aria-hidden="true" style="height:92px;"></div>
+
+    <nav id="bottomCenterMenu" class="bottom-menu" role="navigation" aria-label="Home menu">
+      <div class="menu-inner" style="justify-content:center;">
+        <button id="downloadOffline" class="menu-pill" type="button"
+                style="padding:10px 18px;border:none;cursor:pointer;">
+          📥 Download offline
+        </button>
+      </div>
+    </nav>
   </div>
 
   <div id="systemPage" aria-hidden="true">
     <div class="subheader">
-<button class="back-btn" onclick="goBack()" aria-label="Go back" id="backBtn">
-  <!-- inline svg long arrow -->
-  <svg viewBox="0 0 24 24" aria-hidden="true">
-    <path d="M19 12H5M12 5l-7 7 7 7"
-          stroke="currentColor"
-          stroke-width="2.5"
-          fill="none"
-          stroke-linecap="round"
-          stroke-linejoin="round"/>
-  </svg>
-</button>
+      <button class="back-btn" onclick="goBack()" aria-label="Go back" id="backBtn">
+        <!-- inline svg long arrow -->
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M19 12H5M12 5l-7 7 7 7"
+                stroke="currentColor"
+                stroke-width="2.5"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"/>
+        </svg>
+      </button>
 
-<h2 id="systemTitle"></h2>
+      <h2 id="systemTitle"></h2>
 
-<button class="menu-btn" onclick="openMenu()" aria-label="Open menu" id="menuBtn">
-  <!-- inline svg menu -->
-  <svg viewBox="0 0 24 24" aria-hidden="true">
-    <path d="M3 6h18v2H3zM3 11h18v2H3zM3 16h18v2H3z"></path>
-  </svg>
-</button>
+      <button class="menu-btn" onclick="openMenu()" aria-label="Open menu" id="menuBtn">
+        <!-- inline svg menu -->
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M3 6h18v2H3zM3 11h18v2H3zM3 16h18v2H3z"></path>
+        </svg>
+      </button>
     </div>
 
     <div id="parentHeading"><div id="parentHeadingText"></div></div>
@@ -829,6 +1080,8 @@ html { box-sizing: border-box; }
         else document.documentElement.classList.remove('no-scroll'), document.body.classList.remove('no-scroll');
       } catch (e) { /* fail silently */ }
     }
+    
+    
 
     window.addEventListener('load', updateSubheaderOffset);
     window.addEventListener('resize', debounce(updateSubheaderOffset, 130));
@@ -1391,59 +1644,137 @@ html { box-sizing: border-box; }
   }
 })();
 
- 
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js')
-    .then(reg => console.log('Service Worker registered:', reg.scope))
-    .catch(err => console.warn('SW registration failed:', err));
-}
-</script>
-
-  <button id="downloadOffline"
-        style="margin:1rem;padding:.7rem 1rem;border-radius:8px;
-               background:#1976d2;color:white;border:none;cursor:pointer;">
-  📥 Download for offline use
-</button>
-<span id="downloadStatus" style="margin-left:12px"></span>
-
-<script>
-const FILES = [
-  '/Abnormal-Working/',
-  '/Abnormal-Working/index.html',
-  '/Abnormal-Working/manifest.json',
-  '/Abnormal-Working/abnormal-working-192.png',
-  '/Abnormal-Working/abnormal-working-512.png',
-  '/Abnormal-Working/operating-form.html',
-  '/Abnormal-Working/viewer.html'
-];
-
-async function registerSW() {
-  if ('serviceWorker' in navigator) {
-    try {
-      const reg = await navigator.serviceWorker.register('/Abnormal-Working/sw.js');
-      console.log('SW registered', reg.scope);
-      if (navigator.storage && navigator.storage.persist) await navigator.storage.persist();
-    } catch (err) {
-      console.warn('SW registration failed:', err);
-    }
-  }
-}
-
+/* Single-download/offline button: best-effort for the single-file SW above */
 document.getElementById('downloadOffline').addEventListener('click', () => {
-  if (!navigator.serviceWorker.controller)
-    return alert('Please reload the page first so offline mode activates.');
-  const status = document.getElementById('downloadStatus');
-  status.textContent = 'Downloading...';
-  navigator.serviceWorker.addEventListener('message', function onMsg(e) {
-    if (e.data.type === 'DOWNLOAD_COMPLETE') {
-      status.textContent = `Ready ✅ (${e.data.ok} ok, ${e.data.fail} failed)`;
-      navigator.serviceWorker.removeEventListener('message', onMsg);
-    }
-  });
-  navigator.serviceWorker.controller.postMessage({ type: 'DOWNLOAD_OFFLINE', files: FILES });
+  if (!('serviceWorker' in navigator)) {
+    alert('Offline support is not available in this browser.');
+    return;
+  }
+  if (!navigator.serviceWorker.controller) {
+    alert('Reload the page once so the service worker controls the page; then tap "Download offline" again.');
+    return;
+  }
+  // SW precached the page on install; we simply notify the user
+  alert('This page is being cached for offline use (if supported). Check your browser’s Application/Service Worker pane for details.');
 });
 
-registerSW();
-</script>   
+
+/* ===== Improved Home → Abnormal Working flow (robust, delegation + native link) ===== */
+(function(){
+  const mainHeading = document.getElementById('mainHeading');
+  const container = document.querySelector('.block-container');
+  const SELECTION_PAGE = document.getElementById('selectionPage');
+  const BACK_BTN = document.getElementById('backBtn');
+  const SYSTEM_PAGE = document.getElementById('systemPage');
+  const systemTitle = document.getElementById('systemTitle');
+
+  const ORIGINAL_HEADER = mainHeading ? mainHeading.innerHTML : '';
+
+  // render home tiles (keeps Operating Forms as real link)
+  function showHome(){
+    if (!container) return;
+    container.innerHTML = `
+      <div class="block abs" data-action="abnormal" tabindex="0" role="button" aria-pressed="false">
+        Abnormal Working
+      </div>
+
+      <!-- Use a native anchor so browser navigation always works reliably -->
+      <a class="block auto" href="./operating-form.html" role="link" aria-label="Open Operating Forms">
+        Operating Forms
+      </a>
+    `;
+    // inside showHome() — after you rebuild the home tiles
+document.body.classList.remove('category-mode');
+
+    // reset heading & state
+    if (mainHeading) mainHeading.innerHTML = ORIGINAL_HEADER;
+    if (systemTitle) systemTitle.textContent = '';
+    window.currentCategory = null;
+
+    // hide header back button
+    if (BACK_BTN) BACK_BTN.style.display = 'none';
+  }
+
+  // render category tiles (Abnormal Working or Operating Forms category UI)
+  function showCategory(name){
+    if (!container) return;
+    container.innerHTML = `
+      <div class="block abs" data-action="select-system" data-system="Absolute Block System" tabindex="0" role="button" aria-pressed="false">
+        Absolute Block System
+      </div>
+
+      <div class="block auto" data-action="select-system" data-system="Automatic Block Section" tabindex="0" role="button" aria-pressed="false">
+        Automatic Block Section
+      </div>
+
+<div style="width:100%;text-align:center;margin-top:20px;">
+  <button class="menu-pill" type="button" data-action="back-home" aria-label="Back to home">
+    Back
+  </button>
+</div>
+    `;
+    // inside showCategory(name) — after you set the heading / before returning
+document.body.classList.add('category-mode');
+
+    // Uppercase title and keep it fixed while inside category
+    if (mainHeading) mainHeading.innerHTML = `<span>${String(name).toUpperCase()}</span>`;
+    if (systemTitle) systemTitle.textContent = `${name} — Select System`;
+    window.currentCategory = name;
+
+    // header back stays hidden; use pill back inside category
+    if (BACK_BTN) BACK_BTN.style.display = 'none';
+  }
+
+  // handle selecting an actual system (call existing selectSystem)
+  function handleSelectSystem(systemName){
+    if (typeof window.selectSystem === 'function') {
+      window.selectSystem(systemName);
+    } else {
+      document.getElementById('selectionPage').style.display = 'none';
+      document.getElementById('systemPage').style.display = 'block';
+      document.getElementById('systemTitle').textContent = systemName;
+    }
+  }
+
+  // event delegation on the container
+  container.addEventListener('click', function(ev){
+    const target = ev.target.closest('[data-action]');
+    if (!target) return;
+
+    const action = target.getAttribute('data-action');
+    if (action === 'abnormal') {
+      showCategory('Abnormal Working');
+      return;
+    }
+    if (action === 'select-system') {
+      const sys = target.getAttribute('data-system');
+      if (sys) handleSelectSystem(sys);
+      return;
+    }
+    if (action === 'back-home') {
+      showHome();
+      return;
+    }
+  });
+
+  // keyboard accessibility: treat Enter & Space on block elements same as click
+  container.addEventListener('keydown', function(ev){
+    if (ev.key !== 'Enter' && ev.key !== ' ') return;
+    const target = ev.target.closest('[data-action]');
+    if (!target) return;
+    ev.preventDefault();
+    target.click();
+  });
+
+  // expose for debugging / external use
+  window.showHome = showHome;
+  window.showCategory = showCategory;
+
+  // initialize home on load
+  document.addEventListener('DOMContentLoaded', showHome, { once: true });
+
+})();
+</script>
+
 </body>
 </html>
