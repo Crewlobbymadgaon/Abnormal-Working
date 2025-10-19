@@ -1,360 +1,564 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Operating Forms — Abnormal Working Style</title>
-  <style>
-    :root{
-      --header-height:120px;
-      --accent-blue:#1976d2;
-      --accent-green:#388e3c;
-      --bg:#f6f8fb;
-      --card:#ffffff;
-      --muted:#6b7280;
-    }
-    *,*::before,*::after{box-sizing:border-box}
-    html,body{height:100%; margin:0; font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial; background:linear-gradient(180deg,#f8fafc 0%,var(--bg) 100%); color:#0b1220; overflow-x:hidden}
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Operating Forms — Abnormal Working Style</title>
+<style>
+:root{
+  --header-height: 88px;
+  --accent-blue: #1976d2;
+  --accent-green: #388e3c;
+  --muted: #6b7280;
+  --card-font-mid: 1.6vw;
+}
 
-    /* Header */
-    header{
-      position:sticky; top:0; z-index:120; min-height:var(--header-height);
-      display:flex; align-items:center; justify-content:center;
-      background:linear-gradient(90deg,var(--accent-blue),var(--accent-green));
-      color:#fff; padding:12px; box-shadow:0 6px 18px rgba(6,20,52,0.12);
-    }
-    #mainHeading{ margin:0; font-size:clamp(1.6rem,4vw,2.2rem); font-weight:800; letter-spacing:.4px; text-align:center; padding:0 68px; }
+/* Basic page shell */
+html,body{ height:100%; margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background:#f9f9f9; color:#222; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+header{ height:var(--header-height); min-height:var(--header-height); background: linear-gradient(90deg,var(--accent-blue),var(--accent-green)); display:flex; align-items:center; justify-content:center; box-shadow:0 4px 8px rgba(0,0,0,0.15); position:sticky; top:0; z-index:110; padding:0 20px; box-sizing:border-box; }
+#mainHeading { color:#fff; margin:0; font-weight:800; text-align:center; font-size:clamp(1rem,3.0vw,1.6rem); display:flex; flex-direction:column; gap:2px; align-items:center; justify-content:center; height:100%; box-sizing:border-box; padding:10px 52px; }
 
-    .btn-circle{ position:absolute; bottom:14px; width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; border:0; cursor:pointer; box-shadow:0 6px 18px rgba(6,20,52,0.18); transition:transform .14s ease }
-    .back-btn{ left:12px; background:rgba(0,0,0,0.12) }
-    .menu-btn{ right:12px; background:rgba(0,0,0,0.12) }
-    .btn-circle svg{ width:20px; height:20px; stroke:#fff; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round }
-    .btn-circle:hover{ transform:translateY(-3px) }
+/* container & tiles */
+.card-surface{ padding:12px; max-width:980px; margin:18px auto; }
+/* --- Home Screen Blocks (Improved, White & Larger Text) --- */
+.block-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  flex-wrap: wrap;
+  margin-top: 50px;
+  padding: 0 20px;
+}
 
-    /* sticky system label below header */
-    #systemSub{ display:none; position:sticky; top:calc(var(--header-height) - 6px); z-index:110; background:transparent; padding:10px; text-align:center; }
-    #systemLabel{ display:inline-block; padding:10px 18px; border-radius:999px; font-weight:800; color:#fff; box-shadow:0 10px 28px rgba(3,10,36,0.12); min-width:200px; }
+/* Main tiles */
+.block {
+  flex: 1 1 260px;
+  max-width: 340px;
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  padding: 20px;
+  box-sizing: border-box;
+  cursor: pointer;
+  text-align: center;
+  font-weight: 900;
+  color: #fff;  /* White text */
+  font-size: clamp(24px, 4vw, 36px); /* Bigger, responsive */
+  letter-spacing: 0.5px;
+  text-transform: none;
+  text-shadow: 0 3px 12px rgba(0,0,0,0.35);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+}
 
-    main.app{ max-width:980px; margin:18px auto; padding:12px; width:100% }
-    .card-surface{ background:transparent; border-radius:14px; padding:12px; }
+/* (original gradient backgrounds — outline mode later overrides fill) */
+.block.abs { background: linear-gradient(145deg, #1976d2, #42a5f5); }
+.block.auto { background: linear-gradient(145deg, #2e7d32, #66bb6a); }
 
-    /* Home pills */
-    .pill-row{ display:flex; gap:18px; justify-content:center; margin-top:16px; flex-wrap:wrap; }
-    .pill{
-      min-width:320px; max-width:100%; padding:22px 36px; border-radius:999px; font-weight:900; color:#fff; border:0;
-      font-size:1.15rem; cursor:pointer; text-align:center; box-shadow:0 18px 40px rgba(3,10,36,0.08); transition:transform .16s ease;
-    }
-    .pill.abs{ background: linear-gradient(180deg,#1e7ad9,#0f63b8) }
-    .pill.ats{ background: linear-gradient(180deg,#3fa04a,#2e8a3a) }
-    .pill:active{ transform:translateY(1px) }
+/* Hover & focus effects */
+.block:hover, .block:focus { transform: translateY(-6px) scale(1.03); box-shadow: 0 20px 40px rgba(0,0,0,0.25); outline: none; }
+.block:active { transform: translateY(2px) scale(0.97); }
 
-    .grid{ margin-top:20px; display:grid; gap:16px; grid-template-columns:repeat(1,1fr) }
-    @media(min-width:560px){ .grid{ grid-template-columns:repeat(2,1fr) } }
-    @media(min-width:980px){ .grid{ grid-template-columns:repeat(3,1fr) } }
+/* sheen */
+.block::before { content: ""; position: absolute; left: -20%; top: -40%; width: 140%; height: 60%; transform: rotate(-18deg); background: linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0)); pointer-events: none; mix-blend-mode: overlay; }
 
-    /* Card layout */
-    .tile{
-      display:flex; flex-direction:column; gap:12px; padding:18px; border-radius:14px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(250,250,252,0.97));
-      border:1px solid rgba(14,20,30,0.03);
-      box-shadow: 0 18px 40px rgba(18,28,46,0.06);
-      text-align:center;
-      transition:transform .18s cubic-bezier(.2,.9,.2,1), box-shadow .18s ease;
-    }
-    .tile:hover{ transform:translateY(-8px); box-shadow: 0 34px 70px rgba(18,28,46,0.12) }
+/* Mobile */
+@media (max-width: 720px) { .block { min-height: 140px; font-size: clamp(20px, 5vw, 28px); } }
+@media (max-width: 420px) { .block { min-height: 120px; font-size: clamp(18px, 6vw, 24px); } }
 
-    .auth-number{ font-weight:900; font-size:1.15rem; color:#071133 }
-    .auth-desc{ color:var(--muted); font-size:0.95rem; line-height:1.35; min-height:2.6em }
+/* grid and tiles */
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:18px; margin:20px auto; max-width:980px; align-content:start; }
+.tile{ display:flex; flex-direction:column; gap:12px; padding:18px; border-radius:14px; background:linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,250,252,0.98)); border:1px solid rgba(14,20,30,0.03); box-shadow:0 18px 40px rgba(18,28,46,0.06); text-align:center; transition:transform .18s ease, box-shadow .18s ease; }
+.auth-number{ font-weight:900; font-size:1.15rem; color:#071133 }
+.auth-desc{ color:var(--muted); font-size:0.95rem; line-height:1.35; min-height:2.4em }
+.tile-actions { display:flex; justify-content:center; margin-top:6px; }
+.btn-view { padding:10px 18px; border-radius:999px; border:0; cursor:pointer; font-weight:900; color:#fff; min-width:140px; background:linear-gradient(90deg,var(--accent-blue),#0f63b8); }
+.tile.auto .btn-view, .tile.ats .btn-view { background:linear-gradient(90deg,var(--accent-green),#2e8a3a); }
 
-    .tile-actions{ display:flex; justify-content:center; align-items:center; margin-top:6px }
-    .btn-view{
-      padding:12px 22px; border-radius:999px; border:0; cursor:pointer; font-weight:900; color:#fff;
-      box-shadow: 0 12px 36px rgba(15,74,163,0.14); min-width:160px;
-      background:linear-gradient(90deg,var(--accent-blue),#0f63b8);
-    }
-    .tile.ats .btn-view{ background:linear-gradient(90deg,var(--accent-green),#2e8a3a); box-shadow:0 12px 36px rgba(46,132,50,0.12) }
+/* pills */
+.menu-pill { display:inline-flex; align-items:center; justify-content:center; padding:12px 20px; border-radius:999px; font-weight:800; color:#fff; background:var(--accent-blue); border:0; cursor:pointer; box-shadow:0 10px 30px rgba(25,118,210,0.12); }
 
-    .empty-note{ display:none }
+/* ===== Outline-only tiles (identical size & text to index) ===== */
+.block {
+  flex: 1 1 260px;
+  max-width: 340px;
+  min-height: 160px;
+  padding: 20px;
+  border-radius: 20px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    /* side menu (right) */
-    #overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.35); display:none; z-index:998 }
-    #sideMenu{ position:fixed; top:0; right:0; width:340px; height:100vh; background:#fff; box-shadow:-12px 0 40px rgba(6,20,52,0.12); transform:translateX(100%); transition:transform .28s ease; z-index:999; padding:18px; overflow:auto }
-    #sideMenu.open{ transform:translateX(0) }
+  background: transparent !important;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+  border: 3px solid rgba(0,0,0,0.06);
+  text-shadow: none !important;
 
-    .menu-header{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px }
-    .menu-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px }
-    .menu-section{ border-radius:10px; padding:8px; background:#fbfdff; border:1px solid rgba(12,18,36,0.03) }
-    .menu-system{ display:flex; align-items:center; justify-content:space-between; gap:8px; padding:10px; width:100%; text-align:left; border:0; background:transparent; cursor:pointer; font-weight:800 }
-    .menu-system:focus{ outline:2px solid rgba(25,118,210,0.12) }
+  font-size: clamp(24px, 4vw, 36px) !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  letter-spacing: 0.5px !important;
+  text-transform: none !important;
+  color: inherit !important;
 
-    .menu-forms{ display:none; flex-direction:column; gap:6px; margin-top:6px; padding-left:6px; }
-    .menu-forms button{ text-align:left; padding:8px 10px; border-radius:8px; border:0; background:transparent; cursor:pointer; font-weight:700 }
-    .menu-forms button:hover{ background:rgba(6,20,52,0.03) }
+  transition: transform .28s ease, box-shadow .28s ease;
+  position: relative;
+  overflow: visible;
+  user-select: none;
+}
+.block::before { display: none !important; }
+.block, .block * { font-size: clamp(24px, 4vw, 36px) !important; font-weight: 900 !important; line-height: 1 !important; color: inherit !important; -webkit-text-fill-color: currentColor !important; }
+.block.abs { background: transparent !important; border-color: #1976d2 !important; color: #0f4fa8 !important; }
+.block.auto { background: transparent !important; border-color: #2e7d32 !important; color: #1f6f2f !important; }
+.block:hover, .block:focus { transform: translateY(-6px) scale(1.03); box-shadow: 0 20px 40px rgba(0,0,0,0.12); outline: none; }
+@media (max-width:720px) { .block, .block * { font-size: clamp(20px, 5vw, 28px) !important; } .block { min-height: 140px; max-width: 92%; } }
+@media (max-width:420px) { .block, .block * { font-size: clamp(18px, 6vw, 24px) !important; } .block { min-height: 120px; } }
 
-    .close-menu{ border:0; background:transparent; cursor:pointer; font-weight:700; color:var(--muted) }
+.block, .block * { font-size: clamp(16px, 3.2vw, 22px) !important; font-weight: 800 !important; line-height: 1.05 !important; color: inherit !important; -webkit-text-fill-color: currentColor !important; }
 
-    @media(max-width:520px){
-      .pill{ min-width:92% }
-      .btn-view{ min-width:140px }
-      .auth-number{ font-size:1.05rem }
-      #sideMenu{ width:92%; }
-    }
-  </style>
+/* Subheader & action buttons (kept same visuals) */
+.subheader {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: #fff;
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  position: sticky;
+  top: var(--header-height);
+  z-index: 109;
+  box-sizing: border-box;
+  gap: 8px;
+  min-height: 64px;
+}
+
+/* ensure we can reliably hide/show the circular actions */
+.sub-action {
+  width: 44px;
+  height: 44px;
+  min-width:44px;
+  min-height:44px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  color: #fff;
+  background: var(--accent-blue);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+  cursor: pointer;
+  transition: transform .16s ease, box-shadow .16s ease;
+  line-height: 0;
+}
+.sub-action.menu { background: var(--accent-green); }
+.sub-action svg { width:18px; height:18px; display:block; }
+
+/* ADDED: reliable hide utility for action buttons */
+.sub-action.hidden { display: none !important; }
+
+/* absolute positioning for flows so the center remains centered */
+.subheader .back-flow { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); z-index: 12; }
+.subheader .menu-flow { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); z-index: 12; }
+
+/* centered pill: same visual height as circular buttons (~44px) */
+#systemSubInner {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:44px;               /* same visual height as circular back/menu */
+  min-width:44px;
+  padding: 0 14px;           /* small horizontal padding */
+  border-radius:999px;
+  background:#fff;           /* keep your white background */
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* title style */
+#systemTitle { font-size: 1.02rem; color:#111; font-weight:800; margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+/* other small utilities */
+#homeBackPill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: #fff;
+  background: var(--accent-blue);
+  border: 0;
+  box-shadow: 0 8px 20px rgba(25,118,210,0.12);
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease;
+  margin-top: 34px;
+}
+#homeBackPill:active { transform: translateY(1px) scale(.995); }
+
+/* overlay & side menu (left as before in your upload) */
+#overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.36); opacity: 0; pointer-events: none; transition: opacity .18s ease; z-index: 220; }
+#overlay.show { opacity:1; pointer-events:auto; }
+#sideMenu { position: fixed; right: -340px; top: 0; height: 100vh; width: 320px; max-width: 92%; background: #fff; box-shadow: -8px 0 24px rgba(0,0,0,0.18); transition: right .26s cubic-bezier(.2,.9,.2,1); z-index: 230; padding: 16px; box-sizing: border-box; display:flex; flex-direction:column; gap:12px; }
+#sideMenu.open { right: 0; }
+#sideMenu h3 { margin:0; font-size:1rem; font-weight:800; color:#111; }
+#sideMenu .close-btn { align-self:flex-end; background:transparent; border:0; font-weight:700; cursor:pointer; color:#1976d2; }
+#sideMenu .menu-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; overflow:auto; }
+#sideMenu .menu-list button { display:flex; align-items:center; gap:8px; padding:10px 12px; border-radius:10px; border:1px solid rgba(0,0,0,0.06); background:#fff; cursor:pointer; text-align:left; font-weight:700; }
+#sideMenu .menu-list button:hover { background: #f6fbff; box-shadow: 0 8px 20px rgba(25,118,210,0.06); }
+
+/* Hide legacy header back */
+#headerBack { display:none !important; }
+
+button:focus { outline: 3px solid rgba(25,118,210,0.18); outline-offset: 2px; }
+
+</style>
 </head>
 <body>
-  <header>
-    <h1 id="mainHeading">Operating Forms</h1>
+<header>
+  <!-- legacy header back (hidden) -->
+  <button id="headerBack" class="back-btn hidden" aria-hidden="true" title="Back (legacy)">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M12 5l-7 7 7 7" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
 
-    <button class="btn-circle back-btn" id="headerBack" aria-label="Back">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M12 5l-7 7 7 7" /></svg>
+  <h1 id="mainHeading">OPERATING FORMS</h1>
+</header>
+
+<!-- Subheader -->
+<div id="systemSubheader" class="subheader" style="display:none;" aria-hidden="true">
+  <div class="back-flow">
+    <button id="subBackBtn" class="sub-action hidden" aria-label="Back to systems" title="Back to systems">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M19 12H5M12 5l-7 7 7 7" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
     </button>
-
-    <button class="btn-circle menu-btn" id="openMenu" aria-label="Open menu">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v2H3zM3 11h18v2H3zM3 16h18v2H3z" /></svg>
-    </button>
-  </header>
-
-  <div id="systemSub" aria-hidden="true">
-    <div id="systemLabel" role="status" aria-live="polite"></div>
   </div>
 
-  <main class="app" role="main">
-    <div class="card-surface">
-      <!-- Home Pills -->
-      <div id="homePills">
-        <div class="pill-row">
-          <button class="pill abs" id="pillABS" data-system="Absolute Block System">Absolute Block System</button>
-          <button class="pill ats" id="pillATS" data-system="Automatic Block Section">Automatic Block Section</button>
-        </div>
-      </div>
+  <div id="systemSubInner" aria-hidden="true">
+    <div id="systemTitle" style="font-weight:800;font-size:1.05rem;color:#111"></div>
+  </div>
 
-      <!-- Forms area -->
-      <div id="formsArea" style="display:none">
-        <div id="formsGrid" class="grid" role="list"></div>
-      </div>
-    </div>
-  </main>
+  <div class="menu-flow">
+    <button id="subMenuBtn" class="sub-action menu hidden" aria-label="Open quick list" title="Open quick list">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v2H3zM3 11h18v2H3zM3 16h18v2H3z" fill="currentColor"/></svg>
+    </button>
+  </div>
+</div>
 
-  <div id="overlay" aria-hidden="true"></div>
-
-  <aside id="sideMenu" aria-hidden="true">
-    <div class="menu-header">
-      <div style="font-weight:900">Menu</div>
-      <button id="closeSide" class="close-menu" aria-label="Close menu">Close</button>
+<main class="card-surface" role="main">
+  <div id="homePills">
+    <div class="block-container" id="categoryContainer" role="list">
+      <div class="block abs" id="pillABS" data-system="Absolute Block System" tabindex="0" role="button" aria-pressed="false">Absolute Block System</div>
+      <div class="block auto" id="pillATS" data-system="Automatic Block Section" tabindex="0" role="button" aria-pressed="false">Automatic Block Section</div>
     </div>
 
-    <ul class="menu-list" role="menu" aria-label="App menu">
-      <li class="menu-section">
-        <a href="index.html" style="display:block;padding:8px 6px;text-decoration:none;color:#071133;font-weight:800">Home</a>
-      </li>
+    <!-- Home small back pill -->
+    <div style="width:100%;text-align:center;">
+      <button id="homeBackPill" type="button" aria-label="Back" style="display:inline-flex;">
+        Back
+      </button>
+    </div>
 
-      <li class="menu-section" aria-expanded="false">
-        <button class="menu-system" type="button" data-system="Absolute Block System">Operating Forms — Absolute Block System
-          <span aria-hidden="true">▸</span>
-        </button>
-        <div id="menuFormsABS" class="menu-forms" role="menu"></div>
-      </li>
+    <div style="width:100%;text-align:center;margin-top:20px;">
+      <button id="bottomBack" class="menu-pill" type="button" aria-label="Back" style="display:none;">Back</button>
+    </div>
+  </div>
 
-      <li class="menu-section" aria-expanded="false">
-        <button class="menu-system" type="button" data-system="Automatic Block Section">Operating Forms — Automatic Block Section
-          <span aria-hidden="true">▸</span>
-        </button>
-        <div id="menuFormsATS" class="menu-forms" role="menu"></div>
-      </li>
-    </ul>
-  </aside>
+  <!-- Forms area -->
+  <div id="formsArea" style="display:none; margin-top:18px;">
+    <div id="formsGrid" class="grid" role="list" aria-label="Forms list"></div>
+
+    <div style="width:100%;text-align:center;margin-top:20px;">
+      <button id="listBack" class="menu-pill" type="button" aria-label="Back to systems" style="display:none;">Back</button>
+    </div>
+  </div>
+</main>
+
+<!-- Overlay & Side menu -->
+<div id="overlay" aria-hidden="true"></div>
+<aside id="sideMenu" aria-hidden="true" role="dialog" aria-label="Quick operating forms list">
+  <button class="close-btn" id="sideCloseBtn" aria-label="Close quick list">Close</button>
+  <h3 id="sideMenuTitle">Quick forms</h3>
+  <div id="sideMenuNote" style="color:var(--muted); font-size:0.95rem;">Select a system to see its operating forms here.</div>
+  <ul class="menu-list" id="sideMenuList"></ul>
+</aside>
 
 <script>
-  /* ---------- DATA (adjust file paths as needed) ---------- */
-  const DATA = {
-    "Absolute Block System": [
-      { id: 'T/369(3b)', title:'Private Number / T/369', desc:'Use when double line signal failure — private number authority.', file:'forms/t369.png' },
-      { id: 'T/806', title:'Shunting Form T/806', desc:'Shunting authority and endorsement procedures.', file:'forms/t806.pdf' },
-      { id: 'T/510', title:'Pilot In Memo / T/510', desc:'Used for piloting trains into stations.', file:'forms/t510.pdf' }
-    ],
-    "Automatic Block Section": [
-      { id: 'T/C 1425', title:'PLCT / T/C 1425', desc:'Block instrument authority for failed signals on single line.', file:'forms/tc1425.pdf' },
-      { id: 'T/D 912', title:'Prolonged Failure / T/D 912', desc:'Authority for prolonged failure of signals.', file:'forms/td912.pdf' }
-    ]
-  };
+/* ---------- Data ---------- */
+const DATA = {
+  "Absolute Block System": [
+    { id: 'T/369(3b)', title:'Private Number / T/369', desc:'Use when double line signal failure — private number authority.', file:'forms/t369.pdf' },
+    { id: 'T/806', title:'Shunting Form T/806', desc:'Shunting authority and endorsement procedures.', file:'forms/t806.pdf' },
+    { id: 'T/510', title:'Pilot In Memo / T/510', desc:'Used for piloting trains into stations.', file:'forms/t510.pdf' }
+  ],
+  "Automatic Block Section": [
+    { id: 'T/C 1425', title:'PLCT / T/C 1425', desc:'Block instrument authority for failed signals on single line.', file:'forms/tc1425.pdf' },
+    { id: 'T/D 912', title:'Prolonged Failure / T/D 912', desc:'Authority for prolonged failure of signals.', file:'forms/td912.pdf' }
+  ]
+};
 
-  /* ---------- UI refs ---------- */
-  const pillABS = document.getElementById('pillABS');
-  const pillATS = document.getElementById('pillATS');
-  const homePills = document.getElementById('homePills');
-  const formsArea = document.getElementById('formsArea');
-  const formsGrid = document.getElementById('formsGrid');
-  const systemSub = document.getElementById('systemSub');
-  const systemLabel = document.getElementById('systemLabel');
-  const headerBack = document.getElementById('headerBack');
-  const openMenuBtn = document.getElementById('openMenu');
-  const sideMenu = document.getElementById('sideMenu');
-  const overlay = document.getElementById('overlay');
-  const closeSide = document.getElementById('closeSide');
+/* ---------- Refs ---------- */
+const categoryContainer = document.getElementById('categoryContainer');
+const pillABS = document.getElementById('pillABS');
+const pillATS = document.getElementById('pillATS');
+const homePills = document.getElementById('homePills');
+const formsArea = document.getElementById('formsArea');
+const formsGrid = document.getElementById('formsGrid');
+const bottomBack = document.getElementById('bottomBack');
+const listBack = document.getElementById('listBack');
 
-  let currentSystem = null;
+const systemSubheader = document.getElementById('systemSubheader');
+const systemTitleEl = document.getElementById('systemTitle');
+const homeBackPill = document.getElementById('homeBackPill');
+const subBackBtn = document.getElementById('subBackBtn');
+const subMenuBtn = document.getElementById('subMenuBtn');
 
-  /* ---------- Main list rendering ---------- */
-  function renderGrid(system){
-    formsGrid.innerHTML = '';
-    const arr = DATA[system] || [];
-    if (!arr.length) {
-      formsGrid.innerHTML = '<div style="grid-column:1/-1;color:var(--muted)">No forms available</div>';
-      return;
-    }
-    arr.forEach(it => {
-      const tile = document.createElement('article');
-      tile.className = 'tile' + (system.includes('Automatic') ? ' ats' : '');
-      tile.setAttribute('role','listitem');
+const overlay = document.getElementById('overlay');
+const sideMenu = document.getElementById('sideMenu');
+const sideMenuList = document.getElementById('sideMenuList');
+const sideMenuTitle = document.getElementById('sideMenuTitle');
+const sideMenuNote = document.getElementById('sideMenuNote');
+const sideCloseBtn = document.getElementById('sideCloseBtn');
 
-      const auth = document.createElement('div'); auth.className = 'auth-number'; auth.textContent = it.id;
-      const d = document.createElement('div'); d.className = 'auth-desc'; d.textContent = it.desc || '';
-      const actions = document.createElement('div'); actions.className = 'tile-actions';
-      const btn = document.createElement('button'); btn.className = 'btn-view'; btn.textContent = 'View';
-      btn.addEventListener('click', ()=> openViewer(it));
-      actions.appendChild(btn);
+let currentSystem = null;
 
-      tile.appendChild(auth); tile.appendChild(d); tile.appendChild(actions);
-      formsGrid.appendChild(tile);
-    });
+/* ---------- Helpers (robust show/hide) ---------- */
+function showSubheader(show = true, title = '') {
+  if (!systemSubheader) return;
+  if (show) {
+    systemSubheader.style.display = 'flex';
+    systemSubheader.setAttribute('aria-hidden','false');
+    if (systemTitleEl) systemTitleEl.textContent = title;
+    document.body.classList.add('has-subheader');
+  } else {
+    systemSubheader.style.display = 'none';
+    systemSubheader.setAttribute('aria-hidden','true');
+    if (systemTitleEl) systemTitleEl.textContent = '';
+    document.body.classList.remove('has-subheader');
   }
+}
+function showHomeBackPill(show = true) {
+  if (!homeBackPill) return;
+  homeBackPill.style.display = show ? 'inline-flex' : 'none';
+  homeBackPill.setAttribute('aria-hidden', String(!show));
+}
+function showSubBack(show = true) {
+  if (!subBackBtn) return;
+  // ensure both style and class updated (robust)
+  subBackBtn.classList.toggle('hidden', !show);
+  subBackBtn.style.display = show ? 'inline-flex' : 'none';
+  subBackBtn.setAttribute('aria-hidden', String(!show));
+}
+function showMenuButton(show = true) {
+  if (!subMenuBtn) return;
+  subMenuBtn.classList.toggle('hidden', !show);
+  subMenuBtn.style.display = show ? 'inline-flex' : 'none';
+  subMenuBtn.setAttribute('aria-hidden', String(!show));
+}
 
-  function selectSystem(system){
-    currentSystem = system;
-    systemLabel.textContent = system;
-    systemLabel.style.background = system.includes('Automatic') ? 'linear-gradient(90deg,var(--accent-green),#2e8a3a)' : 'linear-gradient(90deg,var(--accent-blue),#0f63b8)';
-    systemSub.style.display = 'block';
-    renderGrid(system);
-    homePills.style.display = 'none';
-    formsArea.style.display = 'block';
-    try { history.pushState({page:'list', system}, '', '?system=' + encodeURIComponent(system)); } catch(e){}
+/* ---------- Render forms grid ---------- */
+function renderGrid(system){
+  formsGrid.innerHTML = '';
+  const arr = DATA[system] || [];
+  if (!arr.length) {
+    formsGrid.innerHTML = '<div style="grid-column:1/-1;color:var(--muted)">No forms available</div>';
+    return;
   }
+  arr.forEach(it => {
+    const tile = document.createElement('article');
+    tile.className = 'tile' + (system.includes('Automatic') ? ' auto' : '');
+    tile.setAttribute('role','listitem');
 
-  [pillABS, pillATS].forEach(b => b.addEventListener('click', ()=> selectSystem(b.dataset.system)));
+    const auth = document.createElement('div'); auth.className = 'auth-number'; auth.textContent = it.id;
+    const d = document.createElement('div'); d.className = 'auth-desc'; d.textContent = it.desc || '';
+    const actions = document.createElement('div'); actions.className = 'tile-actions';
+    const btn = document.createElement('button'); btn.className = 'btn-view'; btn.textContent = 'View';
+    btn.addEventListener('click', ()=> openViewer(it));
+    actions.appendChild(btn);
 
-  headerBack.addEventListener('click', ()=>{
-    if (formsArea.style.display !== 'none'){ formsArea.style.display='none'; homePills.style.display='block'; systemSub.style.display='none'; currentSystem = null; return; }
+    tile.appendChild(auth); tile.appendChild(d); tile.appendChild(actions);
+    formsGrid.appendChild(tile);
+  });
+}
+
+/* ---------- Select system ---------- */
+function selectSystem(system){
+  currentSystem = system;
+  renderGrid(system);
+
+  // show forms, hide home tiles
+  homePills.style.display = 'none';
+  formsArea.style.display = 'block';
+
+  // show subheader and sub actions
+  showSubheader(true, system);
+  showSubBack(true);
+  showMenuButton(true);
+  showHomeBackPill(false);
+
+  // populate side menu note/title when opened later
+  sideMenuTitle.textContent = (system ? `${system} — Quick forms` : 'Quick forms');
+
+  try { history.pushState({page:'list', system}, '', '?system=' + encodeURIComponent(system)); } catch (e) {}
+}
+
+/* ---------- Back to systems ---------- */
+function goBackToSystems() {
+  currentSystem = null;
+  formsArea.style.display = 'none';
+  homePills.style.display = 'block';
+  showSubheader(false, '');
+  showSubBack(false);
+  showMenuButton(false);
+  showHomeBackPill(true);
+  closeSideMenu();
+  try { history.pushState({page:'home'}, '', location.pathname); } catch(e){}
+}
+
+/* ---------- Viewer navigation ---------- */
+function openViewer(item){
+  const q = new URLSearchParams();
+  q.set('file', item.file);
+  q.set('id', item.id);
+  q.set('system', currentSystem || '');
+  window.location.href = 'viewer.html?' + q.toString();
+}
+
+/* ---------- Wire tile clicks ---------- */
+[pillABS, pillATS].forEach(el => {
+  if (!el) return;
+  el.addEventListener('click', () => selectSystem(el.dataset.system));
+  el.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectSystem(el.dataset.system); }
+  });
+});
+
+/* ---------- home pill behaviour ---------- */
+if (homeBackPill) {
+  homeBackPill.addEventListener('click', () => {
+    // navigate back to index or previous location; change if you want a different target
     window.location.href = 'index.html';
   });
+}
 
-  /* ---------- Viewer navigation: open viewer.html with params ---------- */
-  function openViewer(item){
-    const q = new URLSearchParams();
-    q.set('file', item.file);
-    q.set('id', item.id);
-    q.set('system', currentSystem || '');
-    // close the side menu if open
-    sideMenu.classList.remove('open');
-    overlay.style.display = 'none';
-    // navigate to your viewer.html (which you uploaded)
-    window.location.href = 'viewer.html?' + q.toString();
+/* ---------- subheader back ---------- */
+if (subBackBtn) {
+  subBackBtn.addEventListener('click', goBackToSystems);
+  subBackBtn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goBackToSystems(); } });
+}
+
+/* ---------- side menu open/close & populate ---------- */
+function openSideMenu(){
+  if (!sideMenu || !overlay) return;
+  populateSideMenu();
+  sideMenu.classList.add('open');
+  sideMenu.setAttribute('aria-hidden','false');
+  overlay.classList.add('show');
+  overlay.setAttribute('aria-hidden','false');
+  // focus first menu item
+  setTimeout(()=> {
+  const closeBtn = sideMenu.querySelector('.close-btn') || document.getElementById('sideCloseBtn');
+  if (closeBtn) closeBtn.focus();
+}, 80);
+}
+function closeSideMenu(){
+  if (!sideMenu || !overlay) return;
+  sideMenu.classList.remove('open');
+  sideMenu.setAttribute('aria-hidden','true');
+  overlay.classList.remove('show');
+  overlay.setAttribute('aria-hidden','true');
+  // return focus to subMenuBtn
+  setTimeout(()=> { if (subMenuBtn) subMenuBtn.focus(); }, 40);
+}
+
+if (subMenuBtn) subMenuBtn.addEventListener('click', openSideMenu);
+if (sideCloseBtn) sideCloseBtn.addEventListener('click', closeSideMenu);
+if (overlay) overlay.addEventListener('click', closeSideMenu);
+
+function populateSideMenu() {
+  sideMenuList.innerHTML = '';
+
+  // Show main heading
+  sideMenuTitle.textContent = 'Operating Forms';
+
+  // Check for selected system
+  if (!currentSystem || !DATA[currentSystem]) {
+    sideMenuNote.style.display = 'block';
+    sideMenuNote.textContent = 'No forms available. Select a system first.';
+    return;
   }
 
-  /* ---------- Side-menu population & toggles ---------- */
-  function populateMenuForms() {
-    const absList = document.getElementById('menuFormsABS');
-    const atsList = document.getElementById('menuFormsATS');
-    if (!absList || !atsList) return;
-    absList.innerHTML = '';
-    atsList.innerHTML = '';
+  // Show system name just below heading
+  sideMenuNote.style.display = 'block';
+  sideMenuNote.style.fontWeight = '700';
+  sideMenuNote.style.fontSize = '0.95rem';
+  sideMenuNote.style.color = '#333';
+  sideMenuNote.textContent = currentSystem;
 
-    (DATA['Absolute Block System'] || []).forEach(f => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'menu-form';
-      btn.textContent = f.id;
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        // set currentSystem so viewer receives context
-        currentSystem = 'Absolute Block System';
-        openViewer(f);
-      });
-      absList.appendChild(btn);
+  const arr = DATA[currentSystem];
+
+  // Create button list (form numbers only)
+  arr.forEach(it => {
+    const liBtn = document.createElement('button');
+    liBtn.type = 'button';
+    liBtn.textContent = it.id; // only number
+    liBtn.style.textAlign = 'center';
+    liBtn.style.fontWeight = '800';
+    liBtn.style.fontSize = '1rem';
+    liBtn.style.padding = '12px';
+    liBtn.style.borderRadius = '10px';
+    liBtn.style.border = '1px solid rgba(0,0,0,0.06)';
+    liBtn.style.background = '#fff';
+    liBtn.style.cursor = 'pointer';
+    liBtn.style.transition = 'transform 0.18s ease, box-shadow 0.18s ease';
+
+    liBtn.addEventListener('mouseenter', () => {
+      liBtn.style.transform = 'translateY(-2px)';
+      liBtn.style.boxShadow = '0 10px 20px rgba(25,118,210,0.08)';
+    });
+    liBtn.addEventListener('mouseleave', () => {
+      liBtn.style.transform = 'translateY(0)';
+      liBtn.style.boxShadow = 'none';
     });
 
-    (DATA['Automatic Block Section'] || []).forEach(f => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'menu-form';
-      btn.textContent = f.id;
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        currentSystem = 'Automatic Block Section';
-        openViewer(f);
-      });
-      atsList.appendChild(btn);
+    liBtn.addEventListener('click', () => {
+      closeSideMenu();
+      openViewer(it);
     });
 
-    absList.style.display = 'none';
-    atsList.style.display = 'none';
+    sideMenuList.appendChild(liBtn);
+  });
+}
+/* ---------- popstate / deep link ---------- */
+(function initFromQuery(){
+  const q = new URLSearchParams(location.search);
+  const sys = q.get('system');
+  if (sys && DATA[sys]) {
+    setTimeout(()=> selectSystem(sys), 40);
   }
+})();
+window.addEventListener('popstate', (evt) => {
+  const s = (evt && evt.state) || {};
+  if (s && s.system && DATA[s.system]) selectSystem(s.system);
+  else goBackToSystems();
+});
 
-  function wireSystemToggles() {
-    document.querySelectorAll('.menu-system').forEach(btn => {
-      if (btn.__wired) return;
-      btn.__wired = true;
-      const sys = btn.dataset.system || '';
-      const listId = sys.includes('Absolute') ? 'menuFormsABS' : 'menuFormsATS';
-      const listEl = document.getElementById(listId);
-      if (!listEl) return;
-      btn.setAttribute('aria-expanded', 'false');
-      listEl.style.display = 'none';
-      btn.addEventListener('click', (e) => {
-        e.preventDefault(); e.stopPropagation();
-        const isOpen = listEl.style.display !== 'none';
-        // close other
-        ['menuFormsABS','menuFormsATS'].forEach(id => {
-          if (id === listId) return;
-          const other = document.getElementById(id);
-          if (other) other.style.display = 'none';
-        });
-        listEl.style.display = isOpen ? 'none' : 'flex';
-        listEl.style.flexDirection = 'column';
-        btn.setAttribute('aria-expanded', String(!isOpen));
-      });
-    });
-  }
-
-  function wireMenuOpenClose() {
-    if (openMenuBtn && !openMenuBtn.__wired) {
-      openMenuBtn.__wired = true;
-      openMenuBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const isOpen = sideMenu.classList.toggle('open');
-        overlay.style.display = isOpen ? 'block' : 'none';
-      });
-    }
-    closeSide.addEventListener('click', () => { sideMenu.classList.remove('open'); overlay.style.display = 'none'; });
-
-    // Close menu when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!sideMenu.classList.contains('open')) return;
-      if (sideMenu.contains(e.target) || (openMenuBtn && openMenuBtn.contains(e.target))) return;
-      sideMenu.classList.remove('open'); overlay.style.display = 'none';
-    }, true);
-
-    // Escape closes
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && sideMenu.classList.contains('open')) {
-        sideMenu.classList.remove('open'); overlay.style.display = 'none';
-      }
-    });
-
-    overlay.addEventListener('click', () => { sideMenu.classList.remove('open'); overlay.style.display = 'none'; });
-  }
-
-  /* ---------- Init ---------- */
-  populateMenuForms();
-  wireSystemToggles();
-  wireMenuOpenClose();
-
-  // Restore state from URL if needed
-  (function initFromQuery(){
-    const q = new URLSearchParams(location.search);
-    const sys = q.get('system');
-    if (sys && DATA[sys]) { selectSystem(sys); }
-  })();
-
+/* ---------- Init ---------- */
+document.addEventListener('DOMContentLoaded', () => {
+  // initial state: home
+  showHomeBackPill(true);
+  showSubheader(false, '');
+  showSubBack(false);
+  showMenuButton(false);
+});
 </script>
 </body>
 </html>
