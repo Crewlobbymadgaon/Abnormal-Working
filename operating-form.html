@@ -381,6 +381,46 @@ button:focus {
   outline: 3px solid rgba(25,118,210,0.18);
   outline-offset: 2px;
 }
+  /* --- Home button styling (same theme) --- */
+  #sideHomeBtn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,0.06);
+    background: #fff;
+    cursor: pointer;
+    font-weight: 800;
+    margin-bottom: 8px;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  #sideHomeBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+  }
+
+  /* --- Align “Close” button cleanly at top-right --- */
+  #sideCloseBtn {
+    align-self: flex-end;
+    margin-bottom: 4px;
+    background: transparent;
+    border: none;
+    color: var(--accent-blue);
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 14px;
+  }
+
+  /* Reserve padding at top for Close button */
+  #sideMenu {
+    position: fixed;
+    right: -340px;
+    padding-top: 48px; /* space for close btn */
+  }
 
 </style>
 </head>
@@ -842,6 +882,55 @@ document.addEventListener('DOMContentLoaded', () => {
   ro.observe(headerEl);
   if (subheader) ro.observe(subheader);
 
+})();
+
+(function(){
+  const sideMenu = document.getElementById('sideMenu');
+  const overlay = document.getElementById('overlay');
+  const subMenuBtn = document.getElementById('subMenuBtn');
+  const sideCloseBtn = document.getElementById('sideCloseBtn');
+  const headerEl = document.querySelector('header');
+  const subheader = document.getElementById('systemSubheader');
+
+  if (!sideMenu || !overlay) return;
+
+  /* ---- Add Home button at the top if missing ---- */
+  if (!document.getElementById('sideHomeBtn')) {
+    const homeBtn = document.createElement('button');
+    homeBtn.id = 'sideHomeBtn';
+    homeBtn.innerHTML = '🏠&nbsp;<span>Home</span>';
+    homeBtn.addEventListener('click', () => {
+      // close side menu first
+      if (typeof closeSideMenu === 'function') closeSideMenu();
+      else {
+        sideMenu.classList.remove('open');
+        overlay.classList.remove('show');
+      }
+      // navigate to index.html
+      setTimeout(() => location.href = 'index.html', 150);
+    });
+    sideMenu.insertBefore(homeBtn, sideMenu.firstChild);
+  }
+
+  /* ---- Adjust menu top position so it sits below header + subheader ---- */
+  function adjustSideMenuPosition(){
+    const headerH = headerEl ? Math.ceil(headerEl.getBoundingClientRect().height) : 88;
+    const subH = (subheader && getComputedStyle(subheader).display !== 'none')
+      ? Math.ceil(subheader.getBoundingClientRect().height || 64)
+      : 0;
+    const topPx = headerH + subH + 8;
+    sideMenu.style.top = topPx + 'px';
+    sideMenu.style.height = `calc(100vh - ${topPx + 12}px)`;
+  }
+
+  /* ---- Hook open/close events to update positioning ---- */
+  if (subMenuBtn) subMenuBtn.addEventListener('click', adjustSideMenuPosition);
+  if ('ResizeObserver' in window) {
+    const ro = new ResizeObserver(adjustSideMenuPosition);
+    if (headerEl) ro.observe(headerEl);
+    if (subheader) ro.observe(subheader);
+  }
+  window.addEventListener('resize', adjustSideMenuPosition, { passive: true });
 })();
 </script>
 </body>
