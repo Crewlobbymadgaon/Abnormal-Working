@@ -206,6 +206,39 @@ header {
   min-height: 64px;
 }
 .subheader[aria-hidden="true"] { border-bottom: none; box-shadow: none; }
+/* === Make main header fixed and ensure layout doesn't jump === */
+/* Put near your existing CSS (or paste into head) */
+header#mainHeaderFixed {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 400;
+  will-change: transform;
+  /* keep same visuals (if your header styles were on header element already) */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+}
+
+/* Ensure subheader sits below main header using CSS var for header height */
+.subheader.fixed-subheader {
+  position: fixed !important;
+  top: var(--header-height);
+  left: 0;
+  right: 0;
+  z-index: 390;
+}
+
+/* Spacer style (inserted by JS) */
+#mainHeaderSpacer {
+  display: block;
+  width: 100%;
+  height: var(--header-height); /* default; JS will set exact px value */
+  pointer-events: none;
+  background: transparent;
+}
+
+/* Make sure main content has no extra stacking context that would break fixed header.
+   Avoid setting overflow on parent elements of .subheader. If you do, prefer fixed approach. */
 
 /* Circular sub-actions */
 .sub-action {
@@ -695,6 +728,104 @@ document.addEventListener('DOMContentLoaded', () => {
   showSubBack(false);
   showMenuButton(false);
 });
+/*
+  Fix: Keep main header fixed and ensure subheader sits below it.
+  Usage: drop this after your existing scripts.
+*/
+(function(){
+  // Identify your existing header element (the <header> in your HTML)
+  const headerEl = document.querySelector('header');
+  if (!headerEl) return;
+
+  // Give it an explicit id/class so CSS above applies
+  headerEl.id = headerEl.id || 'mainHeaderFixed';
+
+  // Insert spacer immediately after header (to avoid content jump)
+  let spacer = document.getElementById('mainHeaderSpacer');
+  if (!spacer) {
+    spacer = document.createElement('div');
+    spacer.id = 'mainHeaderSpacer';
+    headerEl.parentNode.insertBefore(spacer, headerEl.nextSibling);
+  }
+
+  // Subheader reference (you already have one)
+  const subheader = document.getElementById('systemSubheader');
+
+  // Helper: set heights precisely using computed style
+  function updateHeights(){
+    // compute header height (include margins if any)
+    const rect = headerEl.getBoundingClientRect();
+    const headerH = Math.ceil(rect.height || parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 88);
+
+    // set CSS variable to be used by subheader top and other places
+    document.documentElement.style.setProperty('--header-height', headerH + 'px');
+
+    // set spacer height (px) so page content doesn't jump
+    spacer.style.height = headerH + 'px';
+
+    // If subheader is fixed, ensure its top remains header height
+    if (subheader && subheader.classList.contains('fixed-subheader')) {
+      subheader.style.top = headerH + 'px';
+    }
+  }
+
+  // Make subheader use fixed positioning if formsArea visible (you may already have similar logic)
+  function enableSubheaderFixed(){
+    if (!subheader) return;
+    // ensure the class present
+    subheader.classList.add('fixed-subheader');
+    // set top to header height (recomputed)
+    const headerH = Math.ceil(headerEl.getBoundingClientRect().height || parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 88);
+    subheader.style.top = headerH + 'px';
+  }
+  function disableSubheaderFixed(){
+    if (!subheader) return;
+    subheader.classList.remove('fixed-subheader');
+    subheader.style.top = '';
+  }
+
+  // Wrap existing navigation functions if available so we can enable/disable subheader appropriately
+  if (typeof window.selectSystem === 'function') {
+    const origSelect = window.selectSystem;
+    window.selectSystem = function(system){
+      const r = origSelect.apply(this, arguments);
+      // after the UI switches, ensure header/subheader are updated
+      setTimeout(()=> { updateHeights(); enableSubheaderFixed(); }, 40);
+      return r;
+    };
+  }
+
+  if (typeof window.goBackToSystems === 'function') {
+    const origBack = window.goBackToSystems;
+    window.goBackToSystems = function(){
+      const r = origBack.apply(this, arguments);
+      setTimeout(()=> { updateHeights(); disableSubheaderFixed(); }, 40);
+      return r;
+    };
+  }
+
+  // On initial load compute heights and enable/disable appropriately
+  document.addEventListener('DOMContentLoaded', () => {
+    updateHeights();
+    // If formsArea visible on load, keep subheader fixed; else not
+    const formsArea = document.getElementById('formsArea');
+    if (formsArea && window.getComputedStyle(formsArea).display !== 'none') {
+      enableSubheaderFixed();
+    } else {
+      disableSubheaderFixed();
+    }
+  });
+
+  // Recompute on resize and also on font load (to be safe)
+  window.addEventListener('resize', updateHeights, { passive:true });
+  window.addEventListener('load', updateHeights);
+
+  // Observe header size changes (if any dynamic content alters header height)
+  const ro = new ResizeObserver(updateHeights);
+  ro.observe(headerEl);
+  if (subheader) ro.observe(subheader);
+
+})();
 </script>
 </body>
 </html>
