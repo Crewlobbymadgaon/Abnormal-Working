@@ -381,47 +381,70 @@ button:focus {
   outline: 3px solid rgba(25,118,210,0.18);
   outline-offset: 2px;
 }
-  /* --- Home button styling (same theme) --- */
+  /* --- Compact side menu --- */
+  #sideMenu {
+    width: 280px;
+    max-width: 88%;
+    padding: 50px 16px 18px;
+    box-shadow: -6px 0 20px rgba(0,0,0,0.15);
+    border-left: 1px solid rgba(0,0,0,0.05);
+    border-top-left-radius: 12px;
+  }
+
+  /* --- Home button --- */
   #sideHomeBtn {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 10px 12px;
-    border-radius: 10px;
-    border: 1px solid rgba(0,0,0,0.06);
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.08);
     background: #fff;
     cursor: pointer;
-    font-weight: 800;
-    margin-bottom: 8px;
+    font-weight: 900;
+    font-size: 1.08rem;
+    margin-bottom: 12px;
     transition: transform .15s ease, box-shadow .15s ease;
   }
   #sideHomeBtn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+    box-shadow: 0 8px 16px rgba(25,118,210,0.12);
   }
 
-  /* --- Align “Close” button cleanly at top-right --- */
+  /* --- Smaller circular Close button --- */
   #sideCloseBtn {
-    align-self: flex-end;
-    margin-bottom: 4px;
-    background: transparent;
-    border: none;
-    color: var(--accent-blue);
-    font-weight: 700;
-    font-size: 0.95rem;
-    cursor: pointer;
     position: absolute;
     top: 10px;
-    right: 14px;
+    right: 12px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.85);
+    font-size: 1.05rem;
+    font-weight: bold;
+    transition: transform .25s ease, box-shadow .25s ease, color .2s ease;
+  }
+  #sideCloseBtn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 14px rgba(25,118,210,0.28);
+    color: rgba(255,255,255,0.95);
   }
 
-  /* Reserve padding at top for Close button */
-  #sideMenu {
-    position: fixed;
-    right: -340px;
-    padding-top: 48px; /* space for close btn */
+  /* ✕ symbol */
+  #sideCloseBtn::before {
+    content: "✕";
+    font-size: 1.1rem;
+    line-height: 1;
+    color: inherit;
   }
-
 </style>
 </head>
 <body>
@@ -887,32 +910,32 @@ document.addEventListener('DOMContentLoaded', () => {
 (function(){
   const sideMenu = document.getElementById('sideMenu');
   const overlay = document.getElementById('overlay');
-  const subMenuBtn = document.getElementById('subMenuBtn');
-  const sideCloseBtn = document.getElementById('sideCloseBtn');
   const headerEl = document.querySelector('header');
   const subheader = document.getElementById('systemSubheader');
+  const sideCloseBtn = document.getElementById('sideCloseBtn');
 
   if (!sideMenu || !overlay) return;
 
-  /* ---- Add Home button at the top if missing ---- */
+  /* --- Clean icon --- */
+  if (sideCloseBtn) sideCloseBtn.textContent = '';
+
+  /* --- Add Home button if missing --- */
   if (!document.getElementById('sideHomeBtn')) {
     const homeBtn = document.createElement('button');
     homeBtn.id = 'sideHomeBtn';
     homeBtn.innerHTML = '🏠&nbsp;<span>Home</span>';
     homeBtn.addEventListener('click', () => {
-      // close side menu first
       if (typeof closeSideMenu === 'function') closeSideMenu();
       else {
         sideMenu.classList.remove('open');
         overlay.classList.remove('show');
       }
-      // navigate to index.html
       setTimeout(() => location.href = 'index.html', 150);
     });
     sideMenu.insertBefore(homeBtn, sideMenu.firstChild);
   }
 
-  /* ---- Adjust menu top position so it sits below header + subheader ---- */
+  /* --- Adjust menu top position below headers --- */
   function adjustSideMenuPosition(){
     const headerH = headerEl ? Math.ceil(headerEl.getBoundingClientRect().height) : 88;
     const subH = (subheader && getComputedStyle(subheader).display !== 'none')
@@ -923,14 +946,14 @@ document.addEventListener('DOMContentLoaded', () => {
     sideMenu.style.height = `calc(100vh - ${topPx + 12}px)`;
   }
 
-  /* ---- Hook open/close events to update positioning ---- */
-  if (subMenuBtn) subMenuBtn.addEventListener('click', adjustSideMenuPosition);
+  window.addEventListener('resize', adjustSideMenuPosition, { passive:true });
   if ('ResizeObserver' in window) {
     const ro = new ResizeObserver(adjustSideMenuPosition);
     if (headerEl) ro.observe(headerEl);
     if (subheader) ro.observe(subheader);
   }
-  window.addEventListener('resize', adjustSideMenuPosition, { passive: true });
+
+  if (sideMenu.classList.contains('open')) adjustSideMenuPosition();
 })();
 </script>
 </body>
