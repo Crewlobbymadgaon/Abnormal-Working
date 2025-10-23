@@ -1623,7 +1623,11 @@ html { box-sizing: border-box; }
 
     document.getElementById('menuBtn').addEventListener('click', openMenu);
     document.getElementById('overlay').addEventListener('click', closeMenu);
-    document.getElementById('menuHomeBtn').addEventListener('click', goHomeFromMenu);
+    // Open real home page (index.html) when the side-menu Home button is clicked
+document.getElementById('menuHomeBtn').addEventListener('click', function (e) {
+  // prefer a same-origin relative navigation so it works offline / in PWA
+  window.location.href = './index.html';
+});
 
     window.selectSystem = selectSystem;
     window.goBack = goBack;
