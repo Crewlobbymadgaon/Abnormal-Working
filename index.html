@@ -992,6 +992,7 @@ html { box-sizing: border-box; }
     };
 
 
+    
     const ATS_DATA = {
       "Failure of Automatic Signal/Signals in between Stations": {
   "": "<div class='card-box'><div class='card-box'><div class='card-line'><b>Authority</b><br/><br/>No Authority</div></div><div class='card-box'><div class='card-line'><b>Speed</b><br/><br/>15 kmph, when view is clear<br/>10 kmph, when view is not clear</div></div><div class='card-box'><div class='card-line'><b>Precautions (GR/SR 9.02)</b><br/><br/><ul class='card-html left'><li>Stop at the foot of Signal</li><li>Wait for:<ul class='card-html left' style='list-style: none; margin-left:10px; padding-left:0;'><li style='list-style-type: none;'>→ 1 minute by day</li><li style='list-style-type: none;'>→ 2 minutes by night</li></ul></li><li>Ensure 'A' Marker</li><li>Blow one long whistle</li><li>Exchange signal with TMR</li><li>Follow speed restriction up to next Signal</li><li>After passing the Automatic Stop signal at ‘ON’, ensure a minimum separation of <b>150 metres</b> (or <b>two clear OHE masts</b> on electrified sections) from the preceding train/obstruction. This distance may be reduced to <b>75 metres</b> (or <b>one clear OHE mast</b>) when an EMU train is following.</li></ul></div></div></div>",
@@ -1000,13 +1001,50 @@ html { box-sizing: border-box; }
 "Prolonged Failure of Signals": {
   "": "<div class='card-box'><div class='card-box'><div class='card-line'><b>Authority</b><br/><br/>T/D 912</div></div><div class='card-box'><div class='card-line'><b>Speed</b><br/><br/>15 kmph, when view is clear<br/>10 kmph, when view is not clear</div></div><div class='card-box'><div class='card-line'><b>Precautions (GR/SR 9.02)</b><br/><br/><ul class='card-html left'><li>Stop at the foot of Signal</li><li>Wait for:<ul class='card-html left' style='list-style: none; margin-left:10px; padding-left:0;'><li style='list-style-type: none;'>→ 1 minute by day</li><li style='list-style-type: none;'>→ 2 minutes by night</li></ul></li><li>Ensure 'A' Marker</li><li>Blow one long whistle</li><li>Exchange signal with TMR</li><li>Follow speed restriction up to next Signal</li><li>After passing the Automatic Stop signal at ‘ON’, ensure a minimum separation of <b>150 metres</b> (or <b>two clear OHE masts</b> on electrified sections) from the preceding train/obstruction. This distance may be reduced to <b>75 metres</b> (or <b>one clear OHE mast</b>) when an EMU train is following.</li></ul></div></div></div>",
 },
-      "Signal Failure": {
-        "Block Instrument/Advance Starter": {
-          "Single Line": "<div class='card-box'><div class='card-line'>PLCT</div><div class='card-line'>(T/C 1425 or T/D 1425)</div></div>",
-          "Double Line":  "<div class='card-box'><div class='card-line'>T/369(3b) + PN</div></div>"
-        }
-      }
-        };
+
+"Failure of Semi-Automatic Stop Signal, When Signal is 'ON' and Illuminated 'A' marker lit": {
+  "": "<div class='card-box'><div class='card-box'><div class='card-line'><b>Authority</b><br/><br/>No Authority</div></div><div class='card-box'><div class='card-line'><b>Speed</b><br/><br/>Stop Dead<br/>15 kmph, when visibility is clear up to the next Stop Signal<br/>10 kmph, when visibility is not clear up to the next Stop Signal</div></div><div class='card-box'><div class='card-line'><b>Precautions (GR/SR 9.02)</b><br/><br/><ul class='card-html left'><li>Stop at the foot of Signal</li><li>Wait for:<ul class='card-html left' style='list-style: none; margin-left:10px; padding-left:0;'><li style='list-style-type: none;'>→ 1 minute by day</li><li style='list-style-type: none;'>→ 2 minutes by night</li></ul></li><li>Ensure 'A' Marker</li><li>Blow one long whistle</li><li>Exchange signal with TMR</li><li>Follow speed restriction up to next Signal</li><li>After passing the Automatic Stop signal at ‘ON’, ensure a minimum separation of <b>150 metres</b> (or <b>two clear OHE masts</b> on electrified sections) from the preceding train/obstruction. This distance may be reduced to <b>75 metres</b> (or <b>one clear OHE mast</b>) when an EMU train is following.</li></ul></div></div></div>",
+},
+
+"Failure of Semi-Automatic Stop Signal (Last Stop Signal), when Signal is 'ON' and Illuminated 'A' marker extinguished": {
+  "": "<div class='card-box'><div class='card-box'><div class='card-line'><b>Authority</b><br/><br/>T/369(3b)</div></div><div class='card-box'><div class='card-line'><b>Speed</b><br/><br/>Stop Dead<br/>15 kmph, when visibility is clear up to the next Stop Signal<br/>10 kmph, when visibility is not clear up to the next Stop Signal</div></div><div class='card-box'><div class='card-line'><b>Precautions</b><br/><br/>Working as Manual Signal</div></div></div>",
+},
+
+"Sending Relief Engine / Train in Automatic Section": {
+  "": "<div class='card-box'><div class='card-box'><div class='card-line'><b>Authority</b><br/><br/>T/C 912</div></div><div class='card-box'><div class='card-line'><b>Speed</b><br/><br/>15 kmph — when view is clear<br/>10 kmph — when view is not clear</div></div><div class='card-box'><div class='card-line'><b>Precautions</b><br/><br/><ul class='card-html left'><li>Starting from Wrong Line: Obtain <b>Pilot Out Memo</b>.</li><li>Stop at the specified kilometer and follow instructions of <b>TMR</b>.</li><li><b>Loco Pilot (LP)</b> to keep a sharp lookout ahead throughout the journey.</li><li>Ensure all <b>Level Crossing (LC) Gates</b> en route are properly closed before passing.</li><li>The LP shall stop at the foot of <b>FSS</b> or <b>LSS</b> (of the wrong line),</li><li>Sound one long whistle, and</li><li>Act as per the <b>Station Master’s (SM)</b> instruction.</li></ul></div></div></div>",
+},
+
+"Reporting of Rough/Slack running - Lurch in Automatic Block Section": {
+  "": "<div class='card-box'><div class='card-box'><div class='card-line'><b>Duties of LP and TMR</b><br/><br/><ul class='card-html left'><li>Stop the train in section.</li><li>Contact <b>Station Master (SM)</b> in rear and confirm for trains already left in the rear.</li><li>Do not start till the message is conveyed to the rear train LP by the <b>TMR</b> of the lurch-experienced train.</li><li>The LP of the lurch-experienced train may proceed further after giving a proper message to the LP of the rear train.</li><li>The rear train LP can pass the spot after duly ensuring safety — stop dead and pass at <b>10 kmph</b> if found safe.</li><li>The LP of the lurch-experienced first train shall report in writing at the next station.</li></ul></div></div></div>",
+},
+
+"Shunting": {
+        "Upto LSS/ First Semi-Automatic Signal": {
+          "Single Line/Double Line": "<div class='card-box'><div class='card-line'>T/806</div></div>"
+        },
+        "Beyond LSS but upto First Automatic Stop Signal": "<div class='card-box'><div class='card-line'>T/806</div><div class='card-line'>+</div><div class='card-line'>Written Memo</div><div class='card-line'>+</div><div class='card-line'>Private Number</div></div>",
+        "Beyond the First Automatic Stop Signal (Block Forward)": "<div class='card-box'><div class='card-line'>(Ensure Section is Clear)</div><br/><div class='card-line'>T/806</div><div class='card-line'>+</div><div class='card-line'>Written Memo</div><div class='card-line'>+</div><div class='card-line'>Private Number</div></div>",
+        "Shunting into the Block Section in Rear/Wrong direction (Block Back)": "<div class='card-box'><div class='card-line'>(Ensure Section is Clear)</div><br/><div class='card-line'>T/806</div><div class='card-line'>+</div><div class='card-line'>Written Memo</div><div class='card-line'>+</div><div class='card-line'>Private Number</div></div>",
+        "Note": "<div class='card-box'><div class='card-line'>SM to ensure Semi-Automatic Signal to be kept in Manual Mode</div></div>",
+       },
+       
+"Failure of Gate Stop Signal in Automatic Section (SR 9.15(2)/GR 9.02)": {
+        "Semi-Automatic Gate Stop Signal at 'ON', 'A' marker is Glowing": {
+  "": "<div class='card-box'><div class='card-line'><ul class='card-html left'><li><b>Stop Dead</b></li><li>Wait for <b>1 minute by day</b> and <b>2 minutes by night</b>.</li><li>Ensure <b>'G' marker</b> below Stop signal.</li><li>Sound one long whistle.</li><li>Exchange signal with <b>TMR</b>.</li><li>Proceed at <b>15 kmph</b> (when view is clear) or <b>10 kmph</b> (when not clear) up to the next Stop Signal.</li><li><b>LC Gate is closed</b>.</li><li>Follow procedure to pass <b>Automatic Signal at 'ON'</b>.</li></ul></div></div>",
+},
+
+"Semi-Automatic Gate Stop Signal at 'ON','A' marker is Extinguished, LC Gate is Closed and Gateman Showing Hand Signal": {
+  "": "<div class='card-box'><div class='card-line'><ul class='card-html left'><li><b>Stop Dead</b></li><li>Wait for <b>1 minute by day</b> and <b>2 minutes by night.</b></li><li>Ensure <b>'G' marker</b> below Stop signal.</li><li>Sound one long whistle.</li><li>Exchange signal with <b>TMR.</b></li><li>Proceed <b>cautiously.</b></li><li>Ensure <b>LC Gate</b> is closed or obtain <b>Hand Signal</b> from Gateman.</li><li>Proceed at <b>15 kmph</b> (when view is clear) or <b>10 kmph</b> (when not clear) up to the next Stop Signal.</li><li>Follow procedure to pass <b>Automatic Signal at 'ON'.</b></li></ul></div></div>",
+},
+
+"Semi-Automatic Gate Stop Signal at 'ON','A' marker is Extinguished, LC Gate is Open": {
+  "": "<div class='card-box'><div class='card-line'><ul class='card-html left'><li><b>Stop Dead.</b></li><li>Wait for <b>1 minute by day</b> and <b>2 minutes by night.</b></li><li>Ensure <b>'G' marker</b> below Stop signal.</li><li>Sound one long whistle.</li><li>Exchange signal with <b>TMR.</b></li><li>Proceed <b>cautiously up to LC Gate.</b></li><li>Stop <b>30 meters before the LC Gate.</b></li><li><b>ALP</b> to close the Gate, if <b>Gateman</b> is not available.</li><li>Pass the Gate cautiously and <b>stop after passing the Gate.</b></li><li><b>TMR</b> to open the Gate after the train passes.</li><li>Proceed at <b>15 kmph</b> (when view is clear) or <b>10 kmph</b> (when not clear) up to the next Stop Signal.</li><li>Follow procedure to pass <b>Automatic Signal at 'ON'.</b></li></ul></div></div>",
+},
+
+       },
+
+ };
+
 
     const data = {
       "Absolute Block System": ABS_DATA,
