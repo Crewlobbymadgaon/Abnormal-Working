@@ -3,7 +3,6 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="abnormal-working-192.png">
 <meta name="theme-color" content="#1976d2">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -246,8 +245,8 @@ header,
 .grid-item:active {
   transform: translateY(-2px) scale(0.98);
   box-shadow:
-    0 4px 8px rgba(0, 0, 0, 0.15),
-    0 10px 20px rgba(0, 0, 0, 0.18);
+    0 4px 8px rgba(0,0,0,0.15),
+    0 10px 20px rgba(0,0,0,0.18);
 }
 
 /* Remove default focus ring */
@@ -766,28 +765,34 @@ html { box-sizing: border-box; }
 
 <script>
 /* ----------------------------
-   Single-file PWA bootstrap
-   - creates manifest (Blob URL)
+   Single-file PWA bootstrap (fixed)
+   - creates manifest (Blob URL) safely (Unicode-safe base64)
    - creates service-worker (Blob URL) and registers it
-   - keeps all app logic intact below
+   - precaches current pathname + operating-form.html
    ---------------------------- */
 
 (function(){
-  // manifest icon: an inline SVG (simple BWS badge). If you have a PNG data URI replace manifestIconDataURI.
- const manifestIconSVG = `
+  // Unicode-safe base64 helper
+  function toBase64Unicode(str) {
+    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1){
+      return String.fromCharCode('0x' + p1);
+    }));
+  }
+
+  const manifestIconSVG = `
 <svg xmlns='http://www.w3.org/2000/svg' width='512' height='512' viewBox='0 0 512 512'>
   <rect width='100%' height='100%' rx='64' fill='#1976d2'/>
   <g font-family='Arial, Helvetica, sans-serif' font-weight='700' fill='#fff'>
-    <text x='50%' y='45%' dominant-baseline='middle' text-anchor='middle' font-size='64'>ABNORMAL</text>
-    <text x='50%' y='65%' dominant-baseline='middle' text-anchor='middle' font-size='64'>WORKING</text>
+    <text x='50%' y='45%' dominant-baseline='middle' text-anchor='middle' font-size='48'>ABNORMAL</text>
+    <text x='50%' y='65%' dominant-baseline='middle' text-anchor='middle' font-size='48'>WORKING</text>
   </g>
 </svg>`;
 
-  const manifestIconDataURI = 'data:image/svg+xml;base64,' + btoa(manifestIconSVG);
+  const manifestIconDataURI = 'data:image/svg+xml;base64,' + toBase64Unicode(manifestIconSVG);
 
   const manifest = {
-    name: "Block Working System",
-    short_name: "BlockSys",
+    name: "Abnormal Working & Operating Forms",
+    short_name: "AbnormalForms",
     description: "Authorities & Abnormal Working — offline reference",
     start_url: "./",
     display: "standalone",
@@ -802,25 +807,29 @@ html { box-sizing: border-box; }
   };
 
   // create manifest blob url and attach link
-  const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
-  const manifestURL = URL.createObjectURL(manifestBlob);
-  const link = document.createElement('link');
-  link.rel = 'manifest';
-  link.href = manifestURL;
-  document.head.appendChild(link);
+  try {
+    const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+    const manifestURL = URL.createObjectURL(manifestBlob);
+    const link = document.createElement('link');
+    link.rel = 'manifest';
+    link.href = manifestURL;
+    document.head.appendChild(link);
+  } catch (e) {
+    console.warn('Manifest blob creation failed', e);
+  }
 
-  // prepare service worker code as string. We'll inject the current page URL to precache.
-  const pageUrl = location.href;
+  // prepare service worker code as string. We'll inject the current page pathname to precache.
+  const pagePath = location.pathname || './';
   const swCode = `
     const CACHE_NAME = 'blocksys-singlefile-v1';
-    const PAGE_URL = ${JSON.stringify(pageUrl)};
     const PRECACHE = [
-      PAGE_URL,
-      './'
+      ${JSON.stringify(pagePath)},
+      './',
+      './operating-form.html'
     ];
     self.addEventListener('install', evt => {
       evt.waitUntil(
-        caches.open(CACHE_NAME).then(c => c.addAll(PRECACHE)).then(() => self.skipWaiting())
+        caches.open(CACHE_NAME).then(cache => cache.addAll(PRECACHE)).then(() => self.skipWaiting())
       );
     });
     self.addEventListener('activate', evt => {
@@ -833,7 +842,7 @@ html { box-sizing: border-box; }
       // navigation requests: try network, fallback to cached page
       if (req.mode === 'navigate') {
         evt.respondWith(
-          fetch(req).then(r => { return r; }).catch(() => caches.match(PAGE_URL))
+          fetch(req).then(r => { return r; }).catch(() => caches.match(${JSON.stringify(pagePath)}))
         );
         return;
       }
@@ -841,12 +850,11 @@ html { box-sizing: border-box; }
         caches.match(req).then(cached => {
           if (cached) return cached;
           return fetch(req).then(net => {
-            // cache same-origin, basic responses
             if (net && net.type === 'basic' && net.status === 200) {
               caches.open(CACHE_NAME).then(c => c.put(req, net.clone()));
             }
             return net;
-          }).catch(()=> caches.match(PAGE_URL));
+          }).catch(()=> caches.match(${JSON.stringify(pagePath)}));
         })
       );
     });
@@ -854,18 +862,21 @@ html { box-sizing: border-box; }
 
   // register service worker from a blob so everything stays in one file
   if ('serviceWorker' in navigator) {
-    const swBlob = new Blob([swCode], {type: 'application/javascript'});
-    const swUrl = URL.createObjectURL(swBlob);
-    navigator.serviceWorker.register(swUrl).then(reg => {
-      console.log('Service worker (single-file) registered at', reg.scope);
-    }).catch(err => {
-      console.warn('SW registration failed:', err);
-    });
+    try {
+      const swBlob = new Blob([swCode], {type: 'application/javascript'});
+      const swUrl = URL.createObjectURL(swBlob);
+      navigator.serviceWorker.register(swUrl).then(reg => {
+        console.log('Service worker (single-file) registered at', reg.scope);
+      }).catch(err => {
+        console.warn('SW registration failed:', err);
+      });
+    } catch (err) {
+      console.warn('SW blob creation failed', err);
+    }
   } else {
     console.warn('Service workers unsupported in this browser');
   }
 
-  // Optional: prompt for Add to Home Screen - mobile Chrome manages prompting itself.
 })();
 
 /* ----------------------------
@@ -1188,6 +1199,9 @@ html { box-sizing: border-box; }
       return out;
     }
 
+    // small counter for heading ids
+    let __authorityHeadingCounter = 0;
+
     function showAuthority(sub, direct = false) {
       let subData;
       if (direct) subData = data[currentSystem] && data[currentSystem][sub];
@@ -1199,10 +1213,13 @@ html { box-sizing: border-box; }
       let html = "";
       const shouldSuppressInnerHeading = parentVisible && (sub === "Signal Failure" || sub === "Shunting");
 
+      // create a unique heading id and set aria-labelledby on the card for screen readers
+      const headingId = 'authority-heading-' + (Date.now().toString(36)) + '-' + (__authorityHeadingCounter++);
       if (!shouldSuppressInnerHeading) {
-        html += `<div class="sub-heading sub-heading-small">${escapeHtml(sub)}</div>`;
+        html += `<div id="${headingId}" class="sub-heading sub-heading-small">${escapeHtml(sub)}</div>`;
       } else {
-        html += `<div class="sub-heading sub-heading-small hidden-subheading-spacer" aria-hidden="true"></div>`;
+        // include a visually-hidden heading to keep aria-labelledby meaningful
+        html += `<div id="${headingId}" class="sub-heading sub-heading-small hidden-subheading-spacer" aria-hidden="true"></div>`;
       }
 
       html += `<div class="card-body" tabindex="0" role="region" aria-live="polite">`;
@@ -1300,6 +1317,11 @@ html { box-sizing: border-box; }
 
       html += `</div>`;
       AUTH_CARD.innerHTML = html;
+
+      // set aria-labelledby for screen readers (use the heading id created above)
+      try {
+        AUTH_CARD.setAttribute('aria-labelledby', headingId);
+      } catch (e) {}
 
       // theme class
       AUTH_CARD.classList.remove('abs','auto');
