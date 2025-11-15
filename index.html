@@ -674,32 +674,21 @@ html { box-sizing: border-box; }
 /* Reduce sheen overlay used on home tiles so outlines stay crisp */
 .category-mode .block::before { opacity: 0.12; }
 
-/* ===== Fix: single-column for category tiles (Abnormal Working -> ABS / ATS) ===== */
-/* Applies to touch/phone devices and narrower viewports (covers Pixel 8) */
-@media (pointer: coarse), (max-width: 920px) {
-  /* Ensure category-mode layout becomes a vertical stack */
-  .category-mode .block-container {
-    flex-direction: column !important;
-    align-items: center !important;
-    gap: 14px !important;
-    margin: 0 auto !important;
-    padding: 0 14px !important;
-    max-width: 720px; /* optional cap so tiles don't stretch huge on large phones */
+/* Force single-column on touch (coarse pointer) devices — safe for phones */
+@media (pointer: coarse) {
+  .block-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    max-width: 720px;     /* optional: caps how wide tiles can grow on big phones */
+    margin: 0 auto;
+    padding: 0 12px;
   }
-
-  /* Make each category tile full width (with a sane max) */
-  .category-mode .block {
-    flex: 0 0 100% !important;
-    width: 100% !important;
-    max-width: 520px !important; /* controls how wide the tile becomes */
-    box-sizing: border-box !important;
-  }
-
-  /* Also ensure the 'Back' pill stays centered and full width on small screens */
-  .category-mode .menu-pill[data-action="back-home"] {
-    width: min(90%, 420px);
-    margin: 14px auto 0;
-    display: inline-block;
+  .block {
+    flex: 0 0 100%;
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
   }
 }
 
