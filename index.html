@@ -1122,6 +1122,92 @@ html { box-sizing: border-box; }
 },
 
        },
+      
+"TSL Working": {
+"Wrong Direction":
+  "<div class='card-box'><div class='card-line'><b>Authority</b><br/><br/>T/E 912</div></div>" +
+
+  "<div class='card-box'><div class='card-line'><b>Speed</b><br/><br/>" +
+    "<ul class='card-html left'>" +
+      "<li><b>First Train</b> – 25 kmph</li>" +
+      "<li><b>Subsequent Trains</b> – Sectional Speed</li>" +
+      "<li><b>At every change of direction, the First Train</b> – 25 kmph</li>" +
+    "</ul>" +
+  "</div></div>" +
+
+  "<div class='card-box'><div class='card-line'><b>Precautions</b><br/><br/>" +
+    "<ul class='card-html left'>" +
+      "<li>Issue <b>Pilot Out Memo</b></li>" +
+      "<li>Switch ON flasher light</li>" +
+      "<li>Whistle freely</li>" +
+      "<li>Stop at Opposite LSS / Adjacent FSS of the receiving station</li>" +
+      "<li>Sound one long whistle</li>" +
+      "<li>Train will be received on <b>T/510</b></li>" +
+      "<li>All trains will run with proper Line Clear</li>" +
+    "</ul>" +
+  "</div></div>",
+
+  "Right Direction":
+  "<div class='card-box'><div class='card-line'><b>Authority</b><br/><br/>T/E 912</div></div>" +
+
+  "<div class='card-box'><div class='card-line'><b>Speed</b><br/><br/>" +
+    "<ul class='card-html left'>" +
+      "<li><b>First Train</b> – 25 kmph</li>" +
+      "<li><b>Subsequent Trains</b> – Sectional Speed following signal aspects</li>" +
+      "<li><b>At every change of direction, the First Train</b> – 25 kmph</li>" +
+    "</ul>" +
+  "</div></div>" +
+
+  "<div class='card-box'><div class='card-line'><b>Precautions</b><br/><br/>" +
+    "<ul class='card-html left'>" +
+      "<li>Starter / manually operated Gate Stop Signals – hand-signalled</li>" +
+      "<li>Train admitted on signal or on <b>T/369(3b)</b></li>" +
+      "<li>Each First Train on Right Line will run on Line Clear</li>" +
+      "<li>Subsequent trains will follow signal aspects</li>" +
+    "</ul>" +
+  "</div></div>"
+
+},
+
+"TIC on Double Line": {
+  "": 
+    "<div class='card-box'><div class='card-line'><b>Authority</b><br/><br/>T/B 912</div></div>" +
+
+    "<div class='card-box'><div class='card-line'><b>Speed</b><br/><br/>" +
+      "<ul class='card-html left'>" +
+        "<li>15 kmph when view is clear</li>" +
+        "<li>10 kmph when view is not clear</li>" +
+        "<li>Facing Points – 15 kmph</li>" +
+      "</ul>" +
+    "</div></div>" +
+
+    "<div class='card-box'><div class='card-line'><b>Precautions</b><br/><br/>" +
+      "<ul class='card-html left'>" +
+        "<li>Tunnel should be piloted</li>" +
+        "<li>Protection: 250 + 250 + 10 metres</li>" +
+        "<li>Following train at an interval of 25 minutes</li>" +
+        "<li>Stop at FSS; train will be received on T/369(3b)</li>" +
+      "</ul>" +
+    "</div></div>"
+
+},
+
+
+
+
+"TIC in TSL": {
+  "Opening Communication, either on Wrong line or Right line": "<div class='card-box'><div class='card-box'><div class='card-line'><b>Authority</b><br/><br/>T/B 602 + T/A 912</div></div><div class='card-box'><div class='card-line'><b>Speed</b><br/><br/>15/10/Walking Speed</div></div><div class='card-box'><div class='card-line'><b>Precautions</b><br/><br/>Follow the Procedures for TIC on Single Line of Automatic Block System(SR 9.12(4) Unified SR)</div></div></div>",
+
+  "For Train movements on Conditional Line Clear Ticket (either Wrong Line or Right Line)":
+  "<div class='card-box'><div class='card-box'><div class='card-line'><b>Authority</b><br/><br/>T/G 602 or T/H 602</div><div class='card-line'>+</div><div class='card-line'>T/A 912</div></div>   <div class='card-box'><div class='card-line'><b>Speed</b><br/><br/>         <div class='card-box'><div class='card-line'><i>Uneven Flow</i></div><ul class='card-html left'><li>First Train - Booked Speed</li><li>Second and Subsequent Trains - 25/10 kmph, after an interval of 30 minutes</li></ul></div>  <div class='card-box'><div class='card-line'><i>Even Flow</i></div><ul class='card-html left'><li>All Trains - Normal Speed</li></ul></div></div></div><div class='card-box'><div class='card-line'><b>Precautions</b><br/><br/>Follow the procedure for TIC on Single Line of Automatic Block System in case of even flow/uneven flow (USR 9.12(4)</div></div><div class='card-box'><div class='card-line'><b>Protection</b><br/><br/>250+250+10 meters</div></div><div class='card-box'><div class='card-line'><b>Reception</b><br/><br/><ul class='card-html left'><li><i>On Wrong Line</i> - Stop at the Opposite FSS or LSS of the receiving Station and the Train will then be 'Piloted In'</li><li><i>On Right Line</i> - The approach signal may be taken off</li></ul></div></div><div class='card-box'><div class='card-line'><b>NOTE</b><br/><br/>Whenever Trains are dealt on the Wrong Line, <b>Pilot Out</b> will be done using <b>T/511</b> or <b>Pilot Out Memo</b>, and <b>Pilot In</b> at the receiving station will be done using <b>T/510</b></div></div></div>"
+
+},
+
+
+     "Engine Push back in Automatic Section (G&SR 9.13)": {
+        "": "<div class='card-box'><b>Engine Pushing is Prohibited in Automatic Section, However in an Emergency following points to be kept in mind :</><ul class='card-html left'><li>Inform Station Master in rear/Section Controller</li><li>Permission shall be given by SM in rear to push back the train</li><li>SM in rear can give the permission, provided no train has been started in behind</li><li>The Permission shall be message supported by Private Number and ensure that LC Gates are closed</li><li>Speed during Push backing shall be with great caution not exceeding 10 kmph</li></ul></div>",
+
+},
 
  };
 
