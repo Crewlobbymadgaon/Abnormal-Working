@@ -1263,8 +1263,174 @@ html { box-sizing: border-box; }
     "</table>" +
   "</div>"
     ,
-      "Local Circulars": "<div class='card-box'><div class='card-line'>Circular 01/2025 - Entry procedures</div></div>",
-      "Emergency Contacts": "<div class='card-box'><div class='card-line'>Station Master: 0123456789</div><div class='card-line'>Control Room: 0987654321</div></div>"
+      "Target Time for turning out of Self Propelled Accident Relief Medical Van (SPARMV)":
+  "<div class='card-box'>" +
+    "<table style='width:100%; border-collapse:collapse; font-size:0.95rem;'>" +
+      "<tr>" +
+        "<td style='padding:8px; border-bottom:4px solid #ddd; text-align:center;'>" +
+          "<div class='card-line'>In case of <b>Double Exit Siding</b></div>" +
+        "</td>" +
+      "</tr>" +
+      "<tr>" +
+        "<td style='padding:8px;'>" +
+          "<div class='card-line'><b>15 minutes</b><br/>(maximum time for despatch)</div>" +
+        "</td>" +
+      "</tr>" +
+    "</table>" +
+  "</div>" +
+
+  "<div class='card-box'>" +
+    "<table style='width:100%; border-collapse:collapse; font-size:0.95rem;'>" +
+      "<tr>" +
+        "<td style='padding:8px; border-bottom:4px solid #ddd; text-align:center;'>" +
+          "<div class='card-line'>In case of <b>Single Exit Siding</b></div>" +
+        "</td>" +
+      "</tr>" +
+      "<tr>" +
+        "<td style='padding:8px;'>" +
+          "<div class='card-line'><b>20 minutes</b><br/>(maximum time for despatch)</div>" +
+        "</td>" +
+      "</tr>" +
+    "</table>" +
+  "</div>",
+  
+  
+"Target Time for Movement of Accident Relief Train (ART)":
+  "<div class='card-box'>" +
+    "<table style='width:100%; border-collapse:collapse; font-size:0.95rem;'>" +
+      "<tr>" +
+        "<td style='padding:8px; border-bottom:4px solid #ddd; text-align:center;'>" +
+          "<div class='card-line'>During <b>Day</b></div>" +
+        "</td>" +
+      "</tr>" +
+      "<tr>" +
+        "<td style='padding:8px;'>" +
+          "<div class='card-line'><b>30 minutes</b><br/>(maximum time for despatch)</div>" +
+        "</td>" +
+      "</tr>" +
+    "</table>" +
+  "</div>" +
+
+  "<div class='card-box'>" +
+    "<table style='width:100%; border-collapse:collapse; font-size:0.95rem;'>" +
+      "<tr>" +
+        "<td style='padding:8px; border-bottom:4px solid #ddd; text-align:center;'>" +
+          "<div class='card-line'>During <b>Night</b></div>" +
+        "</td>" +
+      "</tr>" +
+      "<tr>" +
+        "<td style='padding:8px;'>" +
+          "<div class='card-line'><b>45 minutes</b><br/>(maximum time for despatch)</div>" +
+        "</td>" +
+      "</tr>" +
+    "</table>" +
+  "</div>",
+  
+  "Important Duties of Loco Pilot and Assistant Loco Pilot in case of an Accident": {
+
+  "At the time of an accident, the Loco Pilot and Assistant Loco Pilot must immediately":
+    "<div class='card-box'><ul class='card-html left'>" +
+      "<li>Switch ON the flasher light and switch OFF the headlight of the engine.</li>" +
+      "<li>Sound short whistles frequently to warn the LP of an approaching train.</li>" +
+      "<li>Arrange to protect the adjacent line and then the same line, in accordance with <b>GR 6.03</b> and <b>SR 6.03(1)</b>. Information should be exchanged with the TMR using walkie-talkie or any other available means.</li>" +
+      "<li>Arrange to advise the Controller and adjacent stations about the accident using the available means of communication.</li>" +
+      "<li>Take such technical precautions as may be necessary, or as prescribed by Special Instructions, to make the train safe.</li>" +
+      "<li>Render all possible assistance to the TMR, particularly in the assessment of damage to rolling stock and/or locomotive and in determining the nature of assistance required.</li>" +
+    "</ul></div>",
+
+
+  "Derailment or any other serious consequence due to suspected sabotage":
+    "<div class='card-box'><ul class='card-html left'>" +
+      "<li>Protect the train.</li>" +
+      "<li>Report the accident to adjacent stations and the Control Office.</li>" +
+      "<li>Render first aid to the injured.</li>" +
+      "<li>Examine the track carefully, jointly with responsible passengers, and record the results of the examination. Obtain their signatures on the record.</li>" +
+      "<li>Ensure that portions of the track, rails, fishplates, bolts, or other fittings that appear to have been tampered with are not touched or moved by anyone. These must be closely protected until the arrival of Civil and Police Authorities.</li>" +
+    "</ul></div>"
+
+},
+
+
+"Protection": {
+
+  "One Detonator":
+    "<div class='card-box'><ul class='card-html left'>" +
+      "<li>For testing of the detonator.</li>" +
+      "<li>During emergency, when no sufficient time is available.</li>" +
+    "</ul></div>",
+
+
+  "Three Detonators":
+    "<div class='card-box'><ul class='card-html left'>" +
+      "<li>To protect the train in <b>Automatic Section</b><br/>(90 + 90 + 10 metres)</li>" +
+      "<li>During <b>All Communication Failure (ACF)</b><br/>(250 + 250 + 10 metres)</li>" +
+      "<li>During <b>Engineering Block</b><br/>(Banner flag at 600 metres from obstruction, and 3 detonators at 600 + 10 + 10 metres from banner flag)</li>" +
+    "</ul></div>",
+
+
+  "Four Detonators":
+    "<div class='card-box'><ul class='card-html left'>" +
+      "<li>Normal protection of the train on <b>Single Line</b><br/>(600 + 600 + 600 + 10 metres)</li>" +
+      "<li>Normal protection of the train on <b>Double Line</b><br/>(600 + 600 + 600 + 10 metres)</li>" +
+      "<li>Adjacent line protection on <b>Double Line</b><br/>(600 + 600 + 600 + 10 metres)</li>" +
+      "<li>In <b>Automatic Section</b>, when the adjacent line is obstructed<br/>(600 + 600 + 600 + 10 metres)</li>" +
+    "</ul></div>"
+
+},
+
+"Duties of Loco Pilot in case of Detonator(s) burst (GR 3.78)": {
+
+  "":
+    "<div class='card-box'><ul class='card-html left'>" +
+      "<li>Reduce speed and ensure the train is under full control, ready to stop short of any obstruction.</li>" +
+      "<li>Note down the kilometre number, section, and time of the detonator burst.</li>" +
+      "<li>Whistle intermittently to warn staff.</li>" +
+      "<li>Follow the instructions of the staff who placed the detonator(s).</li>" +
+      "<li>If no staff is available, proceed cautiously up to <b>1.5 kilometres</b>. If no abnormality is noticed, pick up normal speed thereafter.</li>" +
+      "<li>Report the incident to the next station without fail.</li>" +
+    "</ul></div>"
+
+},
+
+"Duties of Loco Pilot in case of Foggy and Tempestuous weather": {
+
+  "":
+    "<div class='card-box'><ul class='card-html left'>" +
+      "<li>The Loco Pilot shall whistle frequently to warn the Gateman and road users while approaching LC gates.</li>" +
+      "<li>The Loco Pilot shall not exceed <b>60 kmph</b> if the Fog Signal Device is not provided or is not functioning, and shall not exceed <b>75 kmph</b> if the Fog Signal Device is provided and functioning.</li>" +
+      "<li>When visibility is impaired, the Loco Pilot shall use discretion and be prepared to stop short of any obstruction.</li>" +
+    "</ul></div>"
+
+},
+
+"Duties and Responsibilities of Loco Pilot in case of OHE failure (SR 17.09)": {
+
+  "SM shall issue Caution Order of 60 kmph during day and 30 kmph during night for the first train on healthy section":
+    "<div class='card-box'>" +
+      "<div class='card-line'><b>Duties of LP in case of abnormality on electric traction or when the train is stopped in the section</b></div>" +
+      "<div class='card-box'><ul class='card-html left'>" +
+        "<li>After receiving details of the abnormality, the decision regarding recharging of OHE shall be taken jointly by SCOR/DyCHC and TPC.</li>" +
+        "<li>If no defect is reported by the LP, then after resumption of OHE supply, the LP shall be instructed by the Controller to clear the section at <b>60 kmph (day) / 30 kmph (night)</b> with a sharp lookout for any abnormality on the train. <br/>For Ro-Ro trains, the speed shall not exceed <b>40 kmph</b> both during day and night.</li>" +
+        "<li>At the next station, the train shall be examined by TRD staff, SM, and TMR. If no abnormality is found, the train may resume normal speed.</li>" +
+      "</ul></div>" +
+    "</div>",
+
+
+  "":
+    "<div class='card-box'>" +
+      "<div class='card-line'><b>Duties of LP in case of OHE tripping / No tension:</b></div>" +
+      "<div class='card-box'><ul class='card-html left'>" +
+        "<li>Inform TPC / SCOR / DyCHC immediately.</li>" +
+        "<li>In case of <b>transient tripping</b>, resume normal traction but maintain a sharp lookout.</li>" +
+        "<li>Inform TMR about the OHE tripping and instruct him to maintain a sharp lookout.</li>" +
+        "<li>In case of <b>No Tension</b>, switch ON the flasher light and control the speed up to <b>60 kmph</b>. Be prepared to stop short of any obstruction and stop close to the emergency socket. Contact Control.</li>" +
+        "<li>If Control cannot be contacted, send the ALP with the TMR to examine the train.</li>" +
+        "<li>After the train has been checked, TMR/LP shall inform SCOR regarding any abnormality detected.</li>" +
+        "<li>If OHE supply is restored, the LP shall resume normal traction.</li>" +
+      "</ul></div>" +
+    "</div>"
+
+}
     };
 
     const data = {
