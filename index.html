@@ -94,6 +94,38 @@ header,
   opacity: 0.9;
 }
 
+
+
+
+/* Make the main heading single-line on tablet/desktop */
+@media (min-width: 720px) {
+  header { height: var(--header-height); min-height: var(--header-height); } /* keep header height stable */
+
+  #mainHeading {
+    flex-direction: row;        /* put spans in one row */
+    gap: 10px;                  /* small gap between words */
+    white-space: nowrap;        /* prevent wrapping */
+    align-items: center;        /* vertical align */
+    justify-content: center;    /* horizontal centering */
+    font-size: clamp(1rem, 1.6vw, 1.25rem); /* slightly smaller on large screens so it fits */
+    line-height: 1;             /* tighten line-height for single-line layout */
+    padding: 0 12px;            /* small horizontal padding to avoid clipping */
+  }
+
+  #mainHeading span {
+    display: inline-block;      /* keep each span inline so the whole title stays on one line */
+    vertical-align: middle;
+    padding: 0 6px;             /* breathing room between title parts */
+  }
+
+  /* keep the ampersand slightly less prominent */
+  #mainHeading span:nth-child(2) {
+    font-size: 0.95em;
+    opacity: 0.95;
+  }
+}
+
+
 /* small helper */
 .nowrap { white-space: nowrap; }
 
@@ -161,6 +193,10 @@ header,
 }
 .block.auto {
   background: linear-gradient(145deg, #2e7d32, #66bb6a);
+}
+/* New: Miscellaneous tile styling */
+.block.misc {
+  background: linear-gradient(145deg, #6a1b9a, #8e24aa);
 }
 
 /* Hover & focus effects */
@@ -290,6 +326,7 @@ html { box-sizing: border-box; }
 }
 #authorityCard.abs::before { background: #1976d2; }
 #authorityCard.auto::before { background: #388e3c; }
+#authorityCard.misc::before { background: #8e24aa; } /* purple accent for misc */
 
 #authorityCard .sub-heading {
   position: sticky;
@@ -646,6 +683,11 @@ html { box-sizing: border-box; }
   color: #1f6f2f !important;             /* green-ish label color */
   background: #fff !important;
 }
+.category-mode .block.misc {
+  border-color: #8e24aa;                 /* purple outline */
+  color: #5e1288 !important;
+  background: #fff !important;
+}
 
 /* Hover: subtle tinted wash, keep mostly outline-only */
 .category-mode .block.abs:hover,
@@ -660,6 +702,13 @@ html { box-sizing: border-box; }
   background: rgba(46,125,50,0.04);      /* very light green wash on hover */
   border-color: #2e7d32;
   box-shadow: 0 10px 30px rgba(56,142,60,0.08);
+  transform: translateY(-4px) scale(1.01);
+}
+.category-mode .block.misc:hover,
+.category-mode .block.misc:focus {
+  background: rgba(142,36,170,0.04);      /* very light purple wash on hover */
+  border-color: #8e24aa;
+  box-shadow: 0 10px 30px rgba(142,36,170,0.06);
   transform: translateY(-4px) scale(1.01);
 }
 
@@ -794,7 +843,7 @@ html { box-sizing: border-box; }
 (function(){
   // Unicode-safe base64 helper
   function toBase64Unicode(str) {
-    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1){
+    return btoa(encodeURIComponent(str).replace(/%([0-9-A-F]{2})/g, function(match, p1){
       return String.fromCharCode('0x' + p1);
     }));
   }
@@ -1077,9 +1126,20 @@ html { box-sizing: border-box; }
  };
 
 
+    /* ------------------------------
+       NEW: Miscellaneous data object (placeholder entries)
+       Replace with real content as needed.
+       ------------------------------ */
+    const MISC_DATA = {
+      "General Notes": "<div class='card-box'><div class='card-line'>Use this section for ad-hoc procedures, clarifications and local instructions.</div></div>",
+      "Local Circulars": "<div class='card-box'><div class='card-line'>Circular 01/2025 - Entry procedures</div></div>",
+      "Emergency Contacts": "<div class='card-box'><div class='card-line'>Station Master: 0123456789</div><div class='card-line'>Control Room: 0987654321</div></div>"
+    };
+
     const data = {
       "Absolute Block System": ABS_DATA,
-      "Automatic Block Section": ATS_DATA
+      "Automatic Block Section": ATS_DATA,
+      "Miscellaneous": MISC_DATA
     };
 
     const BACK_BTN = document.querySelector('.back-btn');
@@ -1344,9 +1404,10 @@ html { box-sizing: border-box; }
       } catch (e) {}
 
       // theme class
-      AUTH_CARD.classList.remove('abs','auto');
+      AUTH_CARD.classList.remove('abs','auto','misc');
       if (currentSystem === "Absolute Block System") AUTH_CARD.classList.add('abs');
       else if (currentSystem === "Automatic Block Section") AUTH_CARD.classList.add('auto');
+      else if (currentSystem === "Miscellaneous") AUTH_CARD.classList.add('misc');
 
       // show dialog safely and mark background inert
       AUTH_CARD.style.flexDirection = 'column';
@@ -1821,6 +1882,10 @@ document.body.classList.remove('category-mode');
 
       <div class="block auto" data-action="select-system" data-system="Automatic Block Section" tabindex="0" role="button" aria-pressed="false">
         Automatic Block Section
+      </div>
+
+      <div class="block misc" data-action="select-system" data-system="Miscellaneous" tabindex="0" role="button" aria-pressed="false">
+        Miscellaneous
       </div>
 
 <div style="width:100%;text-align:center;margin-top:20px;">
