@@ -1616,7 +1616,11 @@ html { box-sizing: border-box; }
         currentCircumstance = circ;
   if (window.__pushSubmenuState) window.__pushSubmenuState(circ);
 
-      if (circ === "Signal Failure" || circ === "Shunting") { setParentHeading(circ); } else { setParentHeading(null); }
+      if (circ === "Signal Failure" || circ === "Shunting" || circ === "Tunnel Working") {
+  setParentHeading(circ);
+} else {
+  setParentHeading(null);
+}
       const subData = data[currentSystem] && data[currentSystem][circ];
       if ( circ === "TIC on Single Line" || circ === "TIC on Double Line" || !subData || typeof subData !== "object" || isLeafObject(subData) ) {
         openedFromSubmenu = false; showAuthority(circ, true); return;
