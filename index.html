@@ -752,6 +752,57 @@ html { box-sizing: border-box; }
     text-indent: -20px; /* makes number hang left */
     line-height: 1.4;
 }
+/* Hanging-number authority list: numbers in their own aligned column,
+   wrapped text aligns with the text (not under the number). */
+#authorityCard .authority-list,
+.card-html.left .authority-list {
+  list-style: none !important;
+  margin: 8px 0 !important;
+  padding-left: 44px !important;        /* room for the number column */
+  counter-reset: authority-item;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+/* Each item: create the number in a fixed column using ::before */
+#authorityCard .authority-list li,
+.card-html.left .authority-list li {
+  position: relative;
+  margin: 8px 0 !important;
+  padding: 0 !important;                /* we use padding-left on parent */
+  counter-increment: authority-item;
+  text-indent: 0;
+  /* keep normal flow for multi-line wrap (wrap will start after the parent padding) */
+}
+
+/* number column */
+#authorityCard .authority-list li::before,
+.card-html.left .authority-list li::before {
+  content: counter(authority-item) ".";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 38px;           /* fixes the number column width */
+  min-width: 38px;
+  text-align: right;     /* aligns single- and multi-digit numbers nicely */
+  font-weight: 700;
+  color: #111;
+  line-height: 1.35;
+  /* if you want smaller number on mobile, you can change font-size using media queries */
+}
+
+/* Ensure nested .card-html.left rules don't override us on small screens */
+@media (max-width: 420px) {
+  #authorityCard .authority-list,
+  .card-html.left .authority-list {
+    padding-left: 44px !important;
+  }
+  #authorityCard .authority-list li::before,
+  .card-html.left .authority-list li::before {
+    width: 34px;
+    min-width: 34px;
+  }
+}
 
 
 </style>
