@@ -1187,52 +1187,95 @@ html { box-sizing: border-box; }
 
        },
       
-"TSL Working": {
-"Wrong Direction":
-  "<div class='card-box'>"+"<div class='card-box'><div class='card-line'><b>Authority</b><br/><br/>T/E 912</div></div>" +
+"TSL Working - SR 9.12(3)": {
 
-  "<div class='card-box'><div class='card-line'><b>Speed</b><br/><br/>" +
-    "<ul class='card-html left'>" +
-      "<li><b>First Train</b> – 25 kmph</li>" +
-      "<li><b>Subsequent Trains</b> – Sectional Speed</li>" +
-      "<li><b>At every change of direction, the First Train</b> – 25 kmph</li>" +
-    "</ul>" +
-  "</div></div>" +
+  "Wrong Direction":
+    "<div class='card-box'>" +
 
-  "<div class='card-box'><div class='card-line'><b>Precautions</b><br/><br/>" +
-    "<ul class='card-html left'>" +
-      "<li>Issue <b>Pilot Out Memo</b></li>" +
-      "<li>Switch ON flasher light</li>" +
-      "<li>Whistle freely</li>" +
-      "<li>Stop at Opposite LSS / Adjacent FSS of the receiving station</li>" +
-      "<li>Sound one long whistle</li>" +
-      "<li>Train will be received on <b>T/510</b></li>" +
-      "<li>All trains will run with proper Line Clear</li>" +
-    "</ul>" +
-  "</div></div></div>",
+      "<div class='card-box'>" +
+        "<div class='card-line'><b>Authority</b><br/><br/>T/E 912 (3 parts)</div>" +
+        "<div class='card-box'>" +
+          "<ul class='card-html left authority-list'>" +
+            "<li>1. Line Clear Ticket</li>" +
+            "<li>2. Authority to pass signals in 'ON' position on Wrong Line with Caution Order</li>" +
+            "<li>3. Authority to pass signals in 'ON' position on Right Line with Caution Order</li>" +
+          "</ul>" +
+        "</div>" +
+      "</div>" +
+
+      "<div class='card-box'><div class='card-line'><b>Speed</b><br/><br/></div>" +
+        "<ul class='card-html left'>" +
+          "<li><b>First Train</b> – 25 kmph</li>" +
+          "<li><b>Subsequent Trains</b> – Sectional Speed</li>" +
+          "<li>At every change of direction, the <b>First Train</b> – 25 kmph</li>" +
+          "<li>Over facing points – 15 kmph</li>" +
+        "</ul>" +
+      "</div>" +
+
+      "<div class='card-box'><div class='card-line'><b>Precautions</b><br/><br/></div>" +
+        "<ul class='card-html left'>" +
+          "<li>Train will be Pilot Out.</li>" +
+          "<li>Ensure hand-signals at points and LC gates before passing.</li>" +
+          "<li>If First Train — switch ON flasher light and inform all Gatemen and Gangmen en route.</li>" +
+          "<li>Whistle freely.</li>" +
+          "<li>Cautiously pass LC gates only after ensuring they are properly closed.</li>" +
+          "<li>Stop at the Opposite FSS of the correct line or the LSS of the wrong line at the receiving station.</li>" +
+          "<li>Sound one long whistle.</li>" +
+          "<li>Train will be received on <b>T/510</b>.</li>" +
+          "<li>All trains will run with proper Line Clear.</li>" +
+        "</ul>" +
+      "</div>" +
+
+    "</div>",
+
 
   "Right Direction":
-  "<div class='card-box'>"+"<div class='card-box'><div class='card-line'><b>Authority</b><br/><br/>T/E 912</div></div>" +
+    "<div class='card-box'>" +
 
-  "<div class='card-box'><div class='card-line'><b>Speed</b><br/><br/>" +
-    "<ul class='card-html left'>" +
-      "<li><b>First Train</b> – 25 kmph</li>" +
-      "<li><b>Subsequent Trains</b> – Sectional Speed following signal aspects</li>" +
-      "<li><b>At every change of direction, the First Train</b> – 25 kmph</li>" +
-    "</ul>" +
-  "</div></div>" +
+      "<div class='card-box'>" +
+        "<div class='card-line'><b>Authority</b><br/><br/>T/E 912 (3 parts)</div>" +
+        "<div class='card-box'>" +
+          "<ul class='card-html left authority-list'>" +
+            "<li>1. Line Clear Ticket</li>" +
+            "<li>2. Authority to pass signals in 'ON' position on Wrong Line with Caution Order</li>" +
+            "<li>3. Authority to pass signals in 'ON' position on Right Line with Caution Order</li>" +
+          "</ul>" +
+        "</div>" +
+      "</div>" +
 
-  "<div class='card-box'><div class='card-line'><b>Precautions</b><br/><br/>" +
-    "<ul class='card-html left'>" +
-      "<li>Starter / manually operated Gate Stop Signals – hand-signalled</li>" +
-      "<li>Train admitted on signal or on <b>T/369(3b)</b></li>" +
-      "<li>Each First Train on Right Line will run on Line Clear</li>" +
-      "<li>Subsequent trains will follow signal aspects</li>" +
-    "</ul>" +
-  "</div></div></div>"
+      "<div class='card-box'><div class='card-line'><b>Speed</b><br/><br/></div>" +
+        "<ul class='card-html left'>" +
+          "<li><b>First Train</b> – 25 kmph</li>" +
+          "<li><b>Subsequent Trains</b> – Sectional Speed following signal aspects</li>" +
+          "<li>At every change of direction, the <b>First Train</b> – 25 kmph</li>" +
+          "<li>Over facing points – 15 kmph</li>" +
+        "</ul>" +
+      "</div>" +
 
+      "<div class='card-box'><div class='card-line'><b>Precautions</b><br/><br/></div>" +
+        "<ul class='card-html left'>" +
+
+          "<li><b>For First Train:</b></li>" +
+          "<ul class='card-html left'>" +
+            "<li>Pass Departure signals and all intervening Automatic signals between stations at 'ON'.</li>" +
+            "<li>Semi-automatic / Manual Stop Signals / Gate Stop Signals — hand-signalled.</li>" +
+            "<li>Cautiously pass LC gates only after ensuring they are closed.</li>" +
+          "</ul>" +
+
+          "<li><b>For Subsequent Trains:</b></li>" +
+          "<ul class='card-html left'>" +
+            "<li>Pass Departure Signal at 'ON'.</li>" +
+            "<li>For intervening signals — follow signal aspects.</li>" +
+          "</ul>" +
+
+          "<li>At next station, train admitted on <b>signal</b> or on <b>T/369(3b)</b>.</li>" +
+          "<li>Each First Train on Right Line will run on Line Clear.</li>" +
+
+        "</ul>" +
+      "</div>" +
+
+    "</div>"
 },
-
 "TIC on Double Line": {
   "": 
     "<div class='card-box'><div class='card-line'><b>Authority</b><br/><br/>T/B 912</div></div>" +
