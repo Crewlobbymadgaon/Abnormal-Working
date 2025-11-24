@@ -41,10 +41,10 @@ const PRECACHE_FULL = [
   './forms/ta409.webp',
   './forms/tb409.webp',
   './forms/ta912.webp',
-  './forms/tb912.webp',
+  './forms/tb912.pdf',
   './forms/tc912.webp',
   './forms/td912.webp',
-  './forms/te912.webp',
+  './forms/te912.pdf',
 ];
 
 // Helper: cache put but swallow/log errors and ensure we clone once
